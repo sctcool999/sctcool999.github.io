@@ -21,10 +21,6 @@
     --neon: #39ff7e;
   }
 
-  html {
-    zoom: 1.4;
-  }
-
   html, body {
     background: var(--bg);
     color: var(--text);
@@ -38,10 +34,19 @@
     align-items: stretch;
     padding: 16px;
     gap: 0;
+    /* Desktop: scale up content 1.4× without iOS zoom bug */
+    font-size: 100%;
+  }
+
+  /* Desktop scale: use a wrapper transform so iOS Safari isn't confused */
+  @media (min-width: 681px) {
+    body {
+      font-size: 140%;
+    }
   }
 
   h1 {
-    font-size: 18px;
+    font-size: 1.1rem;
     font-weight: 600;
     letter-spacing: 0.03em;
     color: var(--text);
@@ -87,6 +92,54 @@
     justify-content: flex-start;
     gap: 10px;
     min-width: 0;
+  }
+
+  /* ── MOBILE: stack vertically ── */
+  @media (max-width: 680px) {
+    body {
+      padding: 10px;
+      font-size: 100%;
+    }
+    h1 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    #main-row {
+      flex-direction: column;
+      gap: 10px;
+    }
+    #canvas-col {
+      flex: none;
+      width: 100%;
+      justify-content: center;
+    }
+    #panel-col {
+      flex: none;
+      width: 100%;
+      gap: 8px;
+    }
+    /* Buttons: 3-column row on mobile */
+    .btn-row {
+      flex-direction: row !important;
+    }
+    .pc-btn {
+      flex: 1;
+      font-size: 11px !important;
+      padding: 7px 4px !important;
+    }
+    /* Info cards: horizontal row on mobile */
+    .info-stack {
+      flex-direction: row !important;
+    }
+    .info-stack .card {
+      flex: 1;
+      min-width: 0;
+    }
+    .card-value { font-size: 16px !important; }
+    .card-sub   { font-size: 10px !important; }
+    #sub-quad   { font-size: 13px !important; }
+    #cartesian-box { font-size: 14px !important; }
+    #notation-box  { font-size: 14px !important; }
   }
 
   /* buttons */
@@ -284,9 +337,18 @@
   const DPR    = window.devicePixelRatio || 1;
 
   function initCanvas() {
-    const col    = document.getElementById('canvas-col');
-    const avail  = Math.min(col.clientWidth, col.clientHeight, 700);
-    const SIZE   = Math.max(avail, 280);
+    const col = document.getElementById('canvas-col');
+    const isMobile = window.innerWidth <= 680;
+    let SIZE;
+    if (isMobile) {
+      // On mobile: full-width column, limit to 90vw and 55vh so controls still fit
+      SIZE = Math.min(col.clientWidth, Math.round(window.innerHeight * 0.52), 500);
+      SIZE = Math.max(SIZE, 240);
+    } else {
+      // Desktop: column is 70% of viewport; cap at 700
+      const avail = Math.min(col.clientWidth, col.clientHeight, 700);
+      SIZE = Math.max(avail, 280);
+    }
     canvas.style.width  = SIZE + 'px';
     canvas.style.height = SIZE + 'px';
     canvas.width  = SIZE * DPR;
