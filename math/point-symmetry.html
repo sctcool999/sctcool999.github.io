@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Point Symmetry</title>
+<style>
+/* Layout: Desmos-style split — expression list on the left, graph paper fills the rest; stacks on phones */
+:root{
+  --bg:#ffffff; --panel:#ffffff; --bar:#2a2a2a; --bar-fg:#f2f2f2;
+  --fg:#222; --muted:#777; --line:#e2e2e2; --row-num:#f4f4f4;
+  --grid-minor:#efefef; --grid-major:#d5d5d5; --axis:#3c3c3c; --tick:#3c3c3c; --halo:#ffffff;
+  --blue:#2d70b3; --red:#c74440; --orange:#fa7e19; --purple:#6042a6;
+  --track:#d9d9d9; --focus:#2f72dc;
+  --math:"Times New Roman","STIX Two Math",Times,serif;
+  --ui:"Helvetica Neue",Arial,"Noto Sans TC",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141414; --panel:#1c1c1c; --bar:#0d0d0d; --bar-fg:#eee;
+  --fg:#e8e8e8; --muted:#9a9a9a; --line:#333; --row-num:#242424;
+  --grid-minor:#232323; --grid-major:#3a3a3a; --axis:#cfcfcf; --tick:#cfcfcf; --halo:#141414;
+  --blue:#5b9be0; --red:#e06a66; --orange:#ff9a45; --purple:#9a7fe0; --track:#444; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141414; --panel:#1c1c1c; --bar:#0d0d0d; --bar-fg:#eee;
+  --fg:#e8e8e8; --muted:#9a9a9a; --line:#333; --row-num:#242424;
+  --grid-minor:#232323; --grid-major:#3a3a3a; --axis:#cfcfcf; --tick:#cfcfcf; --halo:#141414;
+  --blue:#5b9be0; --red:#e06a66; --orange:#ff9a45; --purple:#9a7fe0; --track:#444; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);display:flex;flex-direction:column;overflow:hidden}
+header{background:var(--bar);color:var(--bar-fg);height:44px;flex:none;display:flex;align-items:center;padding-inline:16px;font-size:15px;gap:10px}
+header b{font-weight:600}
+main{flex:1;display:flex;min-height:0}
+#panel{width:340px;flex:none;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;box-shadow:2px 0 6px rgba(0,0,0,.08);z-index:2}
+.row{display:flex;border-bottom:1px solid var(--line);min-height:56px}
+.tab{width:44px;flex:none;background:var(--row-num);display:flex;flex-direction:column;align-items:center;padding-top:6px;gap:6px;font-size:10px;color:var(--muted)}
+.body{flex:1;min-width:0;padding:12px 12px 12px 14px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.note{font-size:15px;line-height:1.35}
+.math{font-family:var(--math);font-size:21px;display:flex;align-items:baseline;gap:4px;flex-wrap:wrap}
+.math i{font-style:italic}
+.swatch{width:26px;height:26px;border-radius:50%;display:grid;place-items:center}
+.icon-curve{background:var(--blue)}
+#fn{font-family:var(--math);font-size:21px;border:none;border-bottom:1px solid transparent;background:transparent;color:var(--fg);flex:1;min-width:0;padding:0 2px}
+#fn:focus{outline:none;border-bottom-color:var(--focus)}
+#fn.bad{color:var(--red);border-bottom-color:var(--red)}
+.play{width:26px;height:26px;border-radius:50%;border:2px solid var(--muted);background:transparent;color:var(--fg);display:grid;place-items:center;cursor:pointer;padding:0}
+.play:focus-visible,.fold:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.slider{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+#xs{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--track);border-radius:2px;accent-color:var(--purple)}
+#xs::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--purple);box-shadow:0 0 0 5px color-mix(in srgb,var(--purple) 25%,transparent);cursor:pointer}
+#xs::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--purple);cursor:pointer}
+.fold{background:none;border:none;color:var(--fg);font:inherit;text-align:left;display:flex;gap:8px;cursor:pointer;padding:0;font-size:15px;line-height:1.35}
+.fold .tri{display:inline-block;transition:transform .15s;color:var(--muted);flex:none}
+.fold[aria-expanded="true"] .tri{transform:rotate(90deg)}
+.sub .tab{background:color-mix(in srgb,var(--row-num) 70%,var(--line))}
+.sub .body{padding-left:26px}
+.dot{width:14px;height:14px;border-radius:50%}
+.dash{width:22px;border-top:3px dashed var(--orange)}
+#graphWrap{flex:1;position:relative;min-width:0}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:default}
+.ctl{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}
+.ctl button{width:34px;height:34px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font-size:20px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.ctl button:focus-visible{outline:2px solid var(--focus)}
+@media (max-width:720px){
+  main{flex-direction:column}
+  #panel{width:auto;max-height:44%;border-right:none;border-bottom:1px solid var(--line)}
+}
+@media (prefers-reduced-motion:reduce){.fold .tri{transition:none}}
+</style>
+
+<header><b>Point symmetry</b></header>
+<main>
+  <section id="panel" aria-label="Expressions">
+    <div class="row"><div class="tab">1</div><div class="body"><div class="note">Put any function here:</div></div></div>
+
+    <div class="row"><div class="tab">2<span class="swatch icon-curve" aria-hidden="true"><svg width="16" height="10" viewBox="0 0 16 10"><path d="M1 5 Q4 -2 8 5 T15 5" fill="none" stroke="#fff" stroke-width="2"/></svg></span></div>
+      <div class="body"><label class="math" for="fn"><span><i>f</i>(<i>x</i>) =</span><input id="fn" value="sin x" spellcheck="false" autocomplete="off" aria-label="f(x)"></label></div></div>
+
+    <div class="row"><div class="tab">3</div><div class="body"><div class="note">Drag around the point or set the point's x-coordinate here:</div></div></div>
+
+    <div class="row"><div class="tab">4<button class="play" id="play" aria-label="Pause"></button></div>
+      <div class="body">
+        <div class="math"><i>X</i> = <span id="xval">−2.17</span></div>
+        <div class="slider"><span>−10</span><input type="range" id="xs" min="-10" max="10" step="0.01" value="-2.17" aria-label="X"><span>10</span></div>
+      </div></div>
+
+    <div class="row"><div class="tab">5</div><div class="body">
+      <button class="fold" id="fold" aria-expanded="false" aria-controls="sub"><span class="tri">▶</span><span>The orange point is reflected. The function is called "point symmetric about the origin" if the orange point is always on the graph!</span></button>
+    </div></div>
+    <div id="sub" hidden>
+      <div class="row sub"><div class="tab">6</div><div class="body"><div class="math"><i>Y</i> = <i>f</i>(<i>X</i>)<span style="margin-left:auto;font-family:var(--ui);font-size:14px;color:var(--muted)" id="yval"></span></div></div></div>
+      <div class="row sub"><div class="tab">7<span class="dot" style="background:var(--blue)"></span></div><div class="body"><div class="math">(<i>X</i>, <i>Y</i>)</div></div></div>
+      <div class="row sub"><div class="tab">8<span class="dash"></span></div><div class="body"><div class="math">polygon((<i>X</i>, <i>Y</i>), (−<i>X</i>, −<i>Y</i>))</div></div></div>
+      <div class="row sub"><div class="tab">9<span class="dot" style="background:var(--orange)"></span></div><div class="body"><div class="math">(−<i>X</i>, −<i>Y</i>)</div></div></div>
+    </div>
+  </section>
+
+  <section id="graphWrap" aria-label="Graph">
+    <canvas id="cv"></canvas>
+    <div class="ctl">
+      <button id="zin" aria-label="Zoom in">+</button>
+      <button id="zout" aria-label="Zoom out">−</button>
+      <button id="home" aria-label="Default viewport">⌂</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const XMIN=-10, XMAX=10, PERIOD=8000;           // slider range and sweep time (ms), as in the original
+  const VIEW0 = {xmin:-6.851888581240567, xmax:6.5060387527380215, ymin:-9.626452061612294, ymax:9.430373618656073};
+
+  const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  const fnIn=document.getElementById('fn'), xs=document.getElementById('xs'), xval=document.getElementById('xval'), yval=document.getElementById('yval');
+  const playBtn=document.getElementById('play'), fold=document.getElementById('fold'), sub=document.getElementById('sub');
+
+  let X=-2.17, playing=true, dir=1;
+  let view={cx:0, cy:0, s:40};                      // center (math units) and pixels per unit
+  let W=0, H=0, dpr=1;
+  let f = x => Math.sin(x);
+
+  /* ---------- function parsing ---------- */
+  function compile(src){
+    let s=src.trim();
+    if(!s) throw 0;
+    s=s.replace(/\\left|\\right/g,'').replace(/\\cdot/g,'*').replace(/\\pi/g,'pi').replace(/π/g,'pi')
+       .replace(/\\(sin|cos|tan|sec|csc|cot|ln|log|sqrt|exp|abs)/g,'$1')
+       .replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g,'(($1)/($2))').replace(/[{}]/g,m=>m=='{'?'(':')')
+       .replace(/−/g,'-').replace(/\^/g,'**').replace(/\|([^|]+)\|/g,'abs($1)');
+    // "sin x", "sin 2x" → sin(x), sin(2x)
+    s=s.replace(/\b(sin|cos|tan|sec|csc|cot|ln|log|sqrt|exp|abs)\s+([0-9.]*[a-z]?(?:\*\*[0-9.]+)?)/g,'$1($2)');
+    // implicit multiplication: 2x, 2(, )(, )x, x(
+    s=s.replace(/(\d)\s*([a-z(])/g,'$1*$2').replace(/\)\s*([a-z0-9(])/g,')*$1').replace(/\bx\s*\(/g,'x*(').replace(/\bx\s*x\b/g,'x*x').replace(/\bx\s+(?=[a-z(])/g,'x*');
+    if(/[^0-9a-z+\-*/().,\s]/i.test(s)) throw 0;
+    const ok=new Set(['x','pi','e','sin','cos','tan','sec','csc','cot','ln','log','sqrt','exp','abs','floor','ceil','sign','arcsin','arccos','arctan','sinh','cosh','tanh']);
+    (s.match(/[a-z]+/gi)||[]).forEach(w=>{ if(!ok.has(w)) throw 0; });
+    const pre='const pi=Math.PI,e=Math.E,sin=Math.sin,cos=Math.cos,tan=Math.tan,sec=t=>1/Math.cos(t),csc=t=>1/Math.sin(t),cot=t=>1/Math.tan(t),ln=Math.log,log=Math.log10,sqrt=Math.sqrt,exp=Math.exp,abs=Math.abs,floor=Math.floor,ceil=Math.ceil,sign=Math.sign,arcsin=Math.asin,arccos=Math.acos,arctan=Math.atan,sinh=Math.sinh,cosh=Math.cosh,tanh=Math.tanh;';
+    const g=new Function('x',pre+'return ('+s+');');
+    const t=g(0.37); if(typeof t!=='number') throw 0;
+    return g;
+  }
+  fnIn.addEventListener('input',()=>{
+    try{ f=compile(fnIn.value); fnIn.classList.remove('bad'); }catch(e){ fnIn.classList.add('bad'); }
+    draw();
+  });
+
+  /* ---------- viewport ---------- */
+  function fitView(v){
+    view.cx=(v.xmin+v.xmax)/2; view.cy=(v.ymin+v.ymax)/2;
+    view.s=Math.min(W/(v.xmax-v.xmin), H/(v.ymax-v.ymin));
+  }
+  const sx=x=>W/2+(x-view.cx)*view.s, sy=y=>H/2-(y-view.cy)*view.s;
+  const mx=px=>view.cx+(px-W/2)/view.s;
+
+  function resize(){
+    const r=cv.getBoundingClientRect(); dpr=window.devicePixelRatio||1;
+    const first=!W; W=r.width; H=r.height;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    if(first) fitView(VIEW0);
+    draw();
+  }
+
+  /* ---------- drawing ---------- */
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const fmt=(v,d)=>{ let t=(+v.toFixed(d)).toString(); if(t==='-0') t='0'; return t.replace('-','−'); };
+
+  function steps(){
+    const target=80/view.s; const p=Math.pow(10,Math.floor(Math.log10(target)));
+    let major=[1,2,5,10].map(k=>k*p).find(v=>v>=target);
+    const m=major/p; const minor = (m===2) ? major/4 : major/5;
+    return {major, minor};
+  }
+
+  function draw(){
+    if(!W) return;
+    const C={gm:css('--grid-minor'),gM:css('--grid-major'),ax:css('--axis'),tk:css('--tick'),halo:css('--halo'),
+             blue:css('--blue'),orange:css('--orange'),fg:css('--fg'),bg:css('--bg')};
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+    const x0=mx(0), x1=mx(W), y0=view.cy-(H/2)/view.s, y1=view.cy+(H/2)/view.s;
+    const {major,minor}=steps();
+
+    const grid=(st,col)=>{
+      ctx.strokeStyle=col; ctx.lineWidth=1; ctx.beginPath();
+      for(let x=Math.ceil(x0/st)*st;x<=x1;x+=st){const p=Math.round(sx(x))+.5;ctx.moveTo(p,0);ctx.lineTo(p,H);}
+      for(let y=Math.ceil(y0/st)*st;y<=y1;y+=st){const p=Math.round(sy(y))+.5;ctx.moveTo(0,p);ctx.lineTo(W,p);}
+      ctx.stroke();
+    };
+    grid(minor,C.gm); grid(major,C.gM);
+
+    // axes
+    const ax=sx(0), ay=sy(0);
+    ctx.strokeStyle=C.ax; ctx.lineWidth=1.5; ctx.beginPath();
+    if(ax>=0&&ax<=W){ctx.moveTo(Math.round(ax)+.5,0);ctx.lineTo(Math.round(ax)+.5,H);}
+    if(ay>=0&&ay<=H){ctx.moveTo(0,Math.round(ay)+.5);ctx.lineTo(W,Math.round(ay)+.5);}
+    ctx.stroke();
+
+    // tick labels
+    ctx.font='13px "Helvetica Neue",Arial,sans-serif'; ctx.lineJoin='round';
+    const lab=(t,x,y,al,bl)=>{ctx.textAlign=al;ctx.textBaseline=bl;ctx.lineWidth=4;ctx.strokeStyle=C.halo;ctx.strokeText(t,x,y);ctx.fillStyle=C.tk;ctx.fillText(t,x,y);};
+    const dec=Math.max(0,-Math.floor(Math.log10(major)+1e-9));
+    const ly=Math.min(Math.max(ay+4,4),H-18);
+    for(let x=Math.ceil(x0/major)*major;x<=x1;x+=major){ if(Math.abs(x)<major/2) continue; lab(fmt(x,dec),sx(x),ly,'center','top'); }
+    const lx=Math.min(Math.max(ax-6,30),W-6);
+    for(let y=Math.ceil(y0/major)*major;y<=y1;y+=major){ if(Math.abs(y)<major/2) continue; lab(fmt(y,dec),lx,sy(y),'right','middle'); }
+    if(ax>=0&&ax<=W&&ay>=0&&ay<=H) lab('0',ax-6,ay+4,'right','top');
+
+    // curve
+    ctx.strokeStyle=C.blue; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.beginPath();
+    let pen=false;
+    for(let px=0;px<=W;px+=0.5){
+      const y=f(mx(px)), py=sy(y);
+      if(!isFinite(y)||Math.abs(py)>H*20){pen=false;continue;}
+      if(pen){ ctx.lineTo(px,py); } else { ctx.moveTo(px,py); pen=true; }
+    }
+    ctx.stroke();
+
+    // reflected pair
+    const Y=f(X), ok=isFinite(Y);
+    yval.textContent = ok ? '= '+fmt(Y,4) : 'undefined';
+    if(!ok) return;
+    const P=[sx(X),sy(Y)], Q=[sx(-X),sy(-Y)];
+    ctx.setLineDash([9,7]); ctx.strokeStyle=C.orange; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(...P); ctx.lineTo(...Q); ctx.stroke(); ctx.setLineDash([]);
+
+    const pt=(p,col,big)=>{
+      if(big){ctx.fillStyle=col;ctx.globalAlpha=.25;ctx.beginPath();ctx.arc(p[0],p[1],13,0,7);ctx.fill();ctx.globalAlpha=1;}
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],big?6.5:6,0,7); ctx.fill();
+    };
+    pt(Q,C.orange,false); pt(P,C.blue,true);
+
+    const coord=(a,b)=>'('+fmt(a,2)+', '+fmt(b,3)+')';
+    ctx.font='15px "Helvetica Neue",Arial,sans-serif';
+    const plab=(t,p,col)=>{
+      let x=p[0]+12, y=p[1]-12; ctx.textAlign='left';
+      const w=ctx.measureText(t).width; if(x+w>W-50){x=p[0]-12;ctx.textAlign='right';}
+      ctx.textBaseline='bottom'; ctx.lineWidth=4; ctx.strokeStyle=C.halo; ctx.strokeText(t,x,y); ctx.fillStyle=col; ctx.fillText(t,x,y);
+    };
+    plab(coord(X,Y),P,C.fg); plab(coord(-X,-Y),Q,C.fg);
+  }
+
+  /* ---------- slider & play ---------- */
+  function setX(v,fromSlider){
+    X=Math.min(XMAX,Math.max(XMIN,v));
+    xval.textContent=fmt(X,2);
+    if(!fromSlider) xs.value=X;
+    draw();
+  }
+  function setPlaying(p){
+    playing=p;
+    playBtn.innerHTML = p
+      ? '<svg width="10" height="12" viewBox="0 0 10 12"><rect x="0" y="0" width="3.5" height="12" fill="currentColor"/><rect x="6.5" y="0" width="3.5" height="12" fill="currentColor"/></svg>'
+      : '<svg width="10" height="12" viewBox="0 0 10 12"><path d="M1 0 L10 6 L1 12 Z" fill="currentColor"/></svg>';
+    playBtn.setAttribute('aria-label',p?'Pause':'Play');
+    last=null;
+  }
+  playBtn.addEventListener('click',()=>setPlaying(!playing));
+  xs.addEventListener('input',()=>{ setPlaying(false); setX(+xs.value,true); });
+
+  let last=null;
+  function tick(t){
+    if(playing){
+      if(last!==null){
+        let v=X+dir*(XMAX-XMIN)*(t-last)/PERIOD;
+        if(v>=XMAX){v=XMAX;dir=-1;} else if(v<=XMIN){v=XMIN;dir=1;}
+        setX(v);
+      }
+      last=t;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  fold.addEventListener('click',()=>{
+    const o=fold.getAttribute('aria-expanded')!=='true';
+    fold.setAttribute('aria-expanded',o); sub.hidden=!o;
+  });
+
+  /* ---------- graph interaction: drag point, pan, zoom ---------- */
+  let mode=null, start=null;
+  const pos=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+  const nearPoint=([px,py])=>{const Y=f(X); if(!isFinite(Y)) return false; return Math.hypot(px-sx(X),py-sy(Y))<18;};
+  cv.addEventListener('pointerdown',e=>{
+    const p=pos(e); cv.setPointerCapture(e.pointerId);
+    if(nearPoint(p)){ mode='point'; setPlaying(false); }
+    else { mode='pan'; start={p,cx:view.cx,cy:view.cy}; cv.style.cursor='grabbing'; }
+  });
+  cv.addEventListener('pointermove',e=>{
+    const p=pos(e);
+    if(mode==='point'){ setX(Math.round(mx(p[0])*100)/100); }
+    else if(mode==='pan'){ view.cx=start.cx-(p[0]-start.p[0])/view.s; view.cy=start.cy+(p[1]-start.p[1])/view.s; draw(); }
+    else cv.style.cursor = nearPoint(p) ? 'pointer' : 'default';
+  });
+  const end=()=>{mode=null;cv.style.cursor='default';};
+  cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+
+  function zoomAt(k,px,py){
+    const bx=mx(px), by=view.cy-(py-H/2)/view.s;
+    view.s=Math.min(5000,Math.max(0.5,view.s*k));
+    view.cx=bx-(px-W/2)/view.s; view.cy=by+(py-H/2)/view.s; draw();
+  }
+  cv.addEventListener('wheel',e=>{e.preventDefault();const p=pos(e);zoomAt(Math.exp(-e.deltaY*0.0015),p[0],p[1]);},{passive:false});
+  document.getElementById('zin').onclick=()=>zoomAt(1.5,W/2,H/2);
+  document.getElementById('zout').onclick=()=>zoomAt(1/1.5,W/2,H/2);
+  document.getElementById('home').onclick=()=>{fitView(VIEW0);draw();};
+
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  new ResizeObserver(resize).observe(cv);
+
+  setPlaying(!matchMedia('(prefers-reduced-motion: reduce)').matches);
+  setX(-2.17);
+  requestAnimationFrame(tick);
+})();
+</script>

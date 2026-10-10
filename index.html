@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>數學・物理 互動教材</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f6f5f2;
+    --card: #ffffff;
+    --border: #e3e1db;
+    --text: #1f1f1d;
+    --muted: #6f6d66;
+    --math: #1d7a5c;
+    --math-tint: #e3f3ec;
+    --phy: #2c6cb0;
+    --phy-tint: #e5eff9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121314;
+      --card: #1b1d1f;
+      --border: #2e3033;
+      --text: #ecebe6;
+      --muted: #9a9890;
+      --math: #4cc79a;
+      --math-tint: #16302a;
+      --phy: #6aa8eb;
+      --phy-tint: #172738;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    line-height: 1.6;
+    padding: 40px 20px 60px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+
+  header { margin-bottom: 36px; }
+  h1 { font-size: 28px; font-weight: 600; letter-spacing: 0.02em; }
+  .lead { color: var(--muted); font-size: 15px; margin-top: 4px; }
+
+  section { margin-bottom: 40px; }
+  h2 {
+    font-size: 19px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  h2::before {
+    content: ""; width: 4px; height: 20px; border-radius: 2px;
+    background: var(--accent);
+  }
+  .math { --accent: var(--math); --tint: var(--math-tint); }
+  .phy  { --accent: var(--phy);  --tint: var(--phy-tint); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  a.card {
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    color: inherit; text-decoration: none;
+    transition: border-color .15s, transform .15s;
+  }
+  a.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .tag {
+    align-self: flex-start;
+    font-size: 12px; font-weight: 600;
+    color: var(--accent); background: var(--tint);
+    padding: 2px 9px; border-radius: 999px;
+  }
+  .card-title { font-size: 17px; font-weight: 600; }
+  .card-desc  { font-size: 14px; color: var(--muted); }
+
+  .empty {
+    color: var(--muted); font-size: 14px;
+    border: 1px dashed var(--border); border-radius: 12px;
+    padding: 18px; text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) { a.card { transition: none; } a.card:hover { transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>數學・物理 互動教材</h1>
+    <p class="lead">點選卡片開啟教材</p>
+  </header>
+
+  <!-- ===================== 數學 ===================== -->
+  <section class="math">
+    <h2>數學</h2>
+    <div class="grid">
+
+      <!-- 新增教材：複製下面一整個 <a class="card"> … </a>，改 href、標籤、標題、說明 -->
+      <a class="card" href="math/polar-coordinate-system.html">
+        <span class="tag">三角函數</span>
+        <span class="card-title">極座標互動學習</span>
+        <span class="card-desc">拖動圓點觀察角度、象限與直角座標的對應，可切換度與弳度</span>
+      </a>
+
+      <a class="card" href="math/graphs-and-properties-of-trigonometric-functions.html">
+        <span class="tag">三角函數</span>
+        <span class="card-title">三角函數圖形與性質</span>
+        <span class="card-desc">sin、cos、tan 圖形與性質，平移伸縮、正餘弦疊合</span>
+      </a>
+
+      <a class="card" href="math/point-symmetry.html">
+        <span class="tag">函數</span>
+        <span class="card-title">點對稱（Point symmetry）</span>
+        <span class="card-desc">輸入任意函數，拖動點檢驗圖形是否對原點對稱</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ===================== 物理 ===================== -->
+  <section class="phy">
+    <h2>物理</h2>
+    <div class="grid">
+
+      <!-- 有物理教材後，刪除下面這行 <div class="empty">，改放卡片 -->
+      <div class="empty">教材準備中</div>
+
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
