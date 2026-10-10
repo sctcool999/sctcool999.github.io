@@ -21,6 +21,10 @@
     --neon: #39ff7e;
   }
 
+  html {
+    zoom: 1.4;
+  }
+
   html, body {
     background: var(--bg);
     color: var(--text);
@@ -34,14 +38,12 @@
     align-items: stretch;
     padding: 16px;
     gap: 0;
-    /* Desktop: scale up content 1.4× without iOS zoom bug */
-    font-size: 100%;
   }
 
-  /* Desktop scale: use a wrapper transform so iOS Safari isn't confused */
-  @media (min-width: 681px) {
-    body {
-      font-size: 140%;
+  /* Mobile: cancel zoom so iOS Safari viewport isn't broken */
+  @media (max-width: 680px) {
+    html {
+      zoom: 1;
     }
   }
 
