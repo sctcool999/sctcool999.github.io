@@ -132,12 +132,14 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;   /* 置中會讓溢出的上半段量不到也捲不到 */
     gap: calc(5px * var(--ps));
     border-left: 3px solid transparent;
     padding-left: 8px;
     overflow-y: auto;
   }
+  /* 由 JS 判定內容確實放得下之後才套用，避免上下被切掉 */
+  .panel-section.centered { justify-content: center; }
 
   .divider { height: 1px; background: var(--border); margin: 2px 0; flex-shrink: 0; }
 
@@ -166,6 +168,9 @@
   .card-value.small { font-size: calc(13px * var(--ps)); }
   .card-sub { font-size: calc(11px * var(--ps)); color: var(--muted); margin-top: calc(3px * var(--ps)); line-height: 1.35; }
   .nb { white-space: nowrap; }
+  /* KaTeX 跟隨所在欄位的字級，不要自行放大 */
+  .card-value .katex, .card-sub .katex, .hint .katex { font-size: 1em; }
+  .card-value .katex .frac-line { border-bottom-width: 0.055em; }
 
   .big-input {
     width: 100%; background: transparent; border: none;
@@ -230,7 +235,7 @@
   .swatch { display: inline-block; width: calc(12px * var(--ps)); height: 0; border-top: calc(1.5px * var(--ps)) solid; }
   .swatch.dash { border-top-style: dashed; border-color: rgba(255,255,255,0.5); }
   .swatch.solid { border-color: var(--neon); }
-  .swatch.lite-sin { border-color: rgba(29,158,117,0.75); }
+  .swatch.lite-sin { border-color: rgba(167,139,250,0.85); }
   .swatch.lite-cos { border-color: rgba(55,138,221,0.8); }
 
   .hint { font-size: calc(11px * var(--ps)); color: var(--muted); text-align: center; line-height: 1.35; flex-shrink: 0; }
@@ -353,7 +358,7 @@
         <div class="legend-item"><span class="swatch solid"></span>平移伸縮後</div>
       </div>
 
-      <div class="hint">可拖滑桿，或直接在方框內輸入：<span>π/2</span>、<span>2</span>、<span>-3π/4</span>、<span>1/3</span> 皆可（π 也可打 pi）</div>
+      <div class="hint">可拖滑桿，或直接在方框內輸入：<span>π/2</span>、<span>2</span>、<span>-3π/4</span>、<span>1/3</span> 皆可（π 可打 pi、√ 可打 sqrt）</div>
     </div>
 
     <div id="panel-superpose" class="panel-section" style="display:none">
@@ -362,14 +367,19 @@
         <button class="pc-btn-sm" id="sbtn-minus">A sin − B cos</button>
       </div>
 
+      <div class="btn-row-h">
+        <button class="pc-btn-sm active" id="fbtn-sin">疊合成 sin</button>
+        <button class="pc-btn-sm" id="fbtn-cos">疊合成 cos</button>
+      </div>
+
       <div class="slider-stack">
         <div class="slider-row">
-          <div class="slider-head"><span>正弦振幅 A</span><input type="text" class="val-input" id="in-sA" value="3"></div>
-          <input type="range" id="slider-sA" min="-60" max="60" step="1" value="30">
+          <div class="slider-head"><span>正弦振幅 A</span><input type="text" class="val-input" id="in-sA" value="1"></div>
+          <input type="range" id="slider-sA" min="-60" max="60" step="1" value="10">
         </div>
         <div class="slider-row">
-          <div class="slider-head"><span>餘弦振幅 B</span><input type="text" class="val-input" id="in-sB" value="4"></div>
-          <input type="range" id="slider-sB" min="-60" max="60" step="1" value="40">
+          <div class="slider-head"><span>餘弦振幅 B</span><input type="text" class="val-input" id="in-sB" value="&#8730;3"></div>
+          <input type="range" id="slider-sB" min="-60" max="60" step="1" value="17">
         </div>
         <div class="slider-row">
           <div class="slider-head"><span>共同角頻率 k</span><input type="text" class="val-input" id="in-sK" value="1"></div>
@@ -390,7 +400,7 @@
         <div class="card"><div class="card-label">值域</div><div class="card-value small" id="s-range">—</div></div>
         <div class="card"><div class="card-label">週期</div><div class="card-value small" id="s-period">—</div></div>
         <div class="card">
-          <div class="card-label">相位角 φ</div>
+          <div class="card-label" id="s-phi-label">相位角 φ</div>
           <div class="card-value small" id="s-phi">—</div>
           <div class="card-sub" id="s-phi-deg"></div>
         </div>
@@ -407,7 +417,7 @@
         <div class="legend-item"><span class="swatch solid"></span>疊合後</div>
       </div>
 
-      <div class="hint">三個係數皆可直接輸入：<span>3</span>、<span>-2.5</span>、<span>1/2</span>、<span>π</span> 皆可</div>
+      <div class="hint">三個係數皆可直接輸入：<span>√3</span>、<span>3</span>、<span>-2.5</span>、<span>1/2</span>、<span>√2/2</span>、<span>π</span>（√ 也可打 sqrt）</div>
     </div>
 
   </div><!-- /panel-col -->
@@ -426,19 +436,23 @@
   ];
 
   const FUNC_INFO = {
-    sin: { title:'正弦函數', plainFormula:'y = sin x', color:'#1D9E75',
-      domain:'ℝ（所有實數）', range:'[-1, 1]', period:'2π', amplitude:'1',
-      symmetry:'x = π/2 + kπ,\nk∈ℤ', symmetryNote:'（通過圖形最高點\n與最低點的鉛垂線）' },
+    sin: { title:'正弦函數', plainFormula:'y = sin x', color:'#A78BFA',
+      domain:'$\\mathbb{R}$（所有實數）', range:'$\\left[-1,\\ 1\\right]$', period:'$2\\pi$', amplitude:'$1$',
+      symmetry:'$x = \\frac{\\pi}{2} + k\\pi$\n$k \\in \\mathbb{Z}$',
+      symmetryNote:'（通過圖形最高點\n與最低點的鉛垂線）' },
     cos: { title:'餘弦函數', plainFormula:'y = cos x', color:'#378ADD',
-      domain:'ℝ（所有實數）', range:'[-1, 1]', period:'2π', amplitude:'1',
-      symmetry:'x = kπ, k∈ℤ', symmetryNote:'（通過圖形最高點\n與最低點的鉛垂線）' },
+      domain:'$\\mathbb{R}$（所有實數）', range:'$\\left[-1,\\ 1\\right]$', period:'$2\\pi$', amplitude:'$1$',
+      symmetry:'$x = k\\pi,\\ k \\in \\mathbb{Z}$',
+      symmetryNote:'（通過圖形最高點\n與最低點的鉛垂線）' },
     tan: { title:'正切函數', plainFormula:'y = tan x', color:'#EF9F27',
-      domain:'x ≠ π/2 + kπ,\nk∈ℤ', range:'ℝ（所有實數）', period:'π', amplitude:'無（圖形無上下界）',
-      symmetry:'無鉛垂對稱軸', symmetryNote:'僅具點對稱\n對稱中心 (kπ/2, 0), k∈ℤ' }
+      domain:'$x \\ne \\frac{\\pi}{2} + k\\pi$\n$k \\in \\mathbb{Z}$',
+      range:'$\\mathbb{R}$（所有實數）', period:'$\\pi$', amplitude:'無（圖形無上下界）',
+      symmetry:'無鉛垂對稱軸',
+      symmetryNote:'僅具點對稱\n對稱中心 $\\left(\\frac{k\\pi}{2},\\ 0\\right),\\ k \\in \\mathbb{Z}$' }
   };
 
   let state = { tab:'sin', dragX: Math.PI/3, dragging:false, tBase:'sin', a:1, b:1, c:0, d:0,
-                sA:3, sB:4, sK:1, sSign:1 };
+                sA:1, sB:Math.sqrt(3), sK:1, sSign:1, sForm:'sin' };
   let lastGeom = null;
 
   /* ───────── helpers ───────── */
@@ -480,14 +494,35 @@
     if (str === null || str === undefined) return NaN;
     let s = String(str).trim().toLowerCase();
     if (s === '') return NaN;
-    s = s.replace(/π/g, 'p').replace(/pi/g, 'p');
-    s = s.replace(/[^0-9p+\-*/().\s]/g, '');
-    s = s.replace(/(\d|\)|p)\s*(?=[p(])/g, '$1*');   // 2π → 2*π，π( → π*(
-    s = s.replace(/(p|\))\s*(?=\d)/g, '$1*');        // π2 → π*2
-    if (!/^[0-9p+\-*/().\s]+$/.test(s)) return NaN;
+
+    // 全形與常見替代符號正規化
+    s = s.replace(/[\u2212\u2013\u2014\uff0d]/g, '-')   // −, –, —, －
+         .replace(/[\u00d7\u2715\u00b7\uff0a]/g, '*')   // ×, ✕, ·, ＊
+         .replace(/[\u00f7\uff0f]/g, '/')               // ÷, ／
+         .replace(/[\uff08]/g, '(').replace(/[\uff09]/g, ')')
+         .replace(/[\uff0b]/g, '+')
+         .replace(/[\uff10-\uff19]/g, function(c){ return String.fromCharCode(c.charCodeAt(0)-0xfee0); });
+
+    // π 與根號的別名
+    s = s.replace(/pi/g, 'p').replace(/π/g, 'p');
+    s = s.replace(/sqrt/g, '√').replace(/root/g, '√');
+
+    // √ 後接數字、括號或 π → 轉成 S(...)
+    s = s.replace(/√\s*(\d+(?:\.\d+)?)/g, 'S($1)');
+    s = s.replace(/√\s*\(/g, 'S(');
+    s = s.replace(/√\s*p/g, 'S(p)');
+    if (s.indexOf('√') !== -1) return NaN;             // 落單的根號
+
+    // 不認識的字元一律視為錯誤，絕不默默刪除
+    if (!/^[0-9pS+\-*/().\s]+$/.test(s)) return NaN;
+
+    // 隱含乘法：2π → 2*π、2√3 → 2*S(3)、π2 → π*2
+    s = s.replace(/(\d|\)|p)\s*(?=[pS(])/g, '$1*');
+    s = s.replace(/(p|\))\s*(?=\d)/g, '$1*');
+
     s = s.replace(/p/g, '(3.141592653589793)');
     try {
-      const v = Function('"use strict";return (' + s + ')')();
+      const v = Function('S', '"use strict";return (' + s + ')')(Math.sqrt);
       return (typeof v === 'number' && isFinite(v)) ? v : NaN;
     } catch(e){ return NaN; }
   }
@@ -552,19 +587,54 @@
     catch(e){ el.textContent = latex; }
   }
 
-  function buildFormulaPlain(base,a,b,c,d){
+  function buildFormulaLatex(base,a,b,c,d){
     const cCoeff = c/Math.PI;
-    const inner = Math.abs(cCoeff)<1e-9 ? 'x' : ('x ' + (cCoeff>0?'-':'+') + ' ' + pf(Math.abs(cCoeff)));
-    const bPart = Math.abs(b-1)<1e-9 ? inner : (trimNum(b)+'('+inner+')');
-    const core = base+'('+bPart+')';
+    const inner = Math.abs(cCoeff)<1e-9 ? 'x'
+                : ('x ' + (cCoeff>0?'-':'+') + ' ' + piLatex(Math.abs(cCoeff)));
+    const bPart = Math.abs(b-1)<1e-9 ? inner
+                : (fracLatex(b) + '\\left(' + inner + '\\right)');
+    const core = '\\' + base + '\\left(' + bPart + '\\right)';
     let aPart;
     if (Math.abs(a-1)<1e-9) aPart = core;
-    else if (Math.abs(a+1)<1e-9) aPart = '-'+core;
-    else aPart = trimNum(a)+'·'+core;
-    const dPart = Math.abs(d)<1e-9 ? '' : (' ' + (d>0?'+':'-') + ' ' + trimNum(Math.abs(d)));
-    return 'y = '+aPart+dPart;
+    else if (Math.abs(a+1)<1e-9) aPart = '-' + core;
+    else aPart = fracLatex(a) + core;
+    const dPart = Math.abs(d)<1e-9 ? ''
+                : (' ' + (d>0?'+':'-') + ' ' + fracLatex(Math.abs(d)));
+    return 'y = ' + aPart + dPart;
   }
 
+
+
+  // ── 排版：字串中 $…$ 之間的部分交給 KaTeX，\n 代表刻意換行 ──
+  function tex(latex){
+    try { return katex.renderToString(latex, { throwOnError:false, displayMode:false }); }
+    catch(e){ return escHTML(latex); }
+  }
+  function setMath(id, str){
+    const html = String(str).split('\n').map(function(line){
+      return line.split('$').map(function(part, i){
+        if (part === '') return '';
+        return (i % 2 === 1) ? '<span class="nb">' + tex(part) + '</span>' : escHTML(part);
+      }).join('');
+    }).join('<br>');
+    setHTML(id, html);
+  }
+
+  // 有理數 → LaTeX 分數；無法化成簡潔分數就用小數
+  function fracLatex(v){
+    if (Math.abs(v) < 1e-12) return '0';
+    const r = ratApprox(v, 1000);
+    if (!r) return trimNum(v);
+    const num = r[0], den = r[1];
+    if (den === 1) return String(num);
+    if (den > 200) return trimNum(v);
+    return (num < 0 ? '-' : '') + '\\frac{' + Math.abs(num) + '}{' + den + '}';
+  }
+
+  // k 乘上某個 π 倍數 → 「k·係數」的 LaTeX
+  function kTimesPi(v){
+    return 'k \\cdot ' + piLatex(v);
+  }
 
   // ── 疊合用：LaTeX 格式化 ──
   function piLatex(k){
@@ -592,34 +662,64 @@
     }
     return [out, inr];
   }
-  function ampParts(A, C){
-    const sq = A*A + C*C, n = Math.round(sq);
-    if (Math.abs(sq - n) < 1e-9 && n >= 0) return simplifySurd(n);   // 可化為最簡根式
+  // 把浮點數還原成有理數 p/q（找不到就回傳 null）
+  function ratApprox(x, maxDen){
+    maxDen = maxDen || 3000;
+    if (!isFinite(x)) return null;
+    const sign = x < 0 ? -1 : 1;
+    const ax = Math.abs(x);
+    const tol = 1e-9 * Math.max(1, ax);
+    for (let q = 1; q <= maxDen; q++){
+      const p = Math.round(ax*q);
+      if (Math.abs(ax - p/q) < tol) return [sign*p, q];
+    }
     return null;
   }
-  function ampLatex(A, C){
-    const pr = ampParts(A, C);
-    if (!pr) return trimNum(Math.sqrt(A*A + C*C));
-    const [co, inr] = pr;
-    if (inr === 1) return String(co);
-    return (co === 1 ? '' : String(co)) + '\\sqrt{' + inr + '}';
-  }
-  function ampText(A, C){
-    const pr = ampParts(A, C);
-    if (!pr) return trimNum(Math.sqrt(A*A + C*C));
-    const [co, inr] = pr;
-    if (inr === 1) return String(co);
-    return (co === 1 ? '' : String(co)) + '√' + inr;
+
+  // R = √(A²+C²)。先把 R² 化成 p/q，再用 √(p/q) = √(pq)/q 化到最簡
+  // 回傳 {co, den, inr}，代表 R = (co/den)·√inr
+  function ampParts(A, C){
+    const sq = A*A + C*C;
+    if (sq < 1e-18) return { co:0, den:1, inr:1 };
+    const r = ratApprox(sq, 3000);
+    if (!r) return null;
+    const p = r[0], q = r[1];
+    if (p <= 0 || p*q > 1e9) return null;
+    const pair = simplifySurd(p*q);
+    let co = pair[0], inr = pair[1], den = q;
+    const g = gcd(co, den);
+    co /= g; den /= g;
+    if (den > 200 || inr > 100000) return null;   // 太醜就改用小數
+    return { co:co, den:den, inr:inr };
   }
 
-  // A·sin(kx) + C·cos(kx) = R·sin(kx + φ)
+  // frac(分子, 分母) → LaTeX 或純文字
+  function ampRender(A, C, mode){
+    const pr = ampParts(A, C);
+    if (!pr) return trimNum(Math.sqrt(A*A + C*C));
+    const co = pr.co, den = pr.den, inr = pr.inr;
+    if (co === 0) return '0';
+    const tex = (mode === 'tex');
+    const root = tex ? ('\\sqrt{' + inr + '}') : ('√' + inr);
+    const num = (inr === 1) ? String(co) : ((co === 1 ? '' : String(co)) + root);
+    if (den === 1) return num;
+    return tex ? ('\\frac{' + num + '}{' + den + '}') : (num + '/' + den);
+  }
+  function ampLatex(A, C){ return ampRender(A, C, 'tex'); }
+  function ampText(A, C){ return ampRender(A, C, 'txt'); }
+
+  // A·sin(kx) + C·cos(kx) = R·sin(kx + φ) = R·cos(kx + ψ)
+  //   sin 形式：cos φ = A/R、sin φ = C/R  → φ = atan2(C, A)
+  //   cos 形式：cos ψ = C/R、sin ψ = −A/R → ψ = atan2(−A, C) = φ − π/2
   function superposeInfo(A, C, k){
     const R = Math.sqrt(A*A + C*C);
     const phi = (R < 1e-12) ? 0 : Math.atan2(C, A);
+    const psi = (R < 1e-12) ? 0 : Math.atan2(-A, C);
     const kAbs = Math.abs(k) < 1e-9 ? 1e-9 : Math.abs(k);
     return {
       R: R,
       phi: phi,
+      psi: psi,
       period: 2*Math.PI/kAbs,
       xMax: (Math.PI/2 - phi)/k,     // kx + φ = π/2
       xMin: (-Math.PI/2 - phi)/k
@@ -632,24 +732,22 @@
     const cCoeff = c/Math.PI;
     const lo = d-Math.abs(a), hi = d+Math.abs(a);
     let domain, range, amplitude, symmetry;
+    const kZ = ',\\ k \\in \\mathbb{Z}';
     if (base==='tan'){
       const offCoeff = cCoeff + Pcoeff/2;
-      domain = 'x ≠ ' + pf(offCoeff) + '\n+ k·(' + pf(Pcoeff) + '), k∈ℤ';
-      range = 'ℝ（所有實數）';
+      domain = '$x \\ne ' + piLatex(offCoeff) + '$\n$+\\ ' + kTimesPi(Pcoeff) + kZ + '$';
+      range = '$\\mathbb{R}$（所有實數）';
       amplitude = '無（圖形無上下界）';
-      symmetry = '無鉛垂對稱軸\n對稱中心 (' + pf(cCoeff) + ' + k·' + pf(Pcoeff/2) + ', ' + trimNum(d) + ')';
+      symmetry = '無鉛垂對稱軸\n對稱中心 $\\left(' + piLatex(cCoeff) + ' + ' +
+                 kTimesPi(Pcoeff/2) + ',\\ ' + fracLatex(d) + '\\right)$';
     } else {
-      domain = 'ℝ（所有實數）';
-      range = '[' + trimNum(lo) + ', ' + trimNum(hi) + ']';
-      amplitude = trimNum(Math.abs(a));
-      if (base==='sin'){
-        const offCoeff = cCoeff + Pcoeff/4;
-        symmetry = 'x = ' + pf(offCoeff) + '\n+ k·(' + pf(Pcoeff/2) + '), k∈ℤ';
-      } else {
-        symmetry = 'x = ' + pf(cCoeff) + '\n+ k·(' + pf(Pcoeff/2) + '), k∈ℤ';
-      }
+      domain = '$\\mathbb{R}$（所有實數）';
+      range = '$\\left[' + fracLatex(lo) + ',\\ ' + fracLatex(hi) + '\\right]$';
+      amplitude = '$' + fracLatex(Math.abs(a)) + '$';
+      const off = (base==='sin') ? (cCoeff + Pcoeff/4) : cCoeff;
+      symmetry = '$x = ' + piLatex(off) + '$\n$+\\ ' + kTimesPi(Pcoeff/2) + kZ + '$';
     }
-    return { domain, range, period: pf(Pcoeff), amplitude, symmetry };
+    return { domain, range, period: '$' + piLatex(Pcoeff) + '$', amplitude, symmetry };
   }
 
   /* ───────── canvas / geometry ───────── */
@@ -679,7 +777,7 @@
 
   function buildGeom(w,h,yMin,yMax){
     const fs = w/720;
-    const marginL = 50*fs, marginR = 24*fs, marginT = 28*fs, marginB = 56*fs;
+    const marginL = 50*fs, marginR = 24*fs, marginT = 28*fs, marginB = 68*fs;
     const plotW = w - marginL - marginR, plotH = h - marginT - marginB;
     return {
       w,h,fs, marginL,marginR,marginT,marginB, plotW,plotH,
@@ -687,6 +785,71 @@
       xToPx(x){ return marginL + (x-XMIN)/(XMAX-XMIN)*plotW; },
       yToPx(y){ return marginT + (yMax-y)/(yMax-yMin)*plotH; }
     };
+  }
+
+
+  // ── canvas 上的分數：畫成上下疊的形式，負號掛在左側 ──
+  // 回傳整體寬度；measureOnly 為 true 時只量不畫
+  function drawFracText(str, cx, yMid, color, fs, sizePx, measureOnly){
+    const f  = Math.round((sizePx || 11) * fs);
+    const fS = Math.round(f * 0.94);
+    const FONT  = '600 ' + f  + "px 'Segoe UI','Noto Sans TC',sans-serif";
+    const FONTS = '600 ' + fS + "px 'Segoe UI','Noto Sans TC',sans-serif";
+    const HALO  = '#141618';
+
+    let body = String(str), neg = false;
+    if (body.charAt(0) === '-' || body.charAt(0) === '−'){ neg = true; body = body.slice(1); }
+    const slash = body.indexOf('/');
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    let width;
+
+    if (slash < 0){                                   // 不是分數，照原樣置中
+      const t = (neg ? '−' : '') + body;
+      ctx.font = FONT;
+      width = ctx.measureText(t).width;
+      if (!measureOnly){
+        ctx.textBaseline = 'middle';
+        ctx.lineWidth = 3.5*fs; ctx.strokeStyle = HALO; ctx.lineJoin = 'round';
+        ctx.strokeText(t, cx, yMid);
+        ctx.fillStyle = color; ctx.fillText(t, cx, yMid);
+      }
+    } else {                                          // 分子／分數線／分母
+      const num = body.slice(0, slash), den = body.slice(slash + 1);
+      ctx.font = FONTS;
+      const barW = Math.max(ctx.measureText(num).width, ctx.measureText(den).width) + 3.5*fs;
+      ctx.font = FONT;
+      const mw = neg ? (ctx.measureText('−').width + 2.2*fs) : 0;
+      width = mw + barW;
+      if (!measureOnly){
+        const left = cx - width/2;
+        const fx   = left + mw + barW/2;              // 分數本體中心
+        const gap  = 1.8*fs;
+        ctx.lineJoin = 'round';
+        ctx.font = FONTS;
+        ctx.lineWidth = 3.5*fs; ctx.strokeStyle = HALO;
+        ctx.textBaseline = 'bottom'; ctx.strokeText(num, fx, yMid - gap);
+        ctx.textBaseline = 'top';    ctx.strokeText(den, fx, yMid + gap);
+        ctx.fillStyle = color;
+        ctx.textBaseline = 'bottom'; ctx.fillText(num, fx, yMid - gap);
+        ctx.textBaseline = 'top';    ctx.fillText(den, fx, yMid + gap);
+        // 分數線（先描一層底色再畫）
+        ctx.lineCap = 'round';
+        ctx.lineWidth = Math.max(2.5, 3.2*fs); ctx.strokeStyle = HALO;
+        ctx.beginPath(); ctx.moveTo(fx - barW/2, yMid); ctx.lineTo(fx + barW/2, yMid); ctx.stroke();
+        ctx.lineWidth = Math.max(1, 1.1*fs); ctx.strokeStyle = color;
+        ctx.beginPath(); ctx.moveTo(fx - barW/2, yMid); ctx.lineTo(fx + barW/2, yMid); ctx.stroke();
+        if (neg){
+          ctx.font = FONT; ctx.textBaseline = 'middle';
+          ctx.lineWidth = 3.5*fs; ctx.strokeStyle = HALO;
+          ctx.strokeText('−', left + mw/2, yMid);
+          ctx.fillStyle = color; ctx.fillText('−', left + mw/2, yMid);
+        }
+      }
+    }
+    ctx.restore();
+    return width;
   }
 
   function drawGridAxes(geom){
@@ -700,7 +863,7 @@
       const px = geom.xToPx(xv);
       ctx.strokeStyle = grid; ctx.lineWidth = 1; ctx.setLineDash([]);
       ctx.beginPath(); ctx.moveTo(px, geom.marginT); ctx.lineTo(px, geom.marginT+geom.plotH); ctx.stroke();
-      ctx.fillText(label, px, geom.marginT+geom.plotH+10*fs);
+      drawFracText(label, px, geom.marginT+geom.plotH+17*fs, 'rgba(255,255,255,0.65)', fs, 12, false);
     });
     const step = niceStep(geom.yMax-geom.yMin);
     ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
@@ -763,16 +926,28 @@
     if (x0<geom.xMin || x0+period>geom.xMax) return;
     const fs=geom.fs;
     const xA=geom.xToPx(x0), xB=geom.xToPx(x0+period);
-    const y = geom.marginT+geom.plotH+30*fs;
+    const y = geom.marginT+geom.plotH+38*fs;
     ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.setLineDash([]);
     ctx.beginPath();
     ctx.moveTo(xA,y-5*fs); ctx.lineTo(xA,y+5*fs);
     ctx.moveTo(xA,y); ctx.lineTo(xB,y);
     ctx.moveTo(xB,y-5*fs); ctx.lineTo(xB,y+5*fs);
     ctx.stroke();
-    ctx.fillStyle=color; ctx.font = "500 " + Math.round(12*fs) + "px 'Segoe UI','Noto Sans TC',sans-serif";
-    ctx.textAlign='center'; ctx.textBaseline='top';
-    ctx.fillText(label, (xA+xB)/2, y+6*fs);
+    const eq = label.indexOf('= ');
+    const cxm = (xA+xB)/2, ty = y + 15*fs;
+    ctx.font = "500 " + Math.round(12*fs) + "px 'Segoe UI','Noto Sans TC',sans-serif";
+    if (eq < 0){
+      ctx.fillStyle=color; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(label, cxm, ty);
+    } else {
+      const head = label.slice(0, eq+2), val = label.slice(eq+2);
+      const hw = ctx.measureText(head).width;
+      const vw = drawFracText(val, 0, 0, color, fs, 12, true);
+      const left = cxm - (hw+vw)/2;
+      ctx.fillStyle=color; ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText(head, left, ty);
+      drawFracText(val, left + hw + vw/2, ty, color, fs, 12, false);
+    }
     ctx.restore();
   }
 
@@ -825,35 +1000,33 @@
     document.getElementById('fx-card-label').textContent = type+' x 精確值';
     const inputEl = document.getElementById('input-x-mult');
     if (document.activeElement !== inputEl) inputEl.value = (x/Math.PI).toFixed(3);
-    setHTML('sub-x-display',
-      '<span class="nb">x = ' + escHTML(pf(x/Math.PI)) + '</span><br>' +
-      '<span class="nb">≈ ' + x.toFixed(3) + ' rad</span>');
+    setMath('sub-x-display', '$x = ' + piLatex(x/Math.PI) + '$\n$\\approx ' + x.toFixed(3) + '$ rad');
     const valFx = document.getElementById('val-fx');
     if (undefinedFlag){
       valFx.textContent = '無定義';
-      setHTML('sub-fx-decimal', '<span class="nb">（漸近線處，</span><br><span class="nb">函數無定義）</span>');
+      setMath('sub-fx-decimal', '（漸近線處，\n函數無定義）');
     } else {
       kr('val-fx', toLatexFrac(y));
-      setHTML('sub-fx-decimal', '<span class="nb">≈ ' + y.toFixed(4) + '</span>');
+      setMath('sub-fx-decimal', '$\\approx ' + y.toFixed(4) + '$');
     }
-    setHTML('def-domain', nbHTML(info.domain));
-    setHTML('def-range', nbHTML(info.range));
-    setHTML('def-period', nbHTML(info.period));
-    setHTML('def-amplitude', nbHTML(info.amplitude));
-    setHTML('def-symmetry', nbHTML(info.symmetry));
-    setHTML('def-symmetry-note', nbHTML(info.symmetryNote));
+    setMath('def-domain', info.domain);
+    setMath('def-range', info.range);
+    setMath('def-period', info.period);
+    setMath('def-amplitude', info.amplitude);
+    setMath('def-symmetry', info.symmetry);
+    setMath('def-symmetry-note', info.symmetryNote);
   }
 
   function updatePanelTransform(base,a,b,c,d){
     syncControls();
-    document.getElementById('formula-render').textContent = buildFormulaPlain(base,a,b,c,d);
+    kr('formula-render', buildFormulaLatex(base,a,b,c,d));
     const info = transformedInfo(base,a,b,c,d);
-    setHTML('t-domain', nbHTML(info.domain));
-    setHTML('t-range', nbHTML(info.range));
-    setHTML('t-period', nbHTML(info.period));
-    setHTML('t-period-note', '<span class="nb">原週期：' + (base==='tan' ? 'π' : '2π') + '</span>');
-    setHTML('t-amplitude', nbHTML(info.amplitude));
-    setHTML('t-symmetry', nbHTML(info.symmetry));
+    setMath('t-domain', info.domain);
+    setMath('t-range', info.range);
+    setMath('t-period', info.period);
+    setMath('t-period-note', '原週期：$' + (base==='tan' ? '\\pi' : '2\\pi') + '$');
+    setMath('t-amplitude', info.amplitude);
+    setMath('t-symmetry', info.symmetry);
   }
 
   function updatePanelSuperpose(A, B, k, sign){
@@ -861,38 +1034,46 @@
     const C = sign * B;
     const info = superposeInfo(A, C, k);
 
+    // 依選定形式取相位：sin 形式用 φ，cos 形式用 ψ
+    const useCos = (state.sForm === 'cos');
+    const ang = useCos ? info.psi : info.phi;
+    const fnName = useCos ? '\\cos' : '\\sin';
+
     // 合成式（KaTeX）
     const kTxt = Math.abs(k-1) < 1e-9 ? 'x' : (trimNum(k) + 'x');
     let latex;
     if (info.R < 1e-12){
       latex = 'y = 0';
     } else {
-      const phiPi = info.phi/Math.PI;
-      const exact = pfExact(Math.abs(phiPi));
-      const phiStr = exact ? piLatex(Math.abs(phiPi)) : trimNum(Math.abs(info.phi));
-      const op = info.phi >= 0 ? '+' : '-';
-      const inner = Math.abs(info.phi) < 1e-12 ? kTxt : (kTxt + ' ' + op + ' ' + phiStr);
-      latex = 'y = ' + ampLatex(A, C) + '\\sin(' + inner + ')';
+      const angPi = ang/Math.PI;
+      const exact = pfExact(Math.abs(angPi));
+      const angStr = exact ? piLatex(Math.abs(angPi)) : trimNum(Math.abs(ang));
+      const op = ang >= 0 ? '+' : '-';
+      const inner = Math.abs(ang) < 1e-12 ? kTxt : (kTxt + ' ' + op + ' ' + angStr);
+      const Rtex = ampLatex(A, C);
+      latex = 'y = ' + (Rtex === '1' ? '' : Rtex) + fnName + '(' + inner + ')';
     }
     kr('sup-formula', latex);
 
-    const Rtxt = ampText(A, C);
-    setHTML('s-amp', '<span class="nb">' + escHTML(Rtxt) + '</span>');
-    document.getElementById('s-amp-sub').textContent = '≈ ' + trimNum(Math.round(info.R*1000)/1000);
-    setHTML('s-range', info.R < 1e-12 ? '<span class="nb">{0}</span>'
-                     : '<span class="nb">[−' + escHTML(Rtxt) + ', ' + escHTML(Rtxt) + ']</span>');
-    setHTML('s-period', nbHTML(pf(info.period/Math.PI)));
+    const Rtex = ampLatex(A, C);
+    setMath('s-amp', '$' + Rtex + '$');
+    setMath('s-amp-sub', '$\\approx ' + trimNum(Math.round(info.R*1000)/1000) + '$');
+    setMath('s-range', info.R < 1e-12 ? '$\\{0\\}$'
+                     : '$\\left[-' + Rtex + ',\\ ' + Rtex + '\\right]$');
+    setMath('s-period', '$' + piLatex(info.period/Math.PI) + '$');
 
-    const phiPi = info.phi/Math.PI;
-    setHTML('s-phi', '<span class="nb">' + escHTML(pfExact(phiPi) || trimNum(info.phi)) + '</span>');
-    document.getElementById('s-phi-deg').textContent = '≈ ' + trimNum(Math.round(info.phi*180/Math.PI*100)/100) + '°';
+    const angPi2 = ang/Math.PI;
+    document.getElementById('s-phi-label').textContent = useCos ? '相位角 ψ' : '相位角 φ';
+    setMath('s-phi', '$' + (pfExact(angPi2) ? piLatex(angPi2) : trimNum(ang)) + '$');
+    setMath('s-phi-deg', '$\\approx ' + trimNum(Math.round(ang*180/Math.PI*100)/100) + '^\\circ$');
 
     if (info.R < 1e-12){
-      setHTML('s-xmax', '—');
-      document.getElementById('s-xmax-sub').textContent = '（A、B 同時為 0）';
+      setMath('s-xmax', '—');
+      setMath('s-xmax-sub', '（A、B 同時為 0）');
     } else {
-      setHTML('s-xmax', '<span class="nb">x = ' + escHTML(pfExact(info.xMax/Math.PI) || trimNum(info.xMax)) + ' + k·' + escHTML(pf(info.period/Math.PI)) + '</span>');
-      document.getElementById('s-xmax-sub').textContent = '最大值 ' + trimNum(Math.round(info.R*1000)/1000);
+      const xmTex = pfExact(info.xMax/Math.PI) ? piLatex(info.xMax/Math.PI) : trimNum(info.xMax);
+      setMath('s-xmax', '$x = ' + xmTex + ' + ' + kTimesPi(info.period/Math.PI) + '$');
+      setMath('s-xmax-sub', '最大值 $' + Rtex + '$');
     }
   }
 
@@ -910,7 +1091,10 @@
     const PANEL_OF = { transform:'panel-transform', superpose:'panel-superpose' };
     const sec = document.getElementById(PANEL_OF[state.tab] || 'panel-basic');
     if (!sec) return;
-    if (window.innerWidth <= 880){ applyPS(PS_MAX); return; }
+    if (window.innerWidth <= 880){ applyPS(PS_MAX); sec.classList.remove('centered'); return; }
+
+    // 量測期間一律頂端對齊，否則溢出的上半段不會計入 scrollHeight
+    sec.classList.remove('centered');
     const overflow = function(){ return sec.scrollHeight > sec.clientHeight + 1; };
     if (reset) applyPS(PS_MAX);
     let guard = 0;
@@ -921,6 +1105,8 @@
       applyPS(psCurrent + 0.05);
       if (overflow()){ applyPS(psCurrent - 0.05); break; }
     }
+    // 真的放得下才置中；仍放不下（已到字級下限）就維持頂端對齊並允許捲動
+    if (!overflow()) sec.classList.add('centered');
   }
 
   /* ───────── render dispatch ───────── */
@@ -985,6 +1171,68 @@
     updatePanelTransform(base,a,b,c,d);
   }
 
+
+  // ⑤ 疊合：標出零點、極大、極小，座標一律寫在 x 軸上
+  function drawSuperposeMarks(geom, R, phi, k){
+    if (!(R > 1e-9) || !isFinite(k) || Math.abs(k) < 1e-9) return;
+    const fs = geom.fs;
+    const T = 2*Math.PI/Math.abs(k);
+
+    const pts = [];
+    const add = function(x, kind, y){
+      if (x >= geom.xMin - 1e-9 && x <= geom.xMax + 1e-9) pts.push({ x:x, kind:kind, y:y });
+    };
+    const tA = k*geom.xMin + phi, tB = k*geom.xMax + phi;
+    const t0 = Math.min(tA, tB), t1 = Math.max(tA, tB);
+    for (let n = Math.floor(t0/Math.PI) - 1; n <= Math.ceil(t1/Math.PI) + 1; n++){
+      add((n*Math.PI - phi)/k, 'zero', 0);
+    }
+    for (let n = Math.floor((t0 - Math.PI/2)/(2*Math.PI)) - 1;
+             n <= Math.ceil((t1 - Math.PI/2)/(2*Math.PI)) + 1; n++){
+      add((Math.PI/2 + 2*n*Math.PI - phi)/k, 'max',  R);
+      add((-Math.PI/2 + 2*n*Math.PI - phi)/k, 'min', -R);
+    }
+    pts.sort(function(a,b){ return a.x - b.x; });
+
+    // 點太密就只標 0 到一個週期之內的，其餘僅畫記號
+    const labelAll = pts.length <= 12;
+    const COL = { zero:'rgba(255,255,255,0.82)', max:'#39ff7e', min:'#39ff7e' };
+    const y0 = geom.yToPx(0);
+    const yLab = y0 + 21*fs;          // 標籤統一放在 x 軸下方這條帶上
+    const taken = [];
+
+    ctx.save();
+    pts.forEach(function(pt){
+      const px = geom.xToPx(pt.x), py = geom.yToPx(pt.y);
+      ctx.setLineDash([]);
+      if (pt.kind === 'zero'){
+        ctx.beginPath(); ctx.arc(px, y0, 4*fs, 0, 2*Math.PI);
+        ctx.fillStyle = '#141618'; ctx.fill();
+        ctx.lineWidth = 1.8; ctx.strokeStyle = COL.zero; ctx.stroke();
+      } else {
+        ctx.setLineDash([4,4]); ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(57,255,126,0.4)';
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, y0); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.arc(px, py, 4.5*fs, 0, 2*Math.PI);
+        ctx.fillStyle = COL[pt.kind]; ctx.fill();
+        ctx.lineWidth = 1.5; ctx.strokeStyle = '#141618'; ctx.stroke();
+      }
+
+      if (!labelAll && !(pt.x >= -1e-9 && pt.x <= T + 1e-9)) return;
+
+      const label = pfExact(pt.x/Math.PI) || trimNum(Math.round(pt.x*1000)/1000);
+      const w = drawFracText(label, px, yLab, COL[pt.kind], fs, 11, true);
+      let clash = false;
+      for (let i = 0; i < taken.length; i++){
+        if (Math.abs(taken[i].px - px) < (taken[i].w + w)/2 + 5*fs){ clash = true; break; }
+      }
+      if (clash) return;
+      taken.push({ px:px, w:w });
+      drawFracText(label, px, yLab, COL[pt.kind], fs, 11, false);
+    });
+    ctx.restore();
+  }
+
   function renderSuperpose(w,h){
     const A = state.sA, B = state.sB, k = state.sK, sign = state.sSign;
     const C = sign * B;
@@ -1006,21 +1254,15 @@
 
     // 兩個原始分量（淡色）
     plotCurve(geom, function(x){ return A*Math.sin(k*x); },
-              {color:'rgba(29,158,117,0.55)', width:2});
+              {color:'rgba(167,139,250,0.65)', width:1});
     plotCurve(geom, function(x){ return C*Math.cos(k*x); },
-              {color:'rgba(55,138,221,0.6)', width:2});
+              {color:'rgba(55,138,221,0.6)', width:1});
     // 疊合結果（最亮）
     plotCurve(geom, function(x){ return A*Math.sin(k*x) + C*Math.cos(k*x); },
-              {color:'#39ff7e', width:3.4});
+              {color:'#39ff7e', width:5});
 
-    // 標出最大值點
-    if (info.R > 1e-9){
-      let xm = info.xMax;
-      const T = info.period;
-      while (xm < geom.xMin) xm += T;
-      while (xm > geom.xMax) xm -= T;
-      if (xm >= geom.xMin && xm <= geom.xMax) drawPoint(geom, xm, info.R, '#39ff7e');
-    }
+    // 零點、極大、極小的位置
+    drawSuperposeMarks(geom, info.R, info.phi, k);
 
     updatePanelSuperpose(A, B, k, sign);
   }
@@ -1047,7 +1289,9 @@
       el.textContent = '三角函數的平移與伸縮：y = a·f(b(x−c)) + d';
       el.style.color = '#39ff7e';
     } else if (state.tab==='superpose'){
-      el.textContent = '正餘弦的疊合：A sin kx ± B cos kx = R sin(kx + φ)';
+      el.textContent = state.sForm === 'cos'
+        ? '正餘弦的疊合：A sin kx ± B cos kx = R cos(kx + ψ)'
+        : '正餘弦的疊合：A sin kx ± B cos kx = R sin(kx + φ)';
       el.style.color = '#39ff7e';
     } else {
       const info = FUNC_INFO[state.tab];
@@ -1100,6 +1344,17 @@
     });
   });
 
+
+  // ── ⑤ 疊合：輸出形式（sin／cos）切換 ──
+  [['fbtn-sin', 'sin'], ['fbtn-cos', 'cos']].forEach(function(pair){
+    document.getElementById(pair[0]).addEventListener('click', function(){
+      state.sForm = pair[1];
+      document.getElementById('fbtn-sin').classList.toggle('active', pair[1] === 'sin');
+      document.getElementById('fbtn-cos').classList.toggle('active', pair[1] === 'cos');
+      updateCurrentTitle();
+      render();
+    });
+  });
 
   // ── ⑤ 疊合：加號／減號切換 ──
   [['sbtn-plus', 1], ['sbtn-minus', -1]].forEach(function(pair){
