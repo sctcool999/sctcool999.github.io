@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>位能與作功 — 互動示範</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    background: #f5f4f0;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding:22px 17px;
+    color: #1a1a1a;
+  }
+  .container { width: 100%; max-width:994px; display: flex; flex-direction: column; }
+  h1 { font-size:19px; font-weight: 500; color: #555; margin-bottom:17px; letter-spacing: 0.02em; }
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap:15px; }
+  .card { background: #fff; border: 0.5px solid rgba(0,0,0,0.1); border-radius:15px; padding:13px 17px; }
+  .scene-wrap { background: #fff; border: 0.5px solid rgba(0,0,0,0.1); border-radius:15px; padding:13px; }
+  .scene-wrap canvas { display: block; width: 100%; border-radius:10px; }
+  .right-col { display: flex; flex-direction: column; gap:13px; }
+  .slider-row { display: flex; flex-direction: column; gap:5px; }
+  .slider-label-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .slider-label { font-size:16px; color: #666; }
+  .slider-val   { font-size:16px; font-weight: 500; color: #1a1a1a; }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width:calc(100% - 41px); height:4px;
+    background: #e0e0e0; border-radius:3px; outline: none; cursor: pointer; display: block;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width:20px; height:17px;
+    border-radius: 50%; background: #1a1a1a; cursor: pointer; border: none;
+  }
+  input[type=range]::-moz-range-thumb {
+    width:20px; height:17px; border-radius: 50%; background: #1a1a1a; cursor: pointer; border: none;
+  }
+  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .metric { background: #f5f4f0; border-radius:10px; padding:9px 13px; }
+  .metric p { margin: 0; }
+  .metric-label { font-size:14px; color: #888; margin-bottom:3px !important; }
+  .metric-val   { font-size:23px; font-weight: 500; color: #999; }
+  .bar-card canvas { display: block; width: 100%; }
+  .verdict { font-size:16px; color: #888; line-height: 1.6; }
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  button {
+    font-size:16px; font-family: inherit; padding:8px 13px;
+    background: #fff; border: 0.5px solid rgba(0,0,0,0.2);
+    border-radius:10px; cursor: pointer; color: #1a1a1a; transition: background 0.12s;
+  }
+  button:hover  { background: #f0efeb; }
+  button:active { background: #e8e7e2; }
+  .section-divider { margin:31px 0 24px; border: none; border-top: 0.5px solid rgba(0,0,0,0.12); }
+  @media (prefers-color-scheme: dark) {
+    body { background: #141414; color: #e8e8e8; }
+    .card, .scene-wrap { background: #1e1e1e; border-color: rgba(255,255,255,0.08); }
+    .metric { background: #262626; }
+    .metric-label { color: #666; }
+    .slider-label { color: #888; }
+    .slider-val   { color: #e8e8e8; }
+    input[type=range] { background: #333; }
+    input[type=range]::-webkit-slider-thumb { background: #e8e8e8; }
+    input[type=range]::-moz-range-thumb     { background: #e8e8e8; }
+    button { background: #1e1e1e; border-color: rgba(255,255,255,0.12); color: #e8e8e8; }
+    button:hover { background: #2a2a2a; }
+    h1 { color: #888; }
+    .section-divider { border-top-color: rgba(255,255,255,0.1); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>W<sub>保守力</sub> = −ΔU &nbsp;·&nbsp; 重力作功與位能消長</h1>
+
+  <div class="layout">
+    <div class="scene-wrap">
+      <canvas id="g_scene"></canvas>
+    </div>
+
+    <div class="right-col">
+      <div class="card" style="display:flex;flex-direction:column;gap:18px">
+        <div class="slider-row">
+          <div class="slider-label-row">
+            <span class="slider-label">高度 h</span>
+            <span class="slider-val" id="g_hOut">7.0 m</span>
+          </div>
+          <input type="range" id="g_hSlider" min="0" max="10" step="0.1" value="7">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label-row">
+            <span class="slider-label">質量 m</span>
+            <span class="slider-val" id="g_mOut">2 kg</span>
+          </div>
+          <input type="range" id="g_mSlider" min="1" max="5" step="1" value="2">
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <p class="metric-label">位能 U（相對零位面）</p>
+          <p class="metric-val" id="g_uVal">— J</p>
+        </div>
+        <div class="metric">
+          <p class="metric-label">W<sub>g</sub> = −ΔU</p>
+          <p class="metric-val" id="g_wVal">— J</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding:18px 21px">
+        <canvas id="g_barChart" height="180"></canvas>
+      </div>
+
+      <div class="card" style="padding:12px 21px">
+        <div class="verdict" id="g_verdict">按「設零位面」後拖動滑桿</div>
+      </div>
+
+      <div class="btn-row">
+        <button id="g_btnRef">設為零位面 h₀</button>
+        <button id="g_btnReset">重置</button>
+      </div>
+    </div>
+  </div>
+<hr class="section-divider">
+<h1>U<sub>彈</sub> = ½kx² &nbsp;·&nbsp; 彈力位能與外力作功消長</h1>
+
+  <div class="layout">
+
+    <div class="scene-wrap">
+      <canvas id="s_scene"></canvas>
+    </div>
+
+    <div class="right-col">
+
+      <div class="card" style="display:flex;flex-direction:column;gap:18px">
+        <div class="slider-row">
+          <div class="slider-label-row">
+            <span class="slider-label">伸長量 x</span>
+            <span class="slider-val" id="s_xOut">+3.0 m</span>
+          </div>
+          <input type="range" id="s_xSlider" min="-6" max="6" step="0.1" value="3">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label-row">
+            <span class="slider-label">彈簧係數 k</span>
+            <span class="slider-val" id="s_kOut">20 N/m</span>
+          </div>
+          <input type="range" id="s_kSlider" min="5" max="50" step="5" value="20">
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <p class="metric-label">彈力位能 U（相對零位面）</p>
+          <p class="metric-val" id="s_uVal">— J</p>
+        </div>
+        <div class="metric">
+          <p class="metric-label">W<sub>外力</sub>（從 x₀ 到 x）</p>
+          <p class="metric-val" id="s_wVal">— J</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding:18px 21px">
+        <canvas id="s_barChart" height="250"></canvas>
+      </div>
+
+      <div class="card" style="padding:12px 21px">
+        <div class="verdict" id="s_verdict">按「設零位面」後拖動滑桿</div>
+      </div>
+
+      <div class="btn-row">
+        <button id="s_btnRef">設為零位面 x₀</button>
+        <button id="s_btnReset">重置</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+function isDark() { return window.matchMedia('(prefers-color-scheme:dark)').matches; }
+
+
+const g = 9.8, H_MAX = 10;
+let m = 2, h = 7, h0 = 0;
+
+const g_scene = document.getElementById('g_scene');
+const g_sc = g_scene.getContext('2d');
+const g_barEl = document.getElementById('g_barChart');
+const g_bc = g_barEl.getContext('2d');
+
+// isDark shared { return window.matchMedia('(prefers-color-scheme:dark)').matches; }
+
+function g_resizeAll() {
+  const sw = g_scene.parentElement.clientWidth - 30;
+  g_scene.width = sw * 2;
+  g_scene.height = Math.round(sw * 2 * 0.88);
+  g_scene.style.width = sw + 'px';
+  g_scene.style.height = Math.round(sw * 0.88) + 'px';
+  const bw = g_barEl.parentElement.clientWidth - 36;
+  g_barEl.width = bw * 2;
+  g_barEl.height = 306;
+  g_barEl.style.width = bw + 'px';
+  g_barEl.style.height = '153px';
+  g_redraw();
+}
+
+function g_drawScene() {
+  const W = g_scene.width, CH = g_scene.height;
+  const dk = isDark();
+  g_sc.clearRect(0, 0, W, CH);
+  const gy = CH - 71;
+
+  g_sc.fillStyle = dk ? '#1c2230' : '#EBF4FD'; g_sc.fillRect(0, 0, W, CH);
+  g_sc.fillStyle = dk ? '#2e3a2e' : '#D4EDDA'; g_sc.fillRect(0, gy, W, CH - gy);
+  g_sc.strokeStyle = dk ? '#4a6a4a' : '#6aaa6a'; g_sc.lineWidth = 4;
+  g_sc.beginPath(); g_sc.moveTo(0, gy); g_sc.lineTo(W, gy); g_sc.stroke();
+  for (let i = 0; i < 18; i++) {
+    g_sc.strokeStyle = dk ? '#3a5a3a' : '#90c890'; g_sc.lineWidth = 2;
+    g_sc.beginPath(); g_sc.moveTo(i * 40 + 16, gy); g_sc.lineTo(i * 40 - 8, CH); g_sc.stroke();
+  }
+  g_sc.font = '37px sans-serif'; g_sc.fillStyle = dk ? '#888' : '#666'; g_sc.textAlign = 'left';
+  g_sc.fillText('h = 0', 10, gy - 14);
+
+  const topY = 56, bX = W * 0.5;
+  function hToY(hv) { return gy - (hv / H_MAX) * (gy - topY); }
+
+  if (h0 !== null) {
+    const refY = hToY(h0);
+    g_sc.strokeStyle = dk ? '#D4537Eaa' : '#993556aa';
+    g_sc.lineWidth = 3; g_sc.setLineDash([8, 7]);
+    g_sc.beginPath(); g_sc.moveTo(16, refY); g_sc.lineTo(W - 16, refY); g_sc.stroke();
+    g_sc.setLineDash([]);
+    g_sc.font = '37px sans-serif'; g_sc.fillStyle = dk ? '#D4537E' : '#993556'; g_sc.textAlign = 'right';
+    g_sc.fillText('零位面 h₀=' + h0.toFixed(1) + 'm', W - 10, refY - 8);
+  }
+
+  const ballY = hToY(h);
+  const r = Math.min(27, W * 0.055);
+
+  if (h > 0.05) {
+    const ax = bX + r + 20, ty = ballY + r, by = gy, hs = 17;
+    g_sc.strokeStyle = dk ? '#5DCAA5' : '#0F6E56'; g_sc.lineWidth = 7;
+    g_sc.beginPath(); g_sc.moveTo(ax, ty); g_sc.lineTo(ax, by); g_sc.stroke();
+    g_sc.fillStyle = dk ? '#5DCAA5' : '#0F6E56';
+    g_sc.beginPath(); g_sc.moveTo(ax, ty - 2); g_sc.lineTo(ax - hs, ty + hs * 1.6); g_sc.lineTo(ax + hs, ty + hs * 1.6); g_sc.closePath(); g_sc.fill();
+    g_sc.beginPath(); g_sc.moveTo(ax, by + 2); g_sc.lineTo(ax - hs, by - hs * 1.6); g_sc.lineTo(ax + hs, by - hs * 1.6); g_sc.closePath(); g_sc.fill();
+    g_sc.font = '41px sans-serif'; g_sc.fillStyle = dk ? '#5DCAA5' : '#0F6E56'; g_sc.textAlign = 'left';
+    g_sc.fillText('h=' + h.toFixed(1) + 'm', ax + 24, (ty + by) / 2 + 14);
+  }
+
+  g_sc.beginPath(); g_sc.arc(bX, ballY, r + 3, 0, Math.PI * 2);
+  g_sc.fillStyle = dk ? '#0C447C' : '#85B7EB'; g_sc.fill();
+  g_sc.beginPath(); g_sc.arc(bX, ballY, r, 0, Math.PI * 2);
+  g_sc.fillStyle = '#185FA5'; g_sc.fill();
+  g_sc.font = `bold ${Math.round(r * 0.75)}px sans-serif`;
+  g_sc.fillStyle = '#fff'; g_sc.textAlign = 'center';
+  g_sc.fillText('m', bX, ballY + r * 0.32);
+
+  const gl = 48;
+  g_sc.strokeStyle = dk ? '#EF9F27' : '#BA7517'; g_sc.lineWidth = 3;
+  g_sc.beginPath(); g_sc.moveTo(bX, ballY + r); g_sc.lineTo(bX, ballY + r + gl); g_sc.stroke();
+  g_sc.fillStyle = dk ? '#EF9F27' : '#BA7517';
+  const gs = 8, gb = ballY + r + gl + 3;
+  g_sc.beginPath(); g_sc.moveTo(bX, gb); g_sc.lineTo(bX - gs, gb - gs * 1.4); g_sc.lineTo(bX + gs, gb - gs * 1.4); g_sc.closePath(); g_sc.fill();
+  g_sc.font = '37px sans-serif'; g_sc.fillStyle = dk ? '#EF9F27' : '#BA7517'; g_sc.textAlign = 'center';
+  g_sc.fillText('mg', bX, gb + 37);
+}
+
+function g_drawBar() {
+  const BW = g_barEl.width, BH = g_barEl.height;
+  const dk = isDark();
+  g_bc.clearRect(0, 0, BW, BH);
+
+  const textClr = dk ? '#aaa' : '#666';
+  const trackClr = dk ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+  const zeroClr = dk ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.22)';
+
+  const labW = 136, padR = 14, rowH = 34, rowGap = 44;
+  const trackX = labW, trackW = BW - labW - padR;
+  const zeroX = trackX + trackW / 2;
+  const row1Y = 20, row2Y = row1Y + rowH + rowGap;
+
+  function drawRow(y, label, labelColor, value, maxAbs, posColor, negColor) {
+    g_bc.font = '32px sans-serif'; g_bc.fillStyle = labelColor; g_bc.textAlign = 'right';
+    g_bc.fillText(label, labW - 10, y + rowH - 2);
+
+    g_bc.fillStyle = trackClr;
+    g_bc.beginPath(); g_bc.roundRect(trackX, y, trackW, rowH, 7); g_bc.fill();
+
+    g_bc.strokeStyle = zeroClr; g_bc.lineWidth = 3;
+    g_bc.beginPath(); g_bc.moveTo(zeroX, y - 3); g_bc.lineTo(zeroX, y + rowH + 3); g_bc.stroke();
+
+    if (h0 === null || maxAbs === 0) {
+      g_bc.font = '38px sans-serif'; g_bc.fillStyle = dk ? '#555' : '#bbb'; g_bc.textAlign = 'center';
+      g_bc.fillText('—', zeroX, y + rowH - 2);
+      return;
+    }
+
+    const halfW = trackW / 2;
+    const px = Math.round(Math.min(Math.abs(value) / maxAbs, 1) * halfW);
+
+    if (value >= 0) {
+      g_bc.fillStyle = posColor;
+      if (px > 0) { g_bc.beginPath(); g_bc.roundRect(zeroX, y, px, rowH, [0, 6, 6, 0]); g_bc.fill(); }
+      g_bc.font = '32px sans-serif'; g_bc.fillStyle = posColor; g_bc.textAlign = 'left';
+      g_bc.fillText('+' + value.toFixed(1) + ' J', zeroX + px + 7, y + rowH - 2);
+    } else {
+      g_bc.fillStyle = negColor;
+      if (px > 0) { g_bc.beginPath(); g_bc.roundRect(zeroX - px, y, px, rowH, [6, 0, 0, 6]); g_bc.fill(); }
+      g_bc.font = '32px sans-serif'; g_bc.fillStyle = negColor; g_bc.textAlign = 'right';
+      g_bc.fillText(value.toFixed(1) + ' J', zeroX - px - 7, y + rowH - 2);
+    }
+  }
+
+  g_bc.font = '32px sans-serif'; g_bc.fillStyle = textClr; g_bc.textAlign = 'center';
+  g_bc.fillText('0', zeroX, row2Y + rowH + 36);
+
+  const maxAbs = m * g * H_MAX;
+  const Urel = h0 !== null ? m * g * (h - h0) : 0;
+  const Wg = -Urel;
+
+  drawRow(row1Y,  'Ug',     dk ? '#85B7EB' : '#185FA5', Urel, maxAbs, dk ? '#85B7EB' : '#185FA5', dk ? '#85B7EB' : '#185FA5');
+  drawRow(row2Y,  'Wg', dk ? '#5DCAA5' : '#0F6E56', Wg,   maxAbs, dk ? '#5DCAA5' : '#0F6E56', dk ? '#F09595' : '#993C1D');
+
+  g_bc.strokeStyle = zeroClr; g_bc.lineWidth = 2;
+  g_bc.beginPath(); g_bc.moveTo(zeroX, row1Y - 8); g_bc.lineTo(zeroX, row2Y + rowH + 8); g_bc.stroke();
+}
+
+function g_updateUI() {
+  const dk = isDark();
+  document.getElementById('g_hOut').textContent = h.toFixed(1) + ' m';
+  document.getElementById('g_mOut').textContent = m + ' kg';
+
+  const uEl = document.getElementById('g_uVal');
+  const wEl = document.getElementById('g_wVal');
+  const verdict = document.getElementById('g_verdict');
+
+  if (h0 !== null) {
+    const Urel = m * g * (h - h0);
+    const Wg = -Urel;
+    uEl.textContent = (Urel >= 0 ? '+' : '') + Urel.toFixed(1) + ' J';
+    uEl.style.color = '#185FA5';
+    wEl.textContent = (Wg >= 0 ? '+' : '') + Wg.toFixed(1) + ' J';
+    wEl.style.color = Wg > 0.01 ? (dk ? '#5DCAA5' : '#0F6E56') : Wg < -0.01 ? (dk ? '#F09595' : '#993C1D') : '#999';
+
+    if (Urel > 0.05) {
+      verdict.innerHTML = 'h ↑ &nbsp;→&nbsp; U <span style="color:#185FA5">增加</span> &nbsp;|&nbsp; W<sub>重力</sub> <span style="color:' + (dk ? '#F09595' : '#993C1D') + '">負功</span>';
+    } else if (Urel < -0.05) {
+      verdict.innerHTML = 'h ↓ &nbsp;→&nbsp; U <span style="color:' + (dk ? '#F09595' : '#993C1D') + '">減少</span> &nbsp;|&nbsp; W<sub>重力</sub> <span style="color:' + (dk ? '#5DCAA5' : '#0F6E56') + '">正功</span>';
+    } else {
+      verdict.textContent = 'h = h₀，U = 0，W重力 = 0';
+      verdict.style.color = '#999';
+    }
+  } else {
+    uEl.textContent = '—'; uEl.style.color = '#999';
+    wEl.textContent = '—'; wEl.style.color = '#999';
+    verdict.textContent = '按「設零位面」後再拖動';
+    verdict.style.color = '#999';
+  }
+
+  g_drawScene(); g_drawBar();
+}
+
+function g_redraw() { g_drawScene(); g_drawBar(); }
+
+document.getElementById('g_hSlider').addEventListener('input', function () { h = parseFloat(this.value); g_updateUI(); });
+document.getElementById('g_mSlider').addEventListener('input', function () { m = parseInt(this.value); g_updateUI(); });
+document.getElementById('g_btnRef').addEventListener('click', function () { h0 = h; g_updateUI(); });
+document.getElementById('g_btnReset').addEventListener('click', function () { h0 = null; g_updateUI(); });
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', g_redraw);
+
+
+g_resizeAll(); g_updateUI();
+
+
+
+const X_MAX = 6;
+let k = 20, x = 3, x0 = 0;
+
+const s_scene = document.getElementById('s_scene');
+const s_sc    = s_scene.getContext('2d');
+const s_barEl = document.getElementById('s_barChart');
+const s_bc    = s_barEl.getContext('2d');
+
+// isDark shared { return window.matchMedia('(prefers-color-scheme:dark)').matches; }
+
+function s_resizeAll() {
+  const sw = s_scene.parentElement.clientWidth - 26;
+  s_scene.width  = sw * 2;
+  s_scene.height = Math.round(sw * 2 * 0.62);
+  s_scene.style.width  = sw + 'px';
+  s_scene.style.height = Math.round(sw * 0.62) + 'px';
+  const bw = s_barEl.parentElement.clientWidth - 36;
+  s_barEl.width  = bw * 2;
+  s_barEl.height = 425;
+  s_barEl.style.width  = bw + 'px';
+  s_barEl.style.height = '212px';
+  s_redraw();
+}
+
+/* ── spring zigzag ── */
+function drawSpring(x1, y1, x2, y2, coils, amp) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx*dx + dy*dy);
+  const ux = dx/len, uy = dy/len;
+  const nx = -uy,    ny =  ux;
+  const segs = coils * 2 + 2;
+  s_sc.beginPath();
+  s_sc.moveTo(x1, y1);
+  for (let i = 0; i <= segs; i++) {
+    const t = i / segs;
+    const cx = x1 + dx * t;
+    const cy = y1 + dy * t;
+    const off = (i === 0 || i === segs) ? 0 :
+                (i % 2 === 1 ? amp : -amp);
+    s_sc.lineTo(cx + nx * off, cy + ny * off);
+  }
+  s_sc.stroke();
+}
+
+function s_drawScene() {
+  const W = s_scene.width, H = s_scene.height;
+  const dk = isDark();
+  s_sc.clearRect(0, 0, W, H);
+
+  const floorY = H - 51;
+  const ceilY  = 48;
+  const midY   = (floorY + ceilY) / 2;
+
+  /* background */
+  s_sc.fillStyle = dk ? '#1c2230' : '#F0F4F9';
+  s_sc.fillRect(0, 0, W, H);
+
+  /* floor / ceiling rails */
+  s_sc.strokeStyle = dk ? '#334' : '#c8d0da';
+  s_sc.lineWidth = 3;
+  s_sc.beginPath(); s_sc.moveTo(0, floorY); s_sc.lineTo(W, floorY); s_sc.stroke();
+  s_sc.beginPath(); s_sc.moveTo(0, ceilY);  s_sc.lineTo(W, ceilY);  s_sc.stroke();
+
+  /* hatching */
+  s_sc.strokeStyle = dk ? '#252535' : '#d8dfe8';
+  s_sc.lineWidth = 2;
+  for (let i = 0; i < 30; i++) {
+    s_sc.beginPath(); s_sc.moveTo(i*36-18, floorY); s_sc.lineTo(i*36, floorY+30); s_sc.stroke();
+    s_sc.beginPath(); s_sc.moveTo(i*36-18, ceilY);  s_sc.lineTo(i*36, ceilY-30); s_sc.stroke();
+  }
+
+  /* origin line (x = 0) */
+  const originX = W * 0.42;
+  s_sc.strokeStyle = dk ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.15)';
+  s_sc.lineWidth = 2; s_sc.setLineDash([5, 5]);
+  s_sc.beginPath(); s_sc.moveTo(originX, ceilY+6); s_sc.lineTo(originX, floorY-6); s_sc.stroke();
+  s_sc.setLineDash([]);
+  s_sc.font = '37px sans-serif';
+  s_sc.fillStyle = dk ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.28)';
+  s_sc.textAlign = 'center';
+  s_sc.fillText('x = 0', originX, ceilY - 12);
+
+  /* x0 reference line */
+  if (x0 !== null) {
+    const rx = originX + (x0 / X_MAX) * (W * 0.48);
+    s_sc.strokeStyle = dk ? '#D4537Eaa' : '#993556aa';
+    s_sc.lineWidth = 3; s_sc.setLineDash([7, 5]);
+    s_sc.beginPath(); s_sc.moveTo(rx, ceilY+6); s_sc.lineTo(rx, floorY-6); s_sc.stroke();
+    s_sc.setLineDash([]);
+    s_sc.font = '37px sans-serif';
+    s_sc.fillStyle = dk ? '#D4537E' : '#993556';
+    s_sc.textAlign = 'center';
+    s_sc.fillText('x₀=' + (x0 >= 0 ? '+' : '') + x0.toFixed(1), rx, floorY + 48);
+  }
+
+  /* block position */
+  const bx = originX + (x / X_MAX) * (W * 0.48);
+  const bw = 61, bh = 61;
+  const wallX = 24;
+
+  /* wall */
+  s_sc.fillStyle = dk ? '#2a2a3a' : '#d0d8e4';
+  s_sc.fillRect(0, ceilY, wallX, floorY - ceilY);
+  s_sc.strokeStyle = dk ? '#3a3a50' : '#b0bac8';
+  s_sc.lineWidth = 2;
+  s_sc.strokeRect(0, ceilY, wallX, floorY - ceilY);
+
+  /* spring */
+  const springEndX = bx - bw / 2;
+  const coils = Math.max(4, Math.round(8 * Math.abs(springEndX - wallX) / (W * 0.3)));
+  const amp = Math.min(27, Math.max(14, 22 * (X_MAX - Math.abs(x)) / X_MAX + 10));
+  s_sc.strokeStyle = dk ? '#7a9cc0' : '#4a78a8';
+  s_sc.lineWidth = 3;
+  drawSpring(wallX, midY, springEndX, midY, coils, amp);
+
+  /* block shadow */
+  s_sc.fillStyle = dk ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.08)';
+  s_sc.fillRect(bx - bw/2 + 5, midY - bh/2 + 5, bw, bh);
+
+  /* block */
+  const blockColor = dk ? '#2a5080' : '#185FA5';
+  s_sc.fillStyle = blockColor;
+  s_sc.beginPath(); s_sc.roundRect(bx - bw/2, midY - bh/2, bw, bh, 8); s_sc.fill();
+  s_sc.strokeStyle = dk ? '#85B7EB' : '#0C447C';
+  s_sc.lineWidth = 3;
+  s_sc.beginPath(); s_sc.roundRect(bx - bw/2, midY - bh/2, bw, bh, 8); s_sc.stroke();
+  s_sc.font = 'bold 22px sans-serif';
+  s_sc.fillStyle = '#fff';
+  s_sc.textAlign = 'center';
+  s_sc.fillText('m', bx, midY + 8);
+
+  /* spring force arrow F_spring = -kx */
+  const Fspring = -k * x;
+  const arrowLen = Math.min(W * 0.22, Math.abs(Fspring) * 4);
+  if (Math.abs(Fspring) > 0.5) {
+    const dir = Fspring > 0 ? 1 : -1;
+    const ax1 = bx + dir * bw/2;
+    const ax2 = ax1 + dir * arrowLen;
+    const arrowY = midY - bh/2 - 48;
+    const hs = 17;
+    s_sc.strokeStyle = dk ? '#5DCAA5' : '#0F6E56'; s_sc.lineWidth = 7;
+    s_sc.beginPath(); s_sc.moveTo(ax1, arrowY); s_sc.lineTo(ax2, arrowY); s_sc.stroke();
+    s_sc.fillStyle = dk ? '#5DCAA5' : '#0F6E56';
+    if (dir > 0) {
+      s_sc.beginPath(); s_sc.moveTo(ax2+2, arrowY); s_sc.lineTo(ax2-hs*1.6, arrowY-hs); s_sc.lineTo(ax2-hs*1.6, arrowY+hs); s_sc.closePath(); s_sc.fill();
+    } else {
+      s_sc.beginPath(); s_sc.moveTo(ax2-2, arrowY); s_sc.lineTo(ax2+hs*1.6, arrowY-hs); s_sc.lineTo(ax2+hs*1.6, arrowY+hs); s_sc.closePath(); s_sc.fill();
+    }
+    s_sc.font = '37px sans-serif'; s_sc.fillStyle = dk ? '#5DCAA5' : '#0F6E56';
+    { const fLbl = 'F彈 = ' + Fspring.toFixed(0) + ' N', fLblW = 323, fGap = 17*1.6+20;
+      if (dir > 0) {
+        const fx = ax2 + fGap;
+        if (fx + fLblW > W - 8) { s_sc.textAlign = 'right'; s_sc.fillText(fLbl, ax1 - 20, arrowY + 14); }
+        else                     { s_sc.textAlign = 'left';  s_sc.fillText(fLbl, fx, arrowY + 14); }
+      } else {
+        const fx = ax2 - fGap;
+        if (fx - fLblW < 8)      { s_sc.textAlign = 'left';  s_sc.fillText(fLbl, ax1 + 20, arrowY + 14); }
+        else                     { s_sc.textAlign = 'right'; s_sc.fillText(fLbl, fx, arrowY + 14); }
+      }
+    }
+  }
+
+  /* external force arrow (opposite to spring) */
+  if (Math.abs(x) > 0.15) {
+    const Fext = k * x;
+    const dir  = Fext > 0 ? 1 : -1;
+    const arrowLen = Math.min(W * 0.22, Math.abs(Fext) * 4);
+    const ax1  = bx + dir * bw/2;
+    const ax2  = ax1 + dir * arrowLen;
+    const arrowY = midY + bh/2 + 54;
+    const hs = 17;
+    s_sc.strokeStyle = dk ? '#EF9F27' : '#BA7517'; s_sc.lineWidth = 7;
+    s_sc.beginPath(); s_sc.moveTo(ax1, arrowY); s_sc.lineTo(ax2, arrowY); s_sc.stroke();
+    s_sc.fillStyle = dk ? '#EF9F27' : '#BA7517';
+    if (dir > 0) {
+      s_sc.beginPath(); s_sc.moveTo(ax2+2, arrowY); s_sc.lineTo(ax2-hs*1.6, arrowY-hs); s_sc.lineTo(ax2-hs*1.6, arrowY+hs); s_sc.closePath(); s_sc.fill();
+    } else {
+      s_sc.beginPath(); s_sc.moveTo(ax2-2, arrowY); s_sc.lineTo(ax2+hs*1.6, arrowY-hs); s_sc.lineTo(ax2+hs*1.6, arrowY+hs); s_sc.closePath(); s_sc.fill();
+    }
+    s_sc.font = '37px sans-serif'; s_sc.fillStyle = dk ? '#EF9F27' : '#BA7517';
+    const eLbl = 'F外力 = +' + Math.abs(Fext).toFixed(0) + ' N';
+    const eLblW = 391;
+    const eGap = hs * 1.6 + 20;
+    if (dir > 0) {
+      const ex = ax2 + eGap;
+      if (ex + eLblW > W - 8) { s_sc.textAlign = 'right'; s_sc.fillText(eLbl, ax1 - 20, arrowY + 14); }
+      else                     { s_sc.textAlign = 'left';  s_sc.fillText(eLbl, ex, arrowY + 14); }
+    } else {
+      const ex = ax2 - eGap;
+      if (ex - eLblW < 8)      { s_sc.textAlign = 'left';  s_sc.fillText(eLbl, ax1 + 20, arrowY + 14); }
+      else                     { s_sc.textAlign = 'right'; s_sc.fillText(eLbl, ex, arrowY + 14); }
+    }
+  }
+
+  /* x displacement arrow */
+  if (Math.abs(x) > 0.15) {
+    const arrowY = floorY - 17;
+    const hs = 14;
+    s_sc.strokeStyle = dk ? '#aaa' : '#888'; s_sc.lineWidth = 5;
+    s_sc.beginPath(); s_sc.moveTo(originX, arrowY); s_sc.lineTo(bx, arrowY); s_sc.stroke();
+    s_sc.fillStyle = dk ? '#aaa' : '#888';
+    if (x > 0) {
+      s_sc.beginPath(); s_sc.moveTo(bx+2, arrowY); s_sc.lineTo(bx-hs*1.6, arrowY-hs); s_sc.lineTo(bx-hs*1.6, arrowY+hs); s_sc.closePath(); s_sc.fill();
+    } else {
+      s_sc.beginPath(); s_sc.moveTo(bx-2, arrowY); s_sc.lineTo(bx+hs*1.6, arrowY-hs); s_sc.lineTo(bx+hs*1.6, arrowY+hs); s_sc.closePath(); s_sc.fill();
+    }
+    s_sc.font = '37px sans-serif';
+    s_sc.fillStyle = dk ? '#aaa' : '#888';
+    s_sc.textAlign = 'center';
+    s_sc.fillText('x = ' + (x >= 0 ? '+' : '') + x.toFixed(1) + ' m', (originX + bx) / 2, arrowY - 17);
+  }
+}
+
+function s_drawBar() {
+  const BW = s_barEl.width, BH = s_barEl.height;
+  const dk = isDark();
+  s_bc.clearRect(0, 0, BW, BH);
+
+  const textClr  = dk ? '#aaa' : '#666';
+  const trackClr = dk ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+  const zeroClr  = dk ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.22)';
+
+  const labW = 136, padR = 14, rowH = 34, rowGap = 44;
+  const trackX = labW, trackW = BW - labW - padR;
+  const zeroX  = trackX + trackW / 2;
+  const row1Y  = 24, row2Y = row1Y + rowH + rowGap;
+
+  function drawRow(y, label, labelColor, value, maxAbs, posColor, negColor) {
+    s_bc.font = '32px sans-serif'; s_bc.fillStyle = labelColor; s_bc.textAlign = 'right';
+    s_bc.fillText(label, labW - 10, y + rowH - 2);
+
+    s_bc.fillStyle = trackClr;
+    s_bc.beginPath(); s_bc.roundRect(trackX, y, trackW, rowH, 7); s_bc.fill();
+
+    s_bc.strokeStyle = zeroClr; s_bc.lineWidth = 3;
+    s_bc.beginPath(); s_bc.moveTo(zeroX, y - 3); s_bc.lineTo(zeroX, y + rowH + 3); s_bc.stroke();
+
+    if (x0 === null || maxAbs === 0) {
+      s_bc.font = '38px sans-serif'; s_bc.fillStyle = dk ? '#555' : '#bbb'; s_bc.textAlign = 'center';
+      s_bc.fillText('—', zeroX, y + rowH - 2);
+      return;
+    }
+
+    const halfW = trackW / 2;
+    const px = Math.round(Math.min(Math.abs(value) / maxAbs, 1) * halfW);
+
+    if (value >= 0) {
+      s_bc.fillStyle = posColor;
+      if (px > 0) { s_bc.beginPath(); s_bc.roundRect(zeroX, y, px, rowH, [0,5,5,0]); s_bc.fill(); }
+      s_bc.font = '32px sans-serif'; s_bc.fillStyle = posColor; s_bc.textAlign = 'left';
+      s_bc.fillText((value >= 0 ? '+' : '') + value.toFixed(1) + ' J', zeroX + px + 7, y + rowH - 2);
+    } else {
+      s_bc.fillStyle = negColor;
+      if (px > 0) { s_bc.beginPath(); s_bc.roundRect(zeroX - px, y, px, rowH, [5,0,0,5]); s_bc.fill(); }
+      s_bc.font = '32px sans-serif'; s_bc.fillStyle = negColor; s_bc.textAlign = 'right';
+      s_bc.fillText(value.toFixed(1) + ' J', zeroX - px - 7, y + rowH - 2);
+    }
+  }
+
+  s_bc.font = '32px sans-serif'; s_bc.fillStyle = textClr; s_bc.textAlign = 'center';
+  s_bc.fillText('0', zeroX, row2Y + rowH + rowGap + rowH + 36);
+
+  const Umax   = 0.5 * k * X_MAX * X_MAX;
+  const Uabs   = 0.5 * k * x * x;
+  const U0abs  = x0 !== null ? 0.5 * k * x0 * x0 : 0;
+  const Urel   = Uabs - U0abs;
+  const Wext   = Urel;       /* W外力 = +ΔU */
+  const Wspr   = -Urel;      /* W彈力 = −ΔU */
+  const row3Y  = row2Y + rowH + rowGap;
+
+  drawRow(row1Y, 'U彈',  dk ? '#85B7EB' : '#185FA5', Urel, Umax, dk ? '#85B7EB' : '#185FA5', dk ? '#85B7EB' : '#185FA5');
+  drawRow(row2Y, 'W彈力', dk ? '#5DCAA5' : '#0F6E56', Wspr, Umax, dk ? '#5DCAA5' : '#0F6E56', dk ? '#F09595' : '#993C1D');
+  drawRow(row3Y, 'W外力', dk ? '#EF9F27' : '#BA7517', Wext, Umax, dk ? '#EF9F27' : '#BA7517', dk ? '#F09595' : '#993C1D');
+
+  s_bc.strokeStyle = zeroClr; s_bc.lineWidth = 2;
+  const row3Y_line = row2Y + rowH + rowGap;
+  s_bc.beginPath(); s_bc.moveTo(zeroX, row1Y - 7); s_bc.lineTo(zeroX, row3Y_line + rowH + 7); s_bc.stroke();
+}
+
+function s_updateUI() {
+  const dk = isDark();
+  document.getElementById('s_xOut').textContent = (x >= 0 ? '+' : '') + x.toFixed(1) + ' m';
+  document.getElementById('s_kOut').textContent = k + ' N/m';
+
+  const uEl    = document.getElementById('s_uVal');
+  const wEl    = document.getElementById('s_wVal');
+  const verdict = document.getElementById('s_verdict');
+
+  const Uabs  = 0.5 * k * x * x;
+  const U0abs = x0 !== null ? 0.5 * k * x0 * x0 : 0;
+  const Urel  = Uabs - U0abs;
+  const Wext  = Urel;
+  const Wspr  = -Urel;
+
+  if (x0 !== null) {
+    uEl.textContent = (Urel >= 0 ? '+' : '') + Urel.toFixed(1) + ' J';
+    uEl.style.color = '#185FA5';
+    wEl.textContent = (Wext >= 0 ? '+' : '') + Wext.toFixed(1) + ' J';
+    wEl.style.color = Wext > 0.05 ? (dk ? '#EF9F27' : '#BA7517') :
+                      Wext < -0.05 ? (dk ? '#F09595' : '#993C1D') : '#999';
+
+    const absX = Math.abs(x), absX0 = Math.abs(x0);
+    if (Urel > 0.05) {
+      const state = absX > absX0 ? '拉伸/壓縮更多' : '仍在伸長中';
+      verdict.innerHTML = '|x| 增大 &nbsp;→&nbsp; U<sub>彈</sub> <span style="color:#185FA5">增加</span> &nbsp;|&nbsp; W<sub>外力</sub> <span style="color:' + (dk?'#EF9F27':'#BA7517') + '">正功（推離）</span>';
+    } else if (Urel < -0.05) {
+      verdict.innerHTML = '|x| 減小 &nbsp;→&nbsp; U<sub>彈</sub> <span style="color:' + (dk?'#F09595':'#993C1D') + '">減少</span> &nbsp;|&nbsp; W<sub>外力</sub> <span style="color:' + (dk?'#F09595':'#993C1D') + '">負功（拉回）</span>';
+    } else {
+      verdict.textContent = 'x = x₀，U彈 = U₀，ΔU = 0';
+      verdict.style.color = '#999';
+    }
+  } else {
+    uEl.textContent = Uabs.toFixed(1) + ' J';
+    uEl.style.color = '#185FA5';
+    wEl.textContent = '—'; wEl.style.color = '#999';
+    verdict.textContent = '按「設零位面」後再拖動';
+    verdict.style.color = '#999';
+  }
+
+  s_drawScene(); s_drawBar();
+}
+
+function s_redraw() { s_drawScene(); s_drawBar(); }
+
+document.getElementById('s_xSlider').addEventListener('input', function() { x = parseFloat(this.value); s_updateUI(); });
+document.getElementById('s_kSlider').addEventListener('input', function() { k = parseInt(this.value);   s_updateUI(); });
+document.getElementById('s_btnRef').addEventListener('click',  function() { x0 = x; s_updateUI(); });
+document.getElementById('s_btnReset').addEventListener('click',function() { x0 = null; s_updateUI(); });
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', s_redraw);
+
+
+s_resizeAll(); s_updateUI();
+
+
+
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function(){ g_redraw(); s_redraw(); });
+window.addEventListener('resize', function(){ g_resizeAll(); s_resizeAll(); });
+
+</script>
+</body>
+</html>

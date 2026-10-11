@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>熱學五大概念關係圖</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+html, body {
+  width: 210mm;
+  height: 297mm;
+  background: #fff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  color: #1a1a1a;
+}
+
+/* zoom 縮放：寬度保持 180mm，整體等比縮小到 A4 單頁 */
+.container {
+  width: 180mm;
+  padding: 4mm 0 4mm;
+  zoom: 0.86;
+}
+
+h1 {
+  text-align: center;
+  font-size: 14pt;
+  font-weight: 600;
+  color: #1e3a5a;
+  background: #daeeff;
+  border: 1.5px solid #7ab8e0;
+  border-radius: 6px;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
+
+.card {
+  border-radius: 10px;
+  padding: 12px 14px;
+  text-align: center;
+  border: 1.5px solid transparent;
+}
+.card-title { font-size: 13pt; font-weight: 700; margin-bottom: 4px; }
+.card-sub   { font-size: 10pt; margin-bottom: 4px; line-height: 1.5; }
+.card-note  { font-size: 9pt; margin-top: 4px; line-height: 1.5; opacity: .85; }
+.card-eq    { font-size: 10pt; min-height: 20px; display:flex; align-items:center; justify-content:center; margin-top:3px; }
+
+.amber { background:#fffbe6; border-color:#d4a017; color:#5a3800; }
+.amber .card-title { color:#6a4200; }
+.amber .card-sub   { color:#7a5010; }
+.amber .card-eq    { color:#5a3800; }
+
+.teal  { background:#e2f7f0; border-color:#22b07a; color:#004535; }
+.teal .card-title  { color:#005540; }
+.teal .card-sub    { color:#0a6a50; }
+.teal .card-eq     { color:#004535; }
+
+.coral { background:#fef0ea; border-color:#d86040; color:#6a2000; }
+.coral .card-title { color:#7a2800; }
+.coral .card-sub   { color:#903020; }
+
+.pink  { background:#fde6f3; border-color:#c85098; color:#600040; }
+.pink .card-title  { color:#700050; }
+.pink .card-sub    { color:#982070; }
+.pink .card-note   { color:#882060; }
+
+.blue  { background:#e6f2ff; border-color:#3a88d8; color:#002868; }
+.blue .card-title  { color:#003078; }
+.blue .card-sub    { color:#0848a0; }
+.blue .card-eq     { color:#002868; }
+
+.row1 { display:grid; grid-template-columns:1fr 80px 1fr; align-items:center; }
+.row1 .card { width:100%; }
+
+.arrow-h { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+.arrow-h .lbl { font-size:9pt; color:#888; white-space:nowrap; }
+
+.row2 { display:flex; justify-content:center; }
+.row2 .card { width:60%; }
+
+.divider { border:none; border-top:1.5px dashed #ccc; margin:16px 0 10px; }
+
+.center-lbl { text-align:center; font-size:9.5pt; color:#888; margin-bottom:10px; }
+
+.row3 { display:grid; grid-template-columns:1fr 50px 1fr 50px 1fr; align-items:center; }
+.row3 .card { width:100%; }
+
+.row4 { display:flex; justify-content:center; }
+.row4 .card { width:60%; }
+
+.law-box {
+  margin-top: 18px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  padding: 0;
+  text-align: center;
+  background: #fff;
+  overflow: hidden;
+}
+.law-label {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #1e3a5a;
+  background: #daeeff;
+  border-bottom: 1.5px solid #7ab8e0;
+  padding: 8px 18px;
+  margin-bottom: 0;
+}
+.law-content {
+  padding: 12px 18px;
+}
+.law-eq {
+  display:flex; align-items:center; justify-content:center;
+  flex-wrap:wrap; gap:8px; font-size:12pt; font-weight:700; color:#1a1a1a;
+}
+
+.law-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #ddd;
+  text-align: left;
+}
+.law-detail-intro {
+  font-size: 10.5pt;
+  color: #333;
+  font-weight: 400;
+  margin-bottom: 6px;
+  line-height: 1.7;
+}
+.law-detail-list {
+  list-style: disc;
+  padding-left: 22px;
+}
+.law-detail-list li {
+  font-size: 10.5pt;
+  color: #333;
+  line-height: 1.9;
+}
+.law-detail-list strong { color: #1a1a1a; font-weight: 700; }
+.law-detail-list .katex { font-size: 1em !important; }
+
+.katex { font-size:1em !important; }
+.katex-display { margin:0 !important; }
+
+/* 最容易混淆的點 */
+.confusion-box {
+  margin-top: 20px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  padding: 14px 18px;
+  background: #fafafa;
+}
+.confusion-title {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid #e0e0e0;
+}
+.confusion-quote {
+  border-left: 3.5px solid #aaa;
+  padding: 6px 12px;
+  font-size: 10.5pt;
+  color: #333;
+  background: #f3f3f3;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.confusion-quote strong { color: #c0392b; }
+.confusion-body {
+  font-size: 10.5pt;
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+.confusion-list {
+  list-style: disc;
+  padding-left: 22px;
+  margin-bottom: 10px;
+}
+.confusion-list li {
+  font-size: 10.5pt;
+  color: #333;
+  line-height: 1.9;
+}
+.confusion-list strong { color: #1a1a1a; font-weight: 700; }
+.confusion-analogy {
+  border-left: 3.5px solid #aaa;
+  padding: 6px 12px;
+  font-size: 10.5pt;
+  color: #333;
+  background: #f3f3f3;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.7;
+}
+.confusion-analogy strong { color: #1a1a1a; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>熱學五大概念：熱能 / 熱量 / 溫度 / 內能 / 熱平衡</h1>
+
+  <div class="row1">
+    <div class="card amber">
+      <div class="card-title">溫度 T（克氏 K）</div>
+      <div class="card-sub">冷熱程度</div>
+      <div class="card-eq" id="eq-T"></div>
+      <div class="card-note">宏觀世界的溫度是由微觀世界<br>氣體分子的平均動能決定</div>
+    </div>
+    <div class="arrow-h">
+      <div class="lbl">決定平均動能</div>
+      <svg width="60" height="14" viewBox="0 0 60 14" fill="none">
+        <line x1="2" y1="7" x2="52" y2="7" stroke="#aaa" stroke-width="1.2"/>
+        <path d="M47 3L56 7L47 11" stroke="#aaa" stroke-width="1.2" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="card teal">
+      <div class="card-title">內能 U</div>
+      <div class="card-sub"><span style="color:#c0392b;font-weight:700;">所有</span>分子能量（動能 &amp; 位能）總和</div>
+      <div class="card-eq" id="eq-U"></div>
+    </div>
+  </div>
+
+  <div style="position:relative;height:62px;">
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible"
+         viewBox="0 0 680 62" preserveAspectRatio="none" fill="none">
+      <defs>
+        <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5"
+                markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <path d="M170 0 Q170 46 258 58" stroke="#aaa" stroke-width="1.2" marker-end="url(#ag)"/>
+      <path d="M510 0 Q510 46 422 58" stroke="#aaa" stroke-width="1.2" marker-end="url(#ag)"/>
+    </svg>
+    <div style="position:absolute;right:120px;top:8px;font-size:11pt;font-weight:700;color:#444;line-height:1.7;text-align:left;">
+      理想氣體中<br>內能 = 熱能
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card coral">
+      <div class="card-title">熱能</div>
+      <div class="card-sub">嚴格來說是指因為溫度而儲存在系統中的那部分內能</div>
+      <div class="card-note">在高中課程中等同於「內能」，指系統內所有分子運動與交互作用的能量總和。嚴格來說此術語在大學後會被更精確的「內能 <span id="eq-Uint"></span>」取代。</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="center-lbl">
+    <span id="eq-dT"></span>　驅動傳遞
+  </div>
+
+  <div class="row3">
+    <div class="card amber">
+      <div class="card-title">系統 A</div>
+      <div class="card-sub">高溫</div>
+      <div class="card-eq" id="eq-UA"></div>
+    </div>
+    <div class="arrow-h">
+      <div class="lbl" style="margin-bottom:3px">傳出</div>
+      <svg width="40" height="14" viewBox="0 0 40 14" fill="none">
+        <line x1="2" y1="7" x2="32" y2="7" stroke="#c03070" stroke-width="1.3"/>
+        <path d="M27 3L36 7L27 11" stroke="#c03070" stroke-width="1.3" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="card pink">
+      <div class="card-title">熱量 Q</div>
+      <div class="card-sub">過程量・能量傳遞</div>
+      <div class="card-note">不為物體內部所含的能量</div>
+    </div>
+    <div class="arrow-h">
+      <div class="lbl" style="margin-bottom:3px">傳入</div>
+      <svg width="40" height="14" viewBox="0 0 40 14" fill="none">
+        <line x1="2" y1="7" x2="32" y2="7" stroke="#c03070" stroke-width="1.3"/>
+        <path d="M27 3L36 7L27 11" stroke="#c03070" stroke-width="1.3" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="card blue">
+      <div class="card-title">系統 B</div>
+      <div class="card-sub">低溫</div>
+      <div class="card-eq" id="eq-UB"></div>
+    </div>
+  </div>
+
+  <div style="position:relative;height:56px;">
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible"
+         viewBox="0 0 680 56" preserveAspectRatio="none" fill="none">
+      <defs>
+        <marker id="ag2" viewBox="0 0 10 10" refX="8" refY="5"
+                markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <path d="M113 0 Q113 46 252 53" stroke="#aaa" stroke-width="1.2" marker-end="url(#ag2)"/>
+      <path d="M567 0 Q567 46 428 53" stroke="#aaa" stroke-width="1.2" marker-end="url(#ag2)"/>
+    </svg>
+    <div style="position:absolute;left:50%;top:80%;transform:translate(-50%,-50%);
+                font-size:11pt;font-weight:700;color:#444;white-space:nowrap;">
+      熱量傳遞結束後達到熱平衡
+    </div>
+  </div>
+
+  <div class="row4">
+    <div class="card teal">
+      <div class="card-title">熱平衡</div>
+      <div class="card-sub">淨熱量傳遞為零</div>
+      <div class="card-eq" id="eq-bal"></div>
+    </div>
+  </div>
+
+  <!-- 最容易混淆的點 -->
+  <div class="confusion-box">
+    <div class="confusion-title">最容易混淆的點</div>
+    <div class="confusion-quote">
+      「物體含有多少熱量？」——這句話在物理上是<strong>錯誤的</strong>。
+    </div>
+    <p class="confusion-body">
+      熱量不是物體擁有的東西，而是能量傳遞的方式。正確的說法是：
+    </p>
+    <ul class="confusion-list">
+      <li>物體擁有<strong>內能</strong></li>
+      <li>物體具有<strong>溫度</strong></li>
+      <li>系統之間<strong>傳遞熱量</strong></li>
+    </ul>
+    <p class="confusion-body">類比來說：</p>
+    <div class="confusion-analogy">
+      銀行帳戶裡有<strong>存款</strong>（內能），帳戶的利率反映<strong>某種強度</strong>（溫度），而<strong>轉帳</strong>的金額（熱量）只存在於交易的過程中，不屬於任何一方的帳戶。
+    </div>
+  </div>
+
+  <div class="law-box">
+    <div class="law-label">熱力學第一定律</div>
+    <div class="law-content">
+      <div class="law-eq">
+        <span id="eq-law"></span>
+        <span>（內能改變 = 熱量傳遞 + 外界做功）</span>
+      </div>
+      <div class="law-detail">
+        <p class="law-detail-intro">內能的變化來自兩個途徑：</p>
+        <ul class="law-detail-list">
+          <li><strong>熱量 <span id="eq-Q"></span></strong>：靠溫度差傳遞（熱傳導、對流、輻射）</li>
+          <li><strong>做功 <span id="eq-W"></span></strong>：靠力學方式傳遞（壓縮氣體、摩擦生熱）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+function rk(id, tex) {
+  const el = document.getElementById(id);
+  if (el) katex.render(tex, el, { throwOnError: false, displayMode: false, trust: true, strict: false });
+}
+window.addEventListener('load', function () {
+  rk('eq-T',   '\\overline{E_k} = \\tfrac{3}{2}k_B T \\propto T');
+  rk('eq-U',   'U = \\textcolor{#c0392b}{N} \\cdot \\tfrac{3}{2}k_B T');
+  rk('eq-dT',  '\\Delta T \\neq 0');
+  rk('eq-UA',  'U_A');
+  rk('eq-UB',  'U_B');
+  rk('eq-bal', 'T_A = T_B,\\quad Q_{\\text{net}} = 0');
+  rk('eq-law', '\\Delta U = Q + W');
+  rk('eq-Q',   'Q');
+  rk('eq-W',   'W');
+  rk('eq-Uint','U');
+});
+</script>
+</body>
+</html>

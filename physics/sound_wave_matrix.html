@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>聲波比較矩陣</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&family=Noto+Sans+TC:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: transparent;
+    color: #444;
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .formula-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 500;
+    color: #444;
+    border-left: 3px solid #c8a96e;
+    padding: 0.6rem 1.2rem;
+    margin-bottom: 2rem;
+    letter-spacing: 0.04em;
+  }
+
+  .formula-block .sub {
+    display: block;
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 0.3rem;
+    letter-spacing: 0.08em;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr th {
+    padding: 0.75rem 1.1rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-bottom: 1px solid #ddd;
+    color: #999;
+  }
+
+  thead th:first-child { text-align: left; }
+  thead th:not(:first-child) { text-align: center; }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  .badge-low  { background: #deeef9; color: #1a5a8a; border: 1px solid #b5d4f0; }
+  .badge-high { background: #fae8e0; color: #8a3a1a; border: 1px solid #f0c4b0; }
+
+  tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f8f8f8; }
+
+  td {
+    padding: 1rem 1.1rem;
+    font-size: 1rem;
+    vertical-align: middle;
+    line-height: 1.5;
+  }
+
+  td:first-child {
+    color: #333;
+    font-size: 0.925rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  td:not(:first-child) { text-align: center; }
+
+  .shared-cell {
+    text-align: center;
+    color: #b08040;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+
+  .val-low  { color: #1a6aaa; }
+  .val-high { color: #aa4a20; }
+
+  .row-note {
+    display: block;
+    font-size: 0.7rem;
+    color: #aaa;
+    margin-top: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  .section-gap { margin-top: 3.5rem; }
+
+  .table-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 1.25rem;
+    padding-left: 1.1rem;
+    border-left: 3px solid #c8a96e;
+  }
+
+  .badge-sound { background: #e0f0dc; color: #2a6a22; border: 1px solid #b0d8aa; }
+  .badge-light { background: #ede0f8; color: #5a2a8a; border: 1px solid #d0aaf0; }
+
+  .val-sound { color: #2a7a22; }
+  .val-light { color: #6a2aaa; }
+
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin-top: 4px;
+  }
+  .tag-up   { background: #e0f0dc; color: #2a6a22; }
+  .tag-down { background: #fce8e8; color: #aa2222; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="formula-block">
+    v = f · λ
+    <span class="sub">聲速 = 頻率 × 波長</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>比較項目</th>
+        <th><span class="badge badge-low">低頻</span></th>
+        <th><span class="badge badge-high">高頻</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>聲速 v</td>
+        <td class="shared-cell" colspan="2">343 m/s（兩者相同）</td>
+      </tr>
+      <tr>
+        <td>頻率 f 的範圍<span class="row-note">（人耳能聽到的範圍）</span></td>
+        <td class="val-low">20 Hz（下限）</td>
+        <td class="val-high">20,000 Hz（上限）</td>
+      </tr>
+      <tr>
+        <td>波長 λ</td>
+        <td class="val-low">17.15 m（長）</td>
+        <td class="val-high">1.7 cm（短）</td>
+      </tr>
+      <tr>
+        <td>能量<span class="row-note">（同振幅時，強度 ∝ f²A²）</span></td>
+        <td class="val-low">較低</td>
+        <td class="val-high">較高</td>
+      </tr>
+      <tr>
+        <td>穿透／共振牆壁</td>
+        <td class="val-low">易穿透／共振牆壁</td>
+        <td class="val-high">不易穿透／共振牆壁</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-gap">
+    <div class="table-title">在不同介質中光波／聲波的比較</div>
+    <table>
+      <thead>
+        <tr>
+          <th>比較項目</th>
+          <th><span class="badge badge-sound">聲波</span></th>
+          <th><span class="badge badge-light">光波</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>波的本質</td>
+          <td class="val-sound">粒子的振動與壓力擾動向前傳遞</td>
+          <td class="val-light">電磁波<br><span class="row-note">不需粒子碰撞；真空中可傳播，且真空才是最快速度</span></td>
+        </tr>
+        <tr>
+          <td>需不需要介質</td>
+          <td class="val-sound">需要介質<br><span class="row-note">（機械波，靠粒子碰撞傳遞）</span></td>
+          <td class="val-light">不需要介質<br><span class="row-note">（電磁波，可在真空中傳播）</span></td>
+        </tr>
+        <tr>
+          <td>介質對波速的影響</td>
+          <td class="val-sound">介質幫助傳播<br>→ 波速越快<br><span class="tag tag-up">硬度↑ 速度↑</span></td>
+          <td class="val-light">介質阻礙傳播<br>→ 波速越慢<br><span class="tag tag-down">折射率↑ 速度↓</span></td>
+        </tr>
+        <tr>
+          <td>空氣中的速率</td>
+          <td class="val-sound mono">343 m/s</td>
+          <td class="val-light mono">3.0 × 10⁸ m/s</td>
+        </tr>
+        <tr>
+          <td>水中的速率</td>
+          <td><span class="val-sound mono">1,480 m/s</span><br><span class="tag tag-up">比空氣快 ×4.3</span></td>
+          <td><span class="val-light mono">2.26 × 10⁸ m/s</span><br><span class="tag tag-down">比空氣慢（n≈1.33）</span></td>
+        </tr>
+        <tr>
+          <td>鋼鐵中的速率<span class="row-note">（僅聲波）</span></td>
+          <td><span class="val-sound mono">5,100 m/s</span><br><span class="tag tag-up">比空氣快 ×15</span></td>
+          <td style="color:#bbb; font-size:0.85rem; text-align:center;">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

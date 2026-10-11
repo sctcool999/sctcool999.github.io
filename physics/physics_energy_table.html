@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作功與力學能的種類</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'$', right:'$', display:false}
+    ]
+  });"></script>
+<style>
+  @page {
+    size: A4 landscape;
+    margin: 8mm 8mm 8mm 8mm;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 281mm;
+    font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    font-size: 8.5pt;
+    line-height: 1.4;
+    background: transparent;
+    color: #1a1a1a;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 16.9pt;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1mm;
+    letter-spacing: 0.05em;
+    color: #111;
+  }
+
+  .table-wrap { width: 281mm; }
+
+  table {
+    border-collapse: collapse;
+    width: 281mm;
+    table-layout: fixed;
+    border: 1.5px solid #999;
+  }
+
+  /* 10 cols, 281mm total */
+  col.c-name     { width: 17mm; }
+  col.c-def      { width: 38mm; }
+  col.c-formula-l{ width: 41mm; }
+  col.c-formula-r{ width: 33mm; }
+  col.c-unit     { width: 11mm; }
+  col.c-scalar   { width: 13mm; }
+  col.c-dir      { width: 15mm; }
+  col.c-sign     { width: 36mm; }
+  col.c-rel      { width: 15mm; }
+  col.c-relwho   { width: 28mm; }
+
+  thead th {
+    background: #c8dff5;
+    font-weight: 700;
+    font-size: 8.5pt;
+    text-align: center;
+    padding: 4px 4px;
+    border: 1px solid #999;
+    color: #111;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  thead th:first-child { text-align: left; }
+
+  tbody th {
+    font-weight: 700;
+    font-size: 8.5pt;
+    padding: 4px 4px;
+    border: 1px solid #999;
+    vertical-align: middle;
+    text-align: center;
+    color: #111;
+    word-break: keep-all;
+  }
+
+  tbody td {
+    padding: 4px 5px;
+    border: 1px solid #bbb;
+    vertical-align: top;
+    color: #1a1a1a;
+    font-size: 8.5pt;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  td.center { text-align: center; vertical-align: middle; }
+
+  /* 右側提示格 */
+  td.hint {
+    vertical-align: middle;
+    background: #fffbea;
+    border-left: 2px solid #e8b800;
+    padding: 5px 6px;
+    font-size: 7.8pt;
+    line-height: 1.55;
+  }
+  td.hint .hn { font-weight: 700; display: block; margin-bottom: 3px; color: #7a5500; font-size: 8pt; }
+  td.hint .hf { font-weight: 700; color: #b52020; }
+  td.hint .hc { color: #555; font-size: 7.5pt; }
+  td.hint .bang { color: #c0392b; font-weight: 800; }
+
+  .fblock {
+    display: block;
+    margin: 1px 0;
+    line-height: 1.6;
+  }
+
+  .sub {
+    display: block;
+    font-size: 7pt;
+    color: #555;
+    margin-top: 1px;
+    line-height: 1.35;
+  }
+
+  .sep {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 3px 0;
+  }
+
+  .tag-y { color: #1a7a4a; font-weight: 700; }
+  .tag-n { color: #b52020; font-weight: 700; }
+  .tag-c { color: #8a5500; font-weight: 700; }
+
+  .main { font-weight: 700; display: block; color: #111; }
+
+  tbody tr:nth-child(even) td,
+  tbody tr:nth-child(even) th { background: #fff; }
+  tbody tr:nth-child(odd)  td,
+  tbody tr:nth-child(odd)  th { background: #fff; }
+
+  /* hint cell overrides zebra */
+  tbody tr td.hint { background: #fffbea !important; }
+
+  .katex { font-size: 0.97em; }
+
+  @media print {
+    html, body { width: 281mm; }
+    .table-wrap, table { width: 281mm; }
+    thead { display: table-header-group; }
+    tbody tr { page-break-inside: avoid; }
+    tbody td, tbody th { background: #fff !important; }
+    td.hint { background: #fffbea !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .diagram-wrap { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ── 功能定理展開圖 ── */
+  .diagram-wrap .bg-gray     { background:#F1EFE8; border:1.4px solid #B4B2A9; color:#2C2C2A; }
+  .diagram-wrap .bg-gray     .tag { color:#5F5E5A; }
+  .diagram-wrap .bg-gray     .eq  { color:#111; }
+  .diagram-wrap .bg-blue     { background:#E6F1FB; border:1.4px solid #378ADD; color:#042C53; }
+  .diagram-wrap .bg-blue     .tag { color:#185FA5; }
+  .diagram-wrap .bg-blue     .eq  { color:#111; }
+  .diagram-wrap .bg-blue     hr  { border-color:#B5D4F4; }
+  .diagram-wrap .bg-amber    { background:#FAEEDA; border:1.4px solid #BA7517; color:#412402; }
+  .diagram-wrap .bg-amber    .tag { color:#854F0B; }
+  .diagram-wrap .bg-purple   { background:#EEEDFE; border:1.4px solid #7F77DD; color:#26215C; }
+  .diagram-wrap .bg-purple   .tag { color:#534AB7; }
+  .diagram-wrap .bg-purple   .eq  { color:#111; }
+  .diagram-wrap .bg-purple   hr  { border-color:#CECBF6; }
+  .diagram-wrap .bg-coral    { background:#FAECE7; border:1.4px solid #D85A30; color:#4A1B0C; }
+  .diagram-wrap .bg-coral    .tag { color:#993C1D; }
+  .diagram-wrap .bg-coral    .eq  { color:#111; }
+  .diagram-wrap .bg-coral    hr  { border-color:#F0997B; }
+  .diagram-wrap .bg-amber-dk { background:#FAC775; border:1.4px solid #854F0B; color:#412402; }
+  .diagram-wrap .bg-amber-dk .tag { color:#633806; }
+  .diagram-wrap .bg-amber-dk hr  { border-color:#E8A030; }
+  .diagram-wrap .bg-amber-md { background:#F5E0C0; border:1.4px solid #A0621A; color:#3A1E08; }
+  .diagram-wrap .bg-amber-md .tag { color:#7A4510; }
+  .diagram-wrap .bg-amber-md .eq  { color:#111; }
+  .diagram-wrap .bg-amber-md hr  { border-color:#DDB887; }
+  .diagram-wrap .bg-amber-lt { background:#FDF3E3; border:1.4px solid #C8892A; color:#3A1E08; }
+  .diagram-wrap .bg-amber-lt .tag { color:#9A6015; }
+  .diagram-wrap .bg-amber-lt .eq  { color:#111; }
+  .diagram-wrap .bg-amber-lt hr  { border-color:#E8C87A; }
+  .diagram-wrap .bg-amber-xs { background:#FEF8EF; border:1.4px solid #D4A855; color:#3A1E08; }
+  .diagram-wrap .bg-amber-xs .tag { color:#A07830; }
+  .diagram-wrap .bg-amber-xs .eq  { color:#111; }
+  .diagram-wrap .bg-amber-xs hr  { border-color:#EDD9A3; }
+  .diagram-wrap .bg-teal     { background:#E1F5EE; border:1.4px solid #1D9E75; color:#04342C; }
+  .diagram-wrap .bg-teal     .tag { color:#0F6E56; }
+  .diagram-wrap .bg-teal     .eq  { color:#111; }
+  .diagram-wrap .bg-teal     hr  { border-color:#9FE1CB; }
+  .diagram-wrap .bg-pink     { background:#F9E0E8; border:1.4px solid #C45A7A; color:#4A1028; }
+  .diagram-wrap .bg-pink     .tag { color:#A03060; }
+  .diagram-wrap .bg-pink     .eq  { color:#111; }
+  .diagram-wrap .bg-pink     hr  { border-color:#E8A0B8; }
+
+  .diagram-wrap .top-row  { display:flex; align-items:center; margin-bottom:4px; }
+  .diagram-wrap .top-cell { width:163px; min-width:163px; flex-shrink:0; border-radius:9px; padding:6px 12.5px; font-size:13.75px; font-weight:600; text-align:center; box-sizing:border-box; }
+  .diagram-wrap .top-op   { width:44px; min-width:44px; text-align:center; font-size:17.5px; color:#999; flex-shrink:0; }
+
+  .diagram-wrap .row  { display:flex; align-items:stretch; }
+  .diagram-wrap .cell { width:163px; min-width:163px; flex-shrink:0; display:flex; }
+  .diagram-wrap .gap  { width:44px; min-width:44px; flex-shrink:0; }
+  .diagram-wrap .card { border-radius:9px; padding:7px 12.5px; font-size:10px; line-height:1.5; width:163px; min-width:163px; flex:1; box-sizing:border-box; }
+  .diagram-wrap .tag  { font-size:11.25px; font-weight:600; margin-bottom:3px; }
+  .diagram-wrap .eq   { font-size:11.25px; font-weight:600; margin-bottom:2.5px; }
+  .diagram-wrap .sub  { font-size:8.75px; margin-top:1px; }
+  .diagram-wrap .note { font-size:8.75px; margin-top:3px; padding-top:3px; }
+  .diagram-wrap hr    { border:none; border-top:1px solid; margin:4px 0; }
+
+  .diagram-wrap svg.arr { display:block; overflow:visible; }
+
+</style>
+</head>
+<body>
+<h1>《作功 &amp; 能量的種類》高一下物理 5-1 <span style="font-size:0.75em;font-weight:400;font-family:'Playfair Display',serif;font-style:italic;">(by Scott老師)</span></h1>
+<div class="table-wrap">
+<table>
+<colgroup>
+  <col class="c-name">
+  <col class="c-def">
+  <col class="c-formula-l">
+  <col class="c-formula-r">
+  <col class="c-unit">
+  <col class="c-scalar">
+  <col class="c-dir">
+  <col class="c-sign">
+  <col class="c-rel">
+  <col class="c-relwho">
+</colgroup>
+<thead>
+  <tr>
+    <th>物理量</th>
+    <th>物理量定義</th>
+    <th colspan="2">公式</th>
+    <th>單位</th>
+    <th>純量？</th>
+    <th>具方向性？</th>
+    <th>有正負？</th>
+    <th>有相對性？</th>
+    <th>相對於誰？</th>
+  </tr>
+</thead>
+<tbody>
+
+<!-- 功 -->
+<tr>
+  <th>功 $W$<br><span class="sub">work</span></th>
+  <td>力在其作用方向上造成物體位移，所傳遞的能量</td>
+  <td colspan="2">
+    <span class="fblock">$W = \vec{F}\cdot\vec{S}$</span>
+    <span class="fblock">$\phantom{W} = |\vec{F}||\vec{S}|\cos\theta = FS\cos\theta = F\cdot(S\cos\theta) = \textcolor{red}{(F\cos\theta)\cdot S}$</span>
+    <span class="sub">（$\theta$ 為 $\vec{F}$ 與 $\vec{S}$ 的夾角）</span>
+  </td>
+  <td class="center">J<br><span class="sub">焦耳</span></td>
+  <td class="center"><span class="tag-y">✅ 是</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span><br><span class="sub" style="text-align:left;display:block;">$0°\leq\theta<90°\Rightarrow W>0$（正功）<br>$\theta=90°\Rightarrow W=0$（不作功）<br>$90°<\theta\leq180°\Rightarrow W<0$（負功）</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span></td>
+  <td>
+    <span class="main">參考座標系</span>
+    <span class="sub">位移 $S$ 依觀測者而異</span>
+    <span class="sub">一般相對於地面</span>
+  </td>
+</tr>
+
+<!-- 功率 -->
+<tr>
+  <th>功率 $P$<br><span class="sub">power</span></th>
+  <td>單位時間內所做的功，描述做功的快慢</td>
+  <td colspan="2">
+    <span class="fblock">$\bar{P} = \dfrac{\Delta W}{\Delta t}$</span>
+    <span class="sub">平均功率</span>
+    <hr class="sep">
+    <span class="fblock">$P = \dfrac{W}{t} = \dfrac{F\textcolor{green}{S}\cos\theta}{\textcolor{green}{t}} = F\textcolor{green}{v}\cos\theta = \vec{F}\cdot\vec{v}$</span>
+    <span class="sub">瞬時功率；$\theta$ 為 $\vec{F}$ 與 $\vec{v}$ 的夾角</span>
+  </td>
+  <td class="center">W<br><span class="sub">瓦特</span></td>
+  <td class="center"><span class="tag-y">✅ 是</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span><br><span class="sub">$P<0$：力對物體作負功</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span></td>
+  <td>
+    <span class="main">參考座標系</span>
+    <span class="sub">$\vec{v}$ 依觀測者而異</span>
+    <span class="sub">一般相對於地面</span>
+  </td>
+</tr>
+
+<!-- 動能（公式欄拆左右） -->
+<tr>
+  <th>動能 $E_k$<br><span class="sub">kinetic energy</span></th>
+  <td>物體因運動而具有的能量</td>
+  <td>
+    <span class="fblock">$E_k = \dfrac{1}{2}mv^2$</span>
+    <span class="sub">$m$：質量，$v$：速率</span>
+    <hr class="sep">
+    <span class="fblock">$\Delta E_k = \dfrac{1}{2}mv_{\text{末}}^2 - \dfrac{1}{2}mv_0^2$</span>
+    <span class="fblock">$\phantom{\Delta E_k} = \dfrac{1}{2}m(v_{\text{末}}^2 - v_0^2)$</span>
+    <span class="sub">功能定理展開式</span>
+    <hr class="sep">
+    <span class="fblock">$W_{\text{合力}} = \Delta E_k$</span>
+    <span class="sub">（合力作功 = 動能變化量：<span style="color:#b52020;font-weight:700;">功能定理</span>）</span>
+  </td>
+  <td class="hint">
+    <span style="display:block;font-size:9.5pt;font-weight:800;color:#b52020;margin-bottom:4px;">功能定理</span>
+    <span class="hn">解題提示</span>
+    <span style="display:block; margin-bottom:4px;">1° 有幾個力對物體作功？</span>
+    <span style="display:block;">2° $W = \Delta E_k$</span>
+    <span style="display:block; font-size:7.5pt; color:#7a5500; margin-left:8px;">（作功 = 動能變化量）</span>
+    <span style="display:block; margin-top:4px;" class="bang">→可以秒殺不少題目!!!</span>
+  </td>
+  <td class="center">J<br><span class="sub">焦耳</span></td>
+  <td class="center"><span class="tag-y">✅ 是</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span><br><span class="sub">$v$ 無論正負<br>$v^2$ 恆正</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span></td>
+  <td>
+    <span class="main">參考座標系</span>
+    <span class="sub">$v$ 依觀測者而異</span>
+    <span class="sub">一般相對於地面</span>
+  </td>
+</tr>
+
+<!-- 位能 -->
+<tr>
+  <th>位能 $U$<br><span class="sub">potential energy</span></th>
+  <td>物體因所處位置（或形狀）而具有的能量；需定義零位面</td>
+  <td colspan="2">
+    <span class="sub">視種類而定，見下方兩項</span>
+  </td>
+  <td class="center">J<br><span class="sub">焦耳</span></td>
+  <td class="center"><span class="tag-y">✅ 是</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td class="center"><span class="tag-c">依零位面而定</span><br><span class="sub">可正、負、零</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span></td>
+  <td>
+    <span class="main">參考零位能</span>
+  </td>
+</tr>
+
+<!-- 重力位能 -->
+<tr>
+  <th>重力位能 $U_g$<br><span class="sub">gravitational<br>potential energy</span></th>
+  <td>物體在重力場中因高度而具有的位能</td>
+  <td colspan="2">
+    <span class="fblock">$U_g = mgh$</span>
+    <span class="sub">$m$：質量，$g \approx 9.8\ \text{m/s}^2$，$h$：相對零位面之高度</span>
+  </td>
+  <td class="center">J<br><span class="sub">焦耳</span></td>
+  <td class="center"><span class="tag-y">✅ 是</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td class="center"><span class="tag-c">依零位面而定</span><br><span class="sub">$h < 0$ 時 $U_g < 0$</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span></td>
+  <td>
+    <span class="main">自訂零位面</span>
+    <span class="sub">常取地面或最低點</span>
+    <span class="sub">一般相對於地面</span>
+  </td>
+</tr>
+
+<!-- 彈力位能 -->
+<tr>
+  <th>彈力位能 $U_s$<br><span class="sub">elastic<br>potential energy</span></th>
+  <td>彈性物體（如彈簧）因形變而儲存的位能</td>
+  <td colspan="2">
+    <span class="fblock">$U_s = \dfrac{1}{2}kx^2$</span>
+    <span class="sub">$k$：彈力常數，$x$：形變量（非彈簧總長）</span>
+  </td>
+  <td class="center">J<br><span class="sub">焦耳</span></td>
+  <td class="center"><span class="tag-y">✅ 是</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span><br><span class="sub">$x$ 無論正負<br>$x^2$ 恆正</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td>
+    <span class="main">—</span>
+    <span class="sub">自然長度（唯一零位點）</span>
+  </td>
+</tr>
+
+<!-- 力學能 -->
+<tr>
+  <th>力學能 $E$<br><span class="sub">mechanical energy</span></th>
+  <td>動能與位能的總和；保守力系統中守恆</td>
+  <td colspan="2">
+    <span class="fblock">$E = E_k + U$</span>
+    <span class="fblock">$E = \dfrac{1}{2}mv^2 + mgh$ <span class="sub" style="display:inline;margin-left:4px;">（僅含重力位能時）</span></span>
+    <span class="fblock">$E = \dfrac{1}{2}mv^2 + \dfrac{1}{2}kx^2$ <span class="sub" style="display:inline;margin-left:4px;">（僅含彈力位能時）</span></span>
+    <hr class="sep">
+    <span class="fblock">$W_{\text{非保守}} = \Delta(E_k + U) = \Delta E_{\text{力學}}$</span>
+  </td>
+  <td class="center">J<br><span class="sub">焦耳</span></td>
+  <td class="center"><span class="tag-y">✅ 是</span></td>
+  <td class="center"><span class="tag-n">❌ 否</span></td>
+  <td class="center"><span class="tag-c">依零位面而定</span><br><span class="sub">取決於 $U$ 零位面</span></td>
+  <td class="center"><span class="tag-y">✅ 有</span></td>
+  <td>
+    <span class="main">由位能零位能決定</span>
+  </td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<!-- 第2頁 -->
+<div style="page-break-before:always;width:281mm;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;">
+
+  <!-- 判斷框架 -->
+  <div style="margin-bottom:1mm;margin-top:0mm;">
+    <div style="border:2px solid #c8dff5;border-radius:6px;background:#eef6fd;padding:1mm 2mm;text-align:center;margin-bottom:1mm;">
+      <span style="font-size:10pt;font-weight:700;color:#1a5a8a;display:block;margin-bottom:0.4mm;">怎麼判斷是保守力？還是非保守力？</span>
+      <span style="font-size:6.65pt;font-weight:600;color:#333;display:block;margin-bottom:0.4mm;">核心問題只有一個：</span>
+      <span style="font-size:6.65pt;font-weight:700;color:#111;display:block;">從 A 點移動到 B 點，這個力做的功，跟走哪條路徑有關嗎？</span>
+    </div>
+    <div style="display:flex;gap:2.8mm;">
+      <div style="flex:1;border-radius:6px;padding:1mm 2mm;font-size:5.25pt;background:#e6f4ee;border:1.5px solid #1a7a4a;">
+        <div style="font-weight:800;font-size:8.5pt;margin-bottom:0.4mm;color:#1a7a4a;">✅ 無關 → 保守力</div>
+        <div style="color:#333;line-height:1.4;">不管走直線、曲線或繞遠路，從 A 到 B 這個力做的功都一樣。能量可以「儲存」起來，對應一個位能。</div>
+      </div>
+      <div style="flex:1;border-radius:6px;padding:1mm 2mm;font-size:5.25pt;background:#fdecea;border:1.5px solid #b52020;">
+        <div style="font-weight:800;font-size:8.5pt;margin-bottom:0.4mm;color:#b52020;">❌ 有關 → 非保守力</div>
+        <div style="color:#333;line-height:1.4;">走的路徑不同，這個力做的功就不同。能量以熱或其他形式散失，無法儲存為位能。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 保守力 / 非保守力 表格 -->
+  <div style="display:flex;gap:5mm;margin-bottom:4mm;">
+    <table style="width:138mm;border-collapse:collapse;font-size:7.5pt;line-height:1.3;border:1.5px solid #999;">
+      <thead>
+        <tr><th colspan="2" style="background:#c8dff5;border:1px solid #999;padding:2px 5px;text-align:center;font-size:8pt;font-weight:800;">保守力（守恆力）</th></tr>
+        <tr>
+          <th style="background:#f0f0f0;border:1px solid #999;padding:2px 5px;text-align:center;font-weight:600;width:50%;">力</th>
+          <th style="background:#f0f0f0;border:1px solid #999;padding:2px 5px;text-align:center;font-weight:600;width:50%;">對應位能</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">重力（萬有引力在地表附近的近似）</td><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">重力位能</td></tr>
+        <tr><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">彈力（彈簧力）</td><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">彈力位能</td></tr>
+        <tr><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">靜電力（電場力）</td><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">電位能</td></tr>
+      </tbody>
+    </table>
+    <table style="width:100mm;border-collapse:collapse;font-size:7.5pt;line-height:1.3;border:1.5px solid #999;">
+      <thead>
+        <tr><th style="background:#c8dff5;border:1px solid #999;padding:2px 5px;text-align:center;font-size:8pt;font-weight:800;">非保守力</th></tr>
+        <tr><th style="background:#f0f0f0;border:1px solid #999;padding:2px 5px;text-align:center;font-weight:600;">力</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">人力（推力／拉力）</td></tr>
+        <tr><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">摩擦力</td></tr>
+        <tr><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">空氣阻力</td></tr>
+        <tr><td style="border:1px solid #bbb;padding:2px 5px;text-align:center;background:#fff;">流體阻力</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 展開圖標題區塊 -->
+  <div style="border:2px solid #c8dff5;border-radius:6px;background:#eef6fd;padding:1mm 3mm;text-align:center;margin-bottom:1.5mm;">
+    <span style="font-size:10pt;font-weight:700;color:#1a5a8a;">《 力學能守恆 &amp; 功能定理 》完整拆解圖</span>
+  </div>
+
+<!-- 功能定理展開圖 -->
+<div style="display:flex;justify-content:center;">
+<div class="diagram-wrap" style="width:fit-content;">
+<!-- 頂部公式列 -->
+<div class="top-row">
+  <div class="top-cell bg-gray">W<sub>合力</sub></div>
+  <div class="top-op">=</div>
+  <div class="top-cell bg-blue">W<sub>保守力</sub></div>
+  <div class="top-op">+</div>
+  <div class="top-cell bg-pink">W<sub>非保守力</sub></div>
+  <div class="top-op">=</div>
+  <div class="top-cell bg-purple">ΔE<sub>k</sub></div>
+</div>
+
+<!-- 第一層 -->
+<div class="row">
+  <div class="cell">
+    <div class="card bg-gray">
+      <div class="tag">W<sub>合力</sub></div>
+      <div style="font-size:9.4px;color:#5F5E5A;margin-top:3.75px;">合力對物體所做的功</div>
+    </div>
+  </div>
+  <div class="gap"></div>
+  <div class="cell">
+    <div class="card bg-blue">
+      <div class="tag">W<sub>保守力</sub></div>
+      <div class="eq">W<sub>保守力</sub> = −ΔU</div>
+      <div class="sub">保守力做正功 → 位能減少<br>保守力做負功 → 位能增加</div>
+      <hr>
+      <div class="sub">代入主式後得：<br><strong>W<sub>非保守力</sub> = ΔE<sub>k</sub> + ΔU = ΔE<sub>力學</sub></strong></div>
+    </div>
+  </div>
+  <div class="gap"></div>
+  <div class="cell">
+    <div class="card bg-pink">
+      <div class="tag">W<sub>非保守力</sub></div>
+      <div class="eq">W<sub>非保守力</sub> = ΔE<sub>力學</sub></div>
+      <div class="sub">非保守力的功直接改變力學能的總量</div>
+    </div>
+  </div>
+  <div class="gap"></div>
+  <div class="cell">
+    <div class="card bg-purple">
+      <div class="tag">ΔE<sub>k</sub></div>
+      <div class="eq">ΔE<sub>k</sub> = ½mv<sub>末</sub>² − ½mv<sub>0</sub>²</div>
+      <div class="sub">= ½m(v<sub>末</sub>² − v<sub>0</sub>²)</div>
+      <hr>
+      <div class="sub">v末 &gt; v0 → 動能增加<br>v末 &lt; v0 → 動能減少</div>
+    </div>
+  </div>
+</div>
+
+<!-- 箭頭1：從第一層col3(W非保守力)中心x=496 → 綠格中心x=392、粉格中心x=599 -->
+<svg class="arr" width="784" height="30">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#378ADD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <line x1="496" y1="3" x2="392" y2="27" stroke="#378ADD" stroke-width="2.2" marker-end="url(#a1)"/>
+  <line x1="496" y1="3" x2="599" y2="27" stroke="#378ADD" stroke-width="2.2" marker-end="url(#a1)"/>
+</svg>
+
+<!--
+  第二層佈局（嚴格對齊截圖）：
+  整體 margin-left:103px，三個區塊頂端對齊（align-items:flex-start）：
+    展開式格  width=207px  左邊x=103, 右邊x=310
+    gap       width=0（展開式右邊即綠格左邊）
+    綠格      width=163px  左邊x=310, 右邊x=473  中心x=391.5≈392  ✓
+    gap       width=44px
+    粉格(≠0)  width=163px  左邊x=517, 右邊x=680  中心x=598.5≈599  ✓
+-->
+<div style="display:flex;align-items:stretch;margin-left:103px;">
+  <!-- 展開式格：寬207px（103到310），align-self:flex-start 保持自身高度不撐高 -->
+  <div style="display:flex;gap:0;border:1.4px solid #1D9E75;border-radius:9px;background:#E1F5EE;padding:6px 7px;width:207px;box-sizing:border-box;flex-shrink:0;align-self:flex-start;">
+    <div style="font-size:7.8px;color:#04342C;line-height:1.6;white-space:nowrap;flex:1;">
+      <div style="font-weight:600;color:#0F6E56;margin-bottom:1px;">E<sub>力學</sub>=E<sub>k</sub>+U</div>
+      <div style="font-weight:600;color:#0F6E56;margin-bottom:1px;">重力系統：</div>
+      <div>E=E<sub>k</sub>+U<sub>g</sub></div>
+      <div>=½mv²+mgh</div>
+    </div>
+    <div style="width:1px;background:#9FE1CB;margin:0 4px;flex-shrink:0;"></div>
+    <div style="font-size:7.8px;color:#04342C;line-height:1.6;white-space:nowrap;flex:1;">
+      <div style="font-weight:600;color:#0F6E56;margin-bottom:1px;">&nbsp;</div>
+      <div style="font-weight:600;color:#0F6E56;margin-bottom:1px;">彈力系統：</div>
+      <div>E=E<sub>k</sub>+U<sub>s</sub></div>
+      <div>=½mv²+½kx²</div>
+    </div>
+    <div style="width:1px;background:#9FE1CB;margin:0 4px;flex-shrink:0;"></div>
+    <div style="font-size:7.8px;color:#04342C;line-height:1.6;white-space:nowrap;flex:1;">
+      <div style="font-weight:600;color:#0F6E56;margin-bottom:1px;">&nbsp;</div>
+      <div style="font-weight:600;color:#0F6E56;margin-bottom:1px;">混合系統：</div>
+      <div>E=E<sub>k</sub>+U<sub>g</sub>+U<sub>s</sub></div>
+      <div>=½mv²+mgh+½kx²</div>
+    </div>
+  </div>
+  <!-- 綠格（=0守恆）：緊接展開式右邊，寬163px，中心x=310+81.5=391.5 -->
+  <div class="cell" style="flex-shrink:0;">
+    <div class="card bg-teal">
+      <div class="tag">W<sub>非保守力</sub> = 0 時</div>
+      <div class="eq">力學能守恆</div>
+      <div class="sub">E<sub>初</sub> = E<sub>末</sub></div>
+      <hr>
+      <div class="note">例：自由落體、無摩擦擺動</div>
+    </div>
+  </div>
+  <!-- gap 44px -->
+  <div class="gap" style="flex-shrink:0;"></div>
+  <!-- 粉格（≠0不守恆）：align-items:stretch 讓此格撐高到與綠格底部齊平 -->
+  <div class="cell" style="flex-shrink:0;">
+    <div class="card bg-pink" style="height:100%;box-sizing:border-box;">
+      <div class="tag">W<sub>非保守力</sub> ≠ 0 時</div>
+      <div class="eq">力學能不守恆</div>
+      <div class="sub">ΔE<sub>力學</sub> = E<sub>末</sub> − E<sub>初</sub> ≠ 0</div>
+    </div>
+  </div>
+</div>
+
+<!--
+  箭頭2：從≠0格底部中心出發
+  ≠0格中心在diagram中 x=598.5
+  第三層兩格以≠0格中心為中心展開：左格左邊=413px，右格右邊=784px
+  SVG用全寬784，起點x=599，左終點=495（413+81.5），右終點=702（413+163+44+81.5）
+-->
+<svg class="arr" width="784" height="30">
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#378ADD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <line x1="599" y1="3" x2="495" y2="27" stroke="#378ADD" stroke-width="2.2" marker-end="url(#a2)"/>
+  <line x1="599" y1="3" x2="702" y2="27" stroke="#378ADD" stroke-width="2.2" marker-end="url(#a2)"/>
+</svg>
+
+<!-- 第三層：margin-left=413px，<0格 + gap + >0格 -->
+<div style="display:flex;align-items:stretch;margin-left:413px;">
+  <div class="cell">
+    <div class="card bg-pink">
+      <div class="tag">W<sub>非保守力</sub> &lt; 0</div>
+      <div class="eq">力學能減少</div>
+      <div class="sub">能量散失為熱等形式</div>
+      <hr>
+      <div class="note">例：摩擦力、空氣阻力</div>
+    </div>
+  </div>
+  <div class="gap"></div>
+  <div class="cell">
+    <div class="card bg-pink">
+      <div class="tag">W<sub>非保守力</sub> &gt; 0 時</div>
+      <div class="eq">力學能增加</div>
+      <div class="sub">外力注入能量至系統</div>
+      <hr>
+      <div class="note">例：引擎推力、人力推動</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+</body>
+</html>

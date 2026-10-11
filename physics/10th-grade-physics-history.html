@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物理學發展史 — 決策矩陣</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: #e2dfd8;
+    --border-strong: #c8c4bc;
+    --text: #1a1917;
+    --text-muted: #6b6860;
+    --text-faint: #9e9c97;
+
+    --era-ancient-bg: #faeeda; --era-ancient-fg: #633806;
+    --era-early-bg:   #e6f1fb; --era-early-fg:   #0c447c;
+    --era-classic-bg: #eaf3de; --era-classic-fg: #27500a;
+    --era-em-bg:      #eeedfe; --era-em-fg:      #3c3489;
+
+    --badge-valid-bg:     #eaf3de; --badge-valid-fg:     #27500a;
+    --badge-refined-bg:   #faeeda; --badge-refined-fg:   #633806;
+    --badge-overturned-bg:#fcebeb; --badge-overturned-fg:#791f1f;
+
+    --accent: #378add;
+    --row-hover: #f3f2ef;
+    --stripe: #faf9f7;
+  }
+
+  body {
+    font-family: 'Noto Serif TC', 'Georgia', serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 2.5rem 1.5rem 4rem;
+    line-height: 1.6;
+  }
+
+  header {
+    max-width: 1100px;
+    margin: 0 auto 1.25rem;
+  }
+  header h1 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    margin-bottom: .5rem;
+  }
+  header h1 span.subtitle {
+    font-size: .85rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 0;
+    margin-left: .6rem;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: .6rem;
+    font-size: .78rem;
+    color: var(--text-muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: .4rem; }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .82rem;
+  }
+
+  thead th {
+    background: #f0ede8;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: .72rem;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-strong);
+    white-space: nowrap;
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) td { background: var(--stripe); }
+  tbody tr:hover td { background: var(--row-hover); }
+
+  td {
+    padding: 10px 14px;
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .col-year  { width: 90px;  min-width: 80px; }
+  .col-name  { width: 130px; min-width: 120px; }
+  .col-contrib { width: 52%; }
+  .col-status  { width: 22%; min-width: 160px; }
+
+  .yr { font-weight: 600; font-size: .8rem; color: var(--text-muted); margin-bottom: 4px; }
+
+  .era {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .era-ancient { background: var(--era-ancient-bg); color: var(--era-ancient-fg); }
+  .era-early   { background: var(--era-early-bg);   color: var(--era-early-fg); }
+  .era-classic { background: var(--era-classic-bg); color: var(--era-classic-fg); }
+  .era-em      { background: var(--era-em-bg);      color: var(--era-em-fg); }
+
+  .nm { font-weight: 600; font-size: .88rem; }
+  .ne { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
+
+  .ct { font-weight: 600; margin-bottom: 4px; font-size: .83rem; }
+  .cd { font-size: .78rem; color: var(--text-muted); line-height: 1.55; }
+  .cd strong { color: var(--text); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .72rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 12px;
+    white-space: nowrap;
+    margin-bottom: 5px;
+  }
+  .badge-valid     { background: var(--badge-valid-bg);     color: var(--badge-valid-fg); }
+  .badge-refined   { background: var(--badge-refined-bg);   color: var(--badge-refined-fg); }
+  .badge-overturned{ background: var(--badge-overturned-bg);color: var(--badge-overturned-fg); }
+
+  .note { font-size: .75rem; color: var(--text-muted); line-height: 1.5; }
+
+  @media print {
+    body { padding: 1rem; background: white; }
+    .wrap { border: 1px solid #ccc; }
+    thead th { background: #eee !important; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>物理學發展史 — 決策矩陣<span class="subtitle">高一物理範疇 · 古代至馬克士威方程式 · 依時間軸排列</span></h1>
+  <div class="legend">
+    <div class="legend-item"><span class="badge badge-valid">✓ 仍有效</span>至今在原適用範圍內成立</div>
+    <div class="legend-item"><span class="badge badge-refined">~ 修正</span>核心成立但被後世修正或限縮</div>
+    <div class="legend-item"><span class="badge badge-overturned">✗ 已推翻</span>被後世完全推翻</div>
+  </div>
+</header>
+
+<div class="wrap">
+<table>
+<thead>
+<tr>
+  <th class="col-year">年代</th>
+  <th class="col-name">科學家</th>
+  <th class="col-contrib">主要貢獻 / 假說 / 定律 / 定則</th>
+  <th class="col-status">今日是否仍成立</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">約 350 BC</div>
+    <span class="era era-ancient">古代</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">亞里斯多德</div>
+    <div class="ne">Aristotle</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">運動理論 / 地心說 / 自然運動與強制運動</div>
+    <div class="cd">
+      <strong>地心說：</strong>地球為宇宙中心，太陽、月亮、行星與恆星皆繞地球做完美圓周運動，天體鑲嵌於水晶球層上。<br>
+      <strong>自然運動（natural motion）：</strong>物體回歸其「自然位置」的運動，無需外力。土與水天然向下，火與空氣天然向上，天體天然做圓周運動。<br>
+      <strong>強制運動（violent motion）：</strong>違背自然位置、需要持續施力才能維持的運動（如推動石塊）。力一旦撤除，運動即停止。<br>
+      <strong>落體理論：</strong>重物比輕物落得快，速度與重量成正比。
+    </div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-overturned">✗ 已推翻</span>
+    <div class="note">地心說被哥白尼 / 伽利略 / 克卜勒推翻；落體理論被伽利略自由落體實驗推翻；「力維持運動」被牛頓慣性定律推翻；自然/強制運動框架被近代力學整體取代</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">約 150 AD</div>
+    <span class="era era-ancient">古代</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">托勒密</div>
+    <div class="ne">Claudius Ptolemy</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">地心說數學化（本輪 / 均輪模型）</div>
+    <div class="cd">《天文學大成》將亞里斯多德地心說數學化，引入本輪（epicycle）與均輪（deferent）機制，能預測行星位置，主導西方天文學約 1400 年。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-overturned">✗ 已推翻</span>
+    <div class="note">哥白尼（1543）日心說取代；克卜勒橢圓軌道定律提供更簡潔精確的模型</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">約 250 BC</div>
+    <span class="era era-ancient">古代</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">阿基米德</div>
+    <div class="ne">Archimedes</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">浮力原理 / 槓桿原理</div>
+    <div class="cd">浸入流體的物體所受浮力等於排開流體的重量（阿基米德原理）。槓桿：F₁d₁ = F₂d₂。靜力學基礎。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">完全成立，流體力學與靜力學基礎至今沿用</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1543</div>
+    <span class="era era-early">近代初期</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">哥白尼</div>
+    <div class="ne">Nicolaus Copernicus</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">日心說 (Heliocentric Model)</div>
+    <div class="cd">太陽為宇宙中心，行星繞太陽做圓形運動；地球自轉解釋晝夜，公轉解釋四季。《天體運行論》推翻托勒密體系。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-refined">~ 修正</span>
+    <div class="note">核心正確；圓形軌道被克卜勒橢圓修正；「宇宙中心」在現代宇宙學中不成立</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1600</div>
+    <span class="era era-early">近代初期</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">吉爾伯特</div>
+    <div class="ne">William Gilbert</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">地磁學 / 靜電與磁力之區分</div>
+    <div class="cd">地球本身是巨大磁鐵；首創 "electricus"（電）一詞；區分靜電吸引與磁力。《論磁》。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">地球磁場理論成立，近代地磁學基礎</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1609–1619</div>
+    <span class="era era-early">近代初期</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">克卜勒</div>
+    <div class="ne">Johannes Kepler</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">克卜勒行星運動三大定律</div>
+    <div class="cd">①橢圓軌道定律 ②等面積定律（角動量守恆） ③週期定律 T² ∝ a³。純描述性規律，無力學解釋。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">完全成立；可由牛頓萬有引力推導</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1589–1638</div>
+    <span class="era era-early">近代初期</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">伽利略</div>
+    <div class="ne">Galileo Galilei</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">自由落體定律 / 慣性原理 / 斜面實驗</div>
+    <div class="cd">無空氣阻力時所有物體以相同加速度 g 落下；斜面實驗建立運動學方程；提出慣性概念；望遠鏡天文觀測支持日心說。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">被牛頓力學納入；近代實驗科學方法奠基者</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1644</div>
+    <span class="era era-early">近代初期</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">托里切利</div>
+    <div class="ne">Evangelista Torricelli</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">大氣壓力 / 托里切利真空</div>
+    <div class="cd">水銀氣壓計實驗證明大氣壓存在，1 atm ≈ 76 cmHg；推翻「自然厭惡真空」說。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">完全成立，氣壓計原理至今沿用</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1660s</div>
+    <span class="era era-early">近代初期</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">虎克</div>
+    <div class="ne">Robert Hooke</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">虎克定律 (Hooke's Law)</div>
+    <div class="cd">彈力與形變成正比：F = −kx，在彈性限度內成立。顯微鏡觀察，《微觀圖》。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">彈性限度內完全成立，彈性力學核心</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1687</div>
+    <span class="era era-classic">古典力學</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">牛頓</div>
+    <div class="ne">Isaac Newton</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">牛頓運動三大定律 / 萬有引力定律</div>
+    <div class="cd">①慣性定律 ②F = ma ③作用力與反作用力。萬有引力：F = Gm₁m₂/r²。微積分（與萊布尼茲共同發展）。光的粒子說。《自然哲學的數學原理》。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-refined">~ 修正</span>
+    <div class="note">低速弱重力場完全成立；高速→狹義相對論；強重力→廣義相對論。光粒子說→波粒二象性（量子力學）</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1733–1785</div>
+    <span class="era era-classic">古典力學</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">庫侖</div>
+    <div class="ne">Charles-Augustin de Coulomb</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">庫侖定律 (Coulomb's Law)</div>
+    <div class="cd">兩點電荷間靜電力：F = kq₁q₂/r²，形式與萬有引力相似。扭力秤實驗。確立電荷守恆概念。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">古典電磁學完全成立；量子電動力學中仍是重要近似</div>
+  </td>
+</tr>
+
+
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1798–1800</div>
+    <span class="era era-classic">古典力學</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">卡文迪什</div>
+    <div class="ne">Henry Cavendish</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">萬有引力常數 G 之測定</div>
+    <div class="cd">扭力秤實驗首次精確測量 G ≈ 6.674 × 10⁻¹¹ N·m²/kg²，推算地球質量與密度。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">完全成立，G 值測定方法至今沿用</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1800</div>
+    <span class="era era-classic">古典力學</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">伏打</div>
+    <div class="ne">Alessandro Volta</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">伏打電池 / 電動勢概念</div>
+    <div class="cd">發明第一個化學電池（伏打電堆），提供穩定電流；建立電動勢 (EMF) 概念。單位「伏特 (V)」以其命名。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">電位差概念完全成立，電化學基礎</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1820</div>
+    <span class="era era-em">電磁場論</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">厄斯特</div>
+    <div class="ne">Hans Christian Ørsted</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">電流磁效應</div>
+    <div class="cd">發現通電導線使周圍指南針偏轉，首次證明電流能產生磁場。打破電與磁獨立的傳統觀念，開啟電磁學統一之路。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">完全成立，電磁學統一的實驗起點</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1820</div>
+    <span class="era era-em">電磁場論</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">安培</div>
+    <div class="ne">André-Marie Ampère</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">安培定律 / 安培力 / 安培右手定則</div>
+    <div class="cd">
+      兩平行電流間磁力定律；電流產生磁場的積分形式（安培定律）；「分子電流」假說解釋物質磁性。<br>
+      <strong>安培右手定則：</strong>右手握住導線，拇指指向電流方向，四指彎曲方向即為磁場環繞方向；適用於直線電流與螺線管磁場方向判斷。
+    </div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">安培定律完全成立；馬克士威加入位移電流項推廣為廣義安培定律。右手定則為實用判斷工具，完全有效</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1821–1826</div>
+    <span class="era era-em">電磁場論</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">歐姆</div>
+    <div class="ne">Georg Simon Ohm</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">歐姆定律 (Ohm's Law)</div>
+    <div class="cd">V = IR，建立電壓、電流、電阻關係。電路分析基礎。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">線性電阻材料完全成立；非線性元件（二極體等）不適用</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1831</div>
+    <span class="era era-em">電磁場論</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">法拉第</div>
+    <div class="ne">Michael Faraday</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">電磁感應 / 感應電流 / 法拉第電磁感應定律 / 場的概念</div>
+    <div class="cd">
+      <strong>電磁感應（感應電流）：</strong>變化的磁通量在閉合迴路中產生感應電流，感應電流方向由冷次定律決定。<br>
+      <strong>法拉第電磁感應定律：</strong>感應電動勢大小正比於磁通量的變化率：ε = −dΦ/dt（負號體現冷次定律）。<br>
+      提出「電場」與「磁場」場線概念；電解定律（法拉第電解第一、二定律）。
+    </div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">完全成立，發電機原理基礎。「場」概念被馬克士威數學化</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1834</div>
+    <span class="era era-em">電磁場論</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">冷次</div>
+    <div class="ne">Heinrich Friedrich Emil Lenz</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">冷次定律 (Lenz's Law)</div>
+    <div class="cd">感應電流所產生的磁場，方向必定與引起感應的磁通量變化相反，即感應電流的效果阻礙磁通量的變化。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-valid">✓ 仍有效</span>
+    <div class="note">完全成立，為能量守恆在電磁感應中的體現</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1842–1847</div>
+    <span class="era era-em">電磁場論</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">焦耳 / 邁爾 / 亥姆霍茲</div>
+    <div class="ne">Joule / Mayer / Helmholtz</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">能量守恆定律（熱力學第一定律）</div>
+    <div class="cd">能量不能被創造或消滅，只能轉換形式。焦耳熱功當量實驗測定機械功與熱的等價性。</div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-refined">~ 修正</span>
+    <div class="note">古典範圍完全成立；相對論擴展為質能守恆 E = mc²</div>
+  </td>
+</tr>
+
+<tr>
+  <td class="col-year">
+    <div class="yr">1864–1873</div>
+    <span class="era era-em">電磁場論</span>
+  </td>
+  <td class="col-name">
+    <div class="nm">馬克士威</div>
+    <div class="ne">James Clerk Maxwell</div>
+  </td>
+  <td class="col-contrib">
+    <div class="ct">馬克士威方程式 / 電磁波理論</div>
+    <div class="cd">
+      四方程式統一電磁場：①高斯電場定律 ②高斯磁場定律（無磁單極）③法拉第定律 ④廣義安培定律（含位移電流 ∂D/∂t）。<br>
+      由此預測電磁波速度 c = 1/√(ε₀μ₀) = 光速，提出光是電磁波。《電磁通論》(1873)。
+    </div>
+  </td>
+  <td class="col-status">
+    <span class="badge badge-refined">~ 修正</span>
+    <div class="note">古典電磁學完全成立；以太假設被推翻；量子電動力學 (QED) 為更深層理論，但馬克士威方程式仍極精確。無磁單極假設尚未被推翻</div>
+  </td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+</body>
+</html>

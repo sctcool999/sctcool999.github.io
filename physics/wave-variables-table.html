@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v = f · λ 波動現象總表</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400&family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff;color:#2d2d2d;font-family:'Noto Sans TC',sans-serif;padding:40px 20px 40px 75px;font-size:13px}
+.page{width:700px;margin:0}
+
+/* 1. 標題字體加大200% */
+.page-title{
+  font-size:30px;
+  font-weight:600;
+  letter-spacing:.06em;
+  color:#222;
+  margin-bottom:18px;
+}
+
+table{width:700px;border-collapse:collapse;table-layout:fixed;font-size:13px}
+col:nth-child(1){width:96px}
+col:nth-child(2){width:172px}
+col:nth-child(3){width:137px}
+col:nth-child(4){width:137px}
+col:nth-child(5){width:158px}
+
+th,td{border:1px solid #e8e8e8;padding:8px 10px;vertical-align:middle}
+
+/* 2. eq row — v f λ 全部大字，= 和 · 用小字夾在中間 */
+tr.eq-row th{
+  background:#fff;
+  border:1px solid transparent;
+  padding:6px 0 10px 0;
+  text-align:center;
+  line-height:1;
+}
+/* 現象/情況兩欄空白 */
+tr.eq-row th:nth-child(1),
+tr.eq-row th:nth-child(2){border:1px solid transparent}
+
+.eq-sym{
+  font-family:'Noto Serif TC',serif;
+  font-size:42px;
+  font-weight:400;
+  color:#1a1a1a;
+}
+.eq-op-sm{
+  font-family:'Noto Sans TC',sans-serif;
+  font-size:20px;
+  font-weight:300;
+  color:#aaa;
+  vertical-align:middle;
+  padding:0 4px;
+}
+
+/* col headers */
+tr.col-header th{
+  background:#5b9ec9;font-weight:600;font-size:12.5px;
+  text-align:center;color:#222;letter-spacing:.04em;
+  padding-top:10px;padding-bottom:10px;
+}
+tr.col-header th:nth-child(1),
+tr.col-header th:nth-child(2){text-align:left}
+tr.col-header th:nth-child(3){border-bottom:3px solid #3a8a58;color:#1a5c38}
+tr.col-header th:nth-child(4){border-bottom:3px solid #3a6aaa;color:#1a3d7a}
+tr.col-header th:nth-child(5){border-bottom:3px solid #a06020;color:#6a3a08}
+
+/* ALL td uniform */
+td{
+  text-align:center;
+  color:#333;
+  font-family:'Noto Sans TC',sans-serif;
+  font-size:13px;
+  font-weight:400;
+  vertical-align:middle;
+}
+
+/* 3. col1 取消粗體 */
+td:nth-child(1){
+  font-weight:400;
+  text-align:left;
+  color:#111;
+  padding-left:12px;
+}
+
+td:nth-child(2){
+  text-align:left;
+  color:#999;
+  line-height:1.5;
+}
+
+tr.sec td{
+  background:#ddeef8;
+  font-size:11.5px;font-weight:600;
+  color:#4a7a9b;letter-spacing:.07em;
+  padding:5px 10px;
+  border-top:2px solid #b8d8ee;
+}
+tr.sub td{
+  background:#c8c8c4;
+  font-size:11px;color:#555;
+  font-style:italic;text-align:left;
+  padding:3px 10px 3px 18px;
+  border-top:1px solid #eee;
+}
+
+tbody tr.data-odd td{background:#fff}
+tbody tr.data-even td{background:#f7f7f5}
+td[rowspan]{vertical-align:middle}
+
+/* 4. badge — 強制居中，block display */
+.badge{
+  display:block;
+  margin:0 auto;
+  width:fit-content;
+  text-align:center;
+  border-radius:6px;
+  padding:4px 10px;
+  font-family:'Noto Sans TC',sans-serif;
+  font-size:12.5px;
+  font-weight:500;
+  line-height:1.4;
+  white-space:nowrap;
+}
+.badge-wrap{
+  display:block;
+  margin:0 auto;
+  width:fit-content;
+  text-align:center;
+  border-radius:6px;
+  padding:4px 10px;
+  font-family:'Noto Sans TC',sans-serif;
+  font-size:12.5px;
+  font-weight:500;
+  line-height:1.4;
+}
+.badge-wrap small{
+  display:block;
+  font-size:10px;font-weight:400;opacity:.75;margin-top:1px;text-align:center;
+}
+
+.b-fixed {background:#fff0f0;color:#cc2222;border:1.5px solid #f5b8b8}
+.b-change{background:#edf7f1;color:#237a46;border:1.5px solid #a8dbbe}
+
+.legend{display:flex;gap:18px;margin-top:14px;font-size:12px;color:#999;align-items:center}
+.legend-item{display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<div class="page">
+<p class="page-title">《波動物理》各現象變因總表</p>
+
+<table>
+  <colgroup><col><col><col><col><col></colgroup>
+  <thead>
+    <!-- eq row: v  =  f  ·  λ  all large, operators small -->
+    <tr class="eq-row">
+      <th colspan="2"></th>
+      <th colspan="3" style="border:1px solid transparent;background:#fff;padding:8px 0 12px 0;">
+        <div style="display:flex;align-items:baseline;justify-content:space-around;width:100%;">
+          <span class="eq-sym">v</span>
+          <span class="eq-op-sm" style="margin-bottom:4px;">=</span>
+          <span class="eq-sym">f</span>
+          <span class="eq-op-sm" style="margin-bottom:6px;">·</span>
+          <span class="eq-sym">λ</span>
+        </div>
+      </th>
+    </tr>
+    <tr class="col-header">
+      <th>現象／情境</th><th>情況</th>
+      <th>波速 v</th><th>頻率 f</th><th>波長 λ</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr class="sec"><td colspan="5">▸ 基準：同一均勻介質中的週期波</td></tr>
+    <tr class="data-odd">
+      <td>同介質傳播</td><td>波源與觀測者皆靜止</td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+    </tr>
+
+    <tr class="sec"><td colspan="5">▸ 光波：界面行為</td></tr>
+    <tr class="data-odd">
+      <td>反射</td><td>同一介質，n 不變</td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+    </tr>
+    <tr class="data-even">
+      <td>折射</td><td>進入不同介質 n₁ → n₂</td>
+      <td><span class="badge b-change">✅ 會變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-change">✅ 會變</span></td>
+    </tr>
+
+    <tr class="sec"><td colspan="5">▸ 光波在同一介質中的波動現象</td></tr>
+    <tr class="data-odd">
+      <td>繞射</td><td>通過縫隙或障礙物</td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+    </tr>
+    <tr class="data-even">
+      <td>干涉</td><td>同調光疊加</td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+      <td><span class="badge b-fixed">❌ 不變</span></td>
+    </tr>
+
+    <tr class="sec"><td colspan="5">▸ 都卜勒效應：聲波</td></tr>
+    <tr class="sub"><td colspan="5">① 人動波不動（觀測者移動，波源靜止）</td></tr>
+    <tr class="data-odd">
+      <td rowspan="2">人動波不動</td>
+      <td>觀測者以 V<sub>o</sub> 朝波源移動</td>
+      <td><span class="badge b-change">✅ 視v ↑ 增大</span></td>
+      <td><span class="badge b-change">✅ 視f ↑ 升高</span></td>
+      <td><span class="badge b-fixed">❌ 視λ 不變</span></td>
+    </tr>
+    <tr class="data-even">
+      <td>觀測者以 V<sub>o</sub> 遠離波源</td>
+      <td><span class="badge b-change">✅ 視v ↓ 減小</span></td>
+      <td><span class="badge b-change">✅ 視f ↓ 降低</span></td>
+      <td><span class="badge b-fixed">❌ 視λ 不變</span></td>
+    </tr>
+
+    <tr class="sub"><td colspan="5">② 波動人不動（波源移動，觀測者靜止）</td></tr>
+    <tr class="data-odd">
+      <td rowspan="2">波動人不動</td>
+      <td>波源以 V<sub>s</sub> 朝觀測者移動</td>
+      <td><span class="badge b-fixed">❌ 視v 不變</span></td>
+      <td><span class="badge b-change">✅ 視f ↑ 升高</span></td>
+      <td><span class="badge b-change">✅ 視λ ↓ 縮短</span></td>
+    </tr>
+    <tr class="data-even">
+      <td>波源以 V<sub>s</sub> 遠離觀測者</td>
+      <td><span class="badge b-fixed">❌ 視v 不變</span></td>
+      <td><span class="badge b-change">✅ 視f ↓ 降低</span></td>
+      <td><span class="badge b-change">✅ 視λ ↑ 拉長</span></td>
+    </tr>
+
+    <tr class="sec"><td colspan="5">▸ 都卜勒效應：光波（視波速恆為 c）</td></tr>
+    <tr class="sub"><td colspan="5">③ 紅移／藍移（天文觀測）</td></tr>
+    <tr class="data-odd">
+      <td rowspan="2">紅移／藍移</td>
+      <td>紅移（星系遠離地球）</td>
+      <td><span class="badge-wrap b-fixed">❌ 視v 不變<small>(恆為 c)</small></span></td>
+      <td><span class="badge b-change">✅ 視f ↓ 降低</span></td>
+      <td><span class="badge b-change">✅ 視λ ↑ 拉長</span></td>
+    </tr>
+    <tr class="data-even">
+      <td>藍移（星系靠近地球）</td>
+      <td><span class="badge-wrap b-fixed">❌ 視v 不變<small>(恆為 c)</small></span></td>
+      <td><span class="badge b-change">✅ 視f ↑ 升高</span></td>
+      <td><span class="badge b-change">✅ 視λ ↓ 縮短</span></td>
+    </tr>
+
+    <tr class="sub"><td colspan="5">④ 雷達測速</td></tr>
+    <tr class="data-odd">
+      <td rowspan="2">雷達測速</td>
+      <td>車輛以 V<sub>t</sub> 朝雷達移動</td>
+      <td><span class="badge-wrap b-fixed">❌ 視v 不變<small>(恆為 c)</small></span></td>
+      <td><span class="badge b-change">✅ 視f ↑ 升高</span></td>
+      <td><span class="badge b-change">✅ 視λ ↓ 縮短</span></td>
+    </tr>
+    <tr class="data-even">
+      <td>車輛以 V<sub>t</sub> 遠離雷達</td>
+      <td><span class="badge-wrap b-fixed">❌ 視v 不變<small>(恆為 c)</small></span></td>
+      <td><span class="badge b-change">✅ 視f ↓ 降低</span></td>
+      <td><span class="badge b-change">✅ 視λ ↑ 拉長</span></td>
+    </tr>
+
+    <tr class="sub"><td colspan="5">⑤ 氣象雷達</td></tr>
+    <tr class="data-odd">
+      <td rowspan="2">氣象雷達</td>
+      <td>降水粒子以 V<sub>p</sub> 朝雷達移動</td>
+      <td><span class="badge-wrap b-fixed">❌ 視v 不變<small>(恆為 c)</small></span></td>
+      <td><span class="badge b-change">✅ 視f ↑ 升高</span></td>
+      <td><span class="badge b-change">✅ 視λ ↓ 縮短</span></td>
+    </tr>
+    <tr class="data-even">
+      <td>降水粒子以 V<sub>p</sub> 遠離雷達</td>
+      <td><span class="badge-wrap b-fixed">❌ 視v 不變<small>(恆為 c)</small></span></td>
+      <td><span class="badge b-change">✅ 視f ↓ 降低</span></td>
+      <td><span class="badge b-change">✅ 視λ ↑ 拉長</span></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+</body>
+</html>
