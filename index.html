@@ -17,6 +17,7 @@
     --math-tint: #e3f3ec;
     --phy: #2c6cb0;
     --phy-tint: #e5eff9;
+    --byline: #7b3fbf;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -29,6 +30,7 @@
       --math-tint: #16302a;
       --phy: #6aa8eb;
       --phy-tint: #172738;
+      --byline: #b993ef;
     }
   }
 
@@ -43,6 +45,7 @@
 
   header { margin-bottom: 36px; }
   h1 { font-size: 28px; font-weight: 600; letter-spacing: 0.02em; }
+  .byline { font-size: 0.8em; color: var(--byline); margin-left: 0.4em; white-space: nowrap; }
   .lead { color: var(--muted); font-size: 15px; margin-top: 4px; }
 
   section { margin-bottom: 40px; }
@@ -98,7 +101,7 @@
 <div class="wrap">
 
   <header>
-    <h1>數學・物理 互動教材</h1>
+    <h1>數學・物理 互動教材<span class="byline">Scott老師編輯修訂</span></h1>
     <p class="lead">點選卡片開啟教材</p>
   </header>
 
