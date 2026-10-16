@@ -86,12 +86,15 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font:15px var(--f-math);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:3px 11px;cursor:pointer}
 .chip:hover{border-color:var(--accent)}
-.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{font:14px var(--f-ui);background:transparent;color:var(--ink);border:0;padding:8px 6px;cursor:pointer}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .seg button:disabled{color:var(--muted);opacity:.55;cursor:not-allowed}
 .note{font-size:12.5px;color:var(--warn);line-height:1.5;margin:0}
+.note.ok{color:var(--accent)}
+.note.info{color:var(--muted)}
+.note sup{font-size:.7em}
 .range{display:flex;align-items:center;gap:10px}
 .range input{flex:1;accent-color:var(--accent);min-width:0}
 .range output{font:14px var(--f-ui);font-variant-numeric:tabular-nums;width:3.2em;text-align:right}
@@ -150,8 +153,14 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
         <div class="seg">
           <button type="button" id="mLit" aria-pressed="true">b<sup>x</sup> 形式</button>
           <button type="button" id="mNum" aria-pressed="false">計算值</button>
+          <button type="button" id="mCus" aria-pressed="false">自訂</button>
         </div>
         <p class="note" id="numNote" hidden></p>
+      </div>
+      <div class="field" id="nField" hidden>
+        <label for="inN"><span class="sw" style="background:var(--chalk)"></span>真數 N</label>
+        <input type="text" id="inN" value="N" maxlength="8" autocomplete="off" spellcheck="false">
+        <p class="note" id="chk" hidden></p>
       </div>
       <div class="field">
         <label for="inSpd">動畫速度</label>
@@ -171,7 +180,7 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
 const $=id=>document.getElementById(id);
 const stage=$('stage'), btn=$('toggle'), lbl=$('toggleLabel');
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const S={b:'10',x:'x',mode:'lit',speed:1,t:0,target:0,running:false,last:0};
+const S={b:'10',x:'x',n:'N',mode:'lit',speed:1,t:0,target:0,running:false,last:0};
 const act={}; let L=null;
 const CH=[240,239,228], WD=[205,145,85];
 
@@ -211,6 +220,7 @@ function numericArg(){
   return null;
 }
 function argHTML(){
+  if(S.mode==='cus') return tok(S.n);
   const n=S.mode==='num'?numericArg():null;
   return n!==null?esc(n):`<span class="c-base">${tok(S.b)}</span><span class="s c-x">${tok(S.x)}</span>`;
 }
@@ -345,12 +355,29 @@ function updatePanel(){
   else warn.hidden=true;
   const n=numericArg(), mNum=$('mNum'), note=$('numNote');
   mNum.disabled=n===null;
-  $('mLit').setAttribute('aria-pressed',S.mode!=='num'||n===null);
+  $('mLit').setAttribute('aria-pressed',S.mode==='lit'||(S.mode==='num'&&n===null));
   mNum.setAttribute('aria-pressed',S.mode==='num'&&n!==null);
+  $('mCus').setAttribute('aria-pressed',S.mode==='cus');
+  $('nField').hidden=S.mode!=='cus';
+  const chk=$('chk');
+  if(S.mode==='cus'){
+    const nN=parseNum(S.n), xN=parseNum(S.x);
+    chk.hidden=false; chk.className='note';
+    if(isFinite(nN)&&nN<=0){chk.textContent='真數須滿足 N > 0。';}
+    else if(isFinite(bN)&&(bN<=0||bN===1)){chk.hidden=true;}
+    else if(isFinite(bN)&&isFinite(xN)&&isFinite(nN)){
+      const v=Math.pow(bN,xN), vs=Number(v.toPrecision(10));
+      const rel=Math.abs(vs-v)<=1e-12*Math.abs(v)?'=':'≈';
+      const lhs=`${tok(S.b)}<sup>${tok(S.x)}</sup> ${rel} ${esc(String(vs))}`;
+      if(Math.abs(v-nN)<=1e-9*Math.max(1,Math.abs(nN))){chk.classList.add('ok');chk.innerHTML=`✓ ${lhs}，等式成立。`;}
+      else chk.innerHTML=`✗ ${lhs} ≠ ${tok(S.n)}，此式不成立。`;
+    }
+    else{chk.classList.add('info');chk.textContent='b、x、N 含符號，無法檢查等式是否成立。';}
+  }else chk.hidden=true;
   if(S.mode==='num'&&n===null){note.hidden=false;note.textContent='b 與 x 需皆為數字，且結果可精確表示，才能顯示計算值；目前以 bˣ 形式顯示。';}
   else note.hidden=true;
   const B=`<span class="hb">${tok(S.b)}</span>`, X=`<span class="hx">${tok(S.x)}</span>`;
-  const N=(S.mode==='num'&&n!==null)?esc(n):`${B}<sup>${X}</sup>`;
+  const N=S.mode==='cus'?tok(S.n):(S.mode==='num'&&n!==null)?esc(n):`${B}<sup>${X}</sup>`;
   $('roLog').innerHTML=`log<sub>${B}</sub> ${N} = ${X}`;
   $('roExp').innerHTML=`${N} = ${B}<sup>${X}</sup>`;
 }
@@ -371,6 +398,8 @@ $('chips').addEventListener('click',e=>{
 });
 $('mLit').addEventListener('click',()=>{S.mode='lit';rebuild();});
 $('mNum').addEventListener('click',()=>{S.mode='num';rebuild();});
+$('mCus').addEventListener('click',()=>{S.mode='cus';rebuild();});
+$('inN').addEventListener('input',e=>{S.n=e.target.value.trim();rebuild();});
 const SPEEDS=[0.25,0.5,1,2];
 $('inSpd').addEventListener('input',e=>{S.speed=SPEEDS[+e.target.value];$('spdOut').textContent=S.speed+'×';});
 
