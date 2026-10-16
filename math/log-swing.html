@@ -219,8 +219,33 @@ function numericArg(){
   if(Number.isInteger(x)&&x<0&&Number.isInteger(b)){const d=Math.pow(b,-x); if(d<=1e15) return '1/'+d;}
   return null;
 }
-function argHTML(){
-  if(S.mode==='cus') return tok(S.n);
+function fmtNice(v){
+  const r=Number(v.toPrecision(12)), str=String(r);
+  if(!str.includes('e')&&(str.split('.')[1]||'').length<=6) return {s:str,exact:true};
+  for(let q=2;q<=12;q++){const p=Math.round(v*q); if(Math.abs(p/q-v)<1e-10) return {s:p+'/'+q,exact:true};}
+  return {s:v.toFixed(4),exact:false};
+}
+// custom mode: exactly one of b, x, N left blank → solve it
+function eff(){
+  const E={b:S.b,x:S.x,n:S.n,solved:null,approx:false,err:null,blanks:0};
+  if(S.mode!=='cus') return E;
+  const bl=['b','x','n'].filter(k=>!S[k]); E.blanks=bl.length;
+  if(bl.length!==1) return E;
+  const k=bl[0], b=parseNum(S.b), x=parseNum(S.x), n=parseNum(S.n);
+  let v=NaN;
+  if(k==='x'&&isFinite(b)&&isFinite(n)){
+    if(b<=0||b===1) E.err='底數須滿足 b > 0 且 b ≠ 1。'; else if(n<=0) E.err='真數須滿足 N > 0。'; else v=Math.log(n)/Math.log(b);
+  }else if(k==='n'&&isFinite(b)&&isFinite(x)){
+    if(b<=0||b===1) E.err='底數須滿足 b > 0 且 b ≠ 1。'; else v=Math.pow(b,x);
+  }else if(k==='b'&&isFinite(x)&&isFinite(n)){
+    if(n<=0) E.err='真數須滿足 N > 0。'; else if(x===0) E.err='x = 0 時無法求出底數。';
+    else{v=Math.pow(n,1/x); if(Math.abs(v-1)<1e-12){E.err='解出的底數為 1，不合對數定義。';v=NaN;}}
+  }
+  if(isFinite(v)&&Math.abs(v)<=1e15){const f=fmtNice(v); E[k]=f.s; E.solved=k; E.approx=!f.exact;}
+  return E;
+}
+function argHTML(E){
+  if(S.mode==='cus') return tok(E.n);
   const n=S.mode==='num'?numericArg():null;
   return n!==null?esc(n):`<span class="c-base">${tok(S.b)}</span><span class="s c-x">${tok(S.x)}</span>`;
 }
@@ -229,11 +254,12 @@ function build(){
   const W=stage.clientWidth, H=stage.clientHeight;
   if(!W||!H) return;
   stage.querySelectorAll('.row,.act,.stickwrap,.burst').forEach(n=>n.remove());
-  const arg=argHTML(), B=tok(S.b), X=tok(S.x);
+  const E=eff(), Q=E.approx?'≈':'=';
+  const arg=argHTML(E), B=tok(E.b), X=tok(E.x);
   const r1=document.createElement('div'); r1.className='row row1';
-  r1.innerHTML=`<span class="p log">log</span><span class="p sub base">${B}</span><span class="p arg">${arg}</span><span class="p eq">=</span><span class="p xr">${X}</span>`;
+  r1.innerHTML=`<span class="p log">log</span><span class="p sub base">${B}</span><span class="p arg">${arg}</span><span class="p eq">${Q}</span><span class="p xr">${X}</span>`;
   const r2=document.createElement('div'); r2.className='row row2';
-  r2.innerHTML=`<span class="p arg">${arg}</span><span class="p eq">=</span><span class="p base">${B}</span><span class="p sup xr">${X}</span>`;
+  r2.innerHTML=`<span class="p arg">${arg}</span><span class="p eq">${Q}</span><span class="p base">${B}</span><span class="p sup xr">${X}</span>`;
   stage.append(r1,r2);
   let F=Math.min(H/5.2,120);
   const setF=f=>{r1.style.fontSize=r2.style.fontSize=f+'px';};
@@ -251,7 +277,7 @@ function build(){
   const mk=(cls,html)=>{const d=document.createElement('div');d.className='act '+cls;d.innerHTML=html;d.style.fontSize=F+'px';stage.append(d);return d;};
   act.log=mk('',  'log');
   act.arg=mk('',  arg);
-  act.eq =mk('',  '=');
+  act.eq =mk('',  Q);
   act.x  =mk('c-x',X);
   const sw=document.createElement('div'); sw.className='stickwrap';
   const st=document.createElement('div'); st.className='stick'; sw.append(st); stage.append(sw);
@@ -361,9 +387,21 @@ function updatePanel(){
   $('nField').hidden=S.mode!=='cus';
   const chk=$('chk');
   if(S.mode==='cus'){
-    const nN=parseNum(S.n), xN=parseNum(S.x);
+    const nN=parseNum(S.n), xN=parseNum(S.x), E=eff();
     chk.hidden=false; chk.className='note';
-    if(isFinite(nN)&&nN<=0){chk.textContent='真數須滿足 N > 0。';}
+    const nm={b:'b',x:'x',n:'N'};
+    if(E.err){chk.textContent=E.err;}
+    else if(E.solved){
+      const r=E.approx?'≈':'=', v=tok(E[E.solved]);
+      const how=E.solved==='x'?`x = log<sub>${tok(S.b)}</sub> ${tok(S.n)} ${r} ${v}`
+               :E.solved==='n'?`N = ${tok(S.b)}<sup>${tok(S.x)}</sup> ${r} ${v}`
+               :`b = ${tok(S.n)}<sup>1/${tok(S.x)}</sup> ${r} ${v}`;
+      chk.classList.add('ok');
+      chk.innerHTML=`${nm[E.solved]} 留空，自動求出：${how}${E.approx?'（四捨五入至小數第 4 位）':''}`;
+    }
+    else if(E.blanks>1){chk.classList.add('info');chk.textContent='b、x、N 只留空一個，就能自動求出它。';}
+    else if(E.blanks===1){chk.classList.add('info');chk.textContent='另外兩個需都是數字，才能求出留空的那一個。';}
+    else if(isFinite(nN)&&nN<=0){chk.textContent='真數須滿足 N > 0。';}
     else if(isFinite(bN)&&(bN<=0||bN===1)){chk.hidden=true;}
     else if(isFinite(bN)&&isFinite(xN)&&isFinite(nN)){
       const v=Math.pow(bN,xN), vs=Number(v.toPrecision(10));
@@ -376,10 +414,13 @@ function updatePanel(){
   }else chk.hidden=true;
   if(S.mode==='num'&&n===null){note.hidden=false;note.textContent='b 與 x 需皆為數字，且結果可精確表示，才能顯示計算值；目前以 bˣ 形式顯示。';}
   else note.hidden=true;
-  const B=`<span class="hb">${tok(S.b)}</span>`, X=`<span class="hx">${tok(S.x)}</span>`;
-  const N=S.mode==='cus'?tok(S.n):(S.mode==='num'&&n!==null)?esc(n):`${B}<sup>${X}</sup>`;
-  $('roLog').innerHTML=`log<sub>${B}</sub> ${N} = ${X}`;
-  $('roExp').innerHTML=`${N} = ${B}<sup>${X}</sup>`;
+  const E2=eff(), Q=E2.approx?'≈':'=';
+  const B=`<span class="hb">${tok(E2.b)}</span>`, X=`<span class="hx">${tok(E2.x)}</span>`;
+  const N=S.mode==='cus'?tok(E2.n):(S.mode==='num'&&n!==null)?esc(n):`${B}<sup>${X}</sup>`;
+  $('roLog').innerHTML=`log<sub>${B}</sub> ${N} ${Q} ${X}`;
+  $('roExp').innerHTML=`${N} ${Q} ${B}<sup>${X}</sup>`;
+  const cus=S.mode==='cus';
+  for(const id of ['inB','inX','inN']) $(id).placeholder=cus?'留空可自動求解':'';
 }
 function rebuild(){build();render();updatePanel();}
 
