@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0;font-size:14px}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>對數揮棒轉換</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400;1,500&display=swap">
+<style>
+/* Layout: chalkboard stage on the left (the lesson itself), slim settings rail on the right; stacks on phones */
+:root{
+  --bg:#eaede7; --surface:#f8f9f5; --ink:#1c2520; --muted:#56635b; --line:#d1d8cf;
+  --accent:#2c674b; --accent-ink:#ffffff; --field:#ffffff; --warn:#a14d18;
+  --hl-base:#9a6f00; --hl-x:#23679f;
+  --board:#25382e; --chalk:#f0efe4; --chalk-dim:rgba(240,239,228,.5);
+  --chalk-base:#f4d36a; --chalk-x:#9ccff3; --frame-a:#9c6b3d; --frame-b:#6a4323;
+  --f-math:"STIX Two Text","Cambria Math","Times New Roman",serif;
+  --f-ui:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-title:"Noto Serif TC","Songti TC","PMingLiU",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121815; --surface:#1a221e; --ink:#e4ebe6; --muted:#97a69d; --line:#2b3731;
+    --accent:#78c09b; --accent-ink:#0d1a13; --field:#121815; --warn:#e59a62;
+    --hl-base:#f4d36a; --hl-x:#9ccff3; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121815; --surface:#1a221e; --ink:#e4ebe6; --muted:#97a69d; --line:#2b3731;
+  --accent:#78c09b; --accent-ink:#0d1a13; --field:#121815; --warn:#e59a62;
+  --hl-base:#f4d36a; --hl-x:#9ccff3; color-scheme:dark;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui)}
+.wrap{max-width:1180px;margin:0 auto;padding-block:22px 36px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{margin-bottom:16px}
+h1{font-family:var(--f-title);font-size:clamp(22px,3vw,30px);margin:0 0 4px;text-wrap:balance;letter-spacing:.02em}
+header p{margin:0;color:var(--muted);font-size:14.5px;max-width:62ch;line-height:1.6}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:20px;align-items:start}
+@media (max-width:860px){.app{grid-template-columns:minmax(0,1fr)}}
+.left{min-width:0}
+
+.frame{background:linear-gradient(135deg,var(--frame-a),var(--frame-b));padding:12px 12px 8px;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.board{position:relative;aspect-ratio:16/9;min-height:300px;max-width:100%;border-radius:3px;overflow:hidden;
+  background:radial-gradient(ellipse 60% 50% at 28% 22%,rgba(255,255,255,.055),transparent 70%),
+             radial-gradient(ellipse 55% 45% at 78% 78%,rgba(255,255,255,.04),transparent 70%),var(--board);
+  box-shadow:inset 0 0 70px rgba(0,0,0,.45)}
+.ledge{height:11px;margin-top:8px;border-radius:3px;background:linear-gradient(#7c512b,#57361a);position:relative}
+.ledge::after{content:"";position:absolute;right:16%;top:-5px;width:32px;height:7px;border-radius:3px;background:#efeee5;box-shadow:-46px 1px 0 -1px #f4d36a}
+
+.tag{position:absolute;left:16px;top:12px;font:500 13px var(--f-ui);color:var(--chalk-dim);letter-spacing:.14em;pointer-events:none}
+.row{position:absolute;white-space:nowrap;line-height:2.4;visibility:hidden;pointer-events:none;font-family:var(--f-math)}
+.p{display:inline-block;line-height:1}
+.row .sub{font-size:.58em;vertical-align:-.42em}
+.row .sup{font-size:.58em;vertical-align:.86em;margin-left:.03em}
+.row1 .arg{margin-left:.16em}
+.row .eq{margin:0 .3em}
+.s{display:inline-block;line-height:1;font-size:.58em;vertical-align:.86em;margin-left:.03em}
+.v{font-style:italic;padding-right:.04em}
+.act{position:absolute;left:0;top:0;transform-origin:0 0;white-space:nowrap;line-height:1;font-family:var(--f-math);color:var(--chalk);will-change:transform;pointer-events:none;text-shadow:0 0 .03em rgba(255,255,255,.35)}
+.c-base{color:var(--chalk-base)} .c-x{color:var(--chalk-x)}
+.stickwrap{position:absolute;left:0;top:0;transform-origin:0 0;filter:drop-shadow(0 3px 2px rgba(0,0,0,.45));pointer-events:none;will-change:transform}
+.stick{width:100%;height:100%;border-radius:999px 0 0 999px;
+  background:repeating-linear-gradient(90deg,rgba(70,35,10,.2) 0 1px,transparent 1px 7px,rgba(255,232,195,.1) 7px 8px,transparent 8px 14px),
+             linear-gradient(180deg,#e4b67e 0%,#bb8046 42%,#8b582a 78%,#6a401c 100%)}
+.burst{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+
+.controls{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin-top:16px}
+.toggle{font:500 17px var(--f-ui);background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:12px 24px 12px 14px;display:inline-flex;gap:10px;align-items:center;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.toggle:hover{filter:brightness(1.06)}
+.toggle:active{transform:translateY(1px)}
+.toggle .ic{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.18);transition:transform .45s cubic-bezier(.6,0,.2,1)}
+.toggle[aria-pressed="true"] .ic{transform:rotate(180deg)}
+.hint{color:var(--muted);font-size:13.5px}
+kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--surface)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.panel h2{margin:0;font-size:15px;font-weight:700;letter-spacing:.06em}
+.field{display:grid;gap:6px}
+.field label{font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.sw{width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.25)}
+.field input[type=text]{font:22px var(--f-math);color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:7px 12px;width:100%;box-sizing:border-box}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:15px var(--f-math);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:3px 11px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:14px var(--f-ui);background:transparent;color:var(--ink);border:0;padding:8px 6px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button:disabled{color:var(--muted);opacity:.55;cursor:not-allowed}
+.note{font-size:12.5px;color:var(--warn);line-height:1.5;margin:0}
+.range{display:flex;align-items:center;gap:10px}
+.range input{flex:1;accent-color:var(--accent);min-width:0}
+.range output{font:14px var(--f-ui);font-variant-numeric:tabular-nums;width:3.2em;text-align:right}
+.readout{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:8px;font-size:13px;color:var(--muted)}
+.readout .m{font:20px var(--f-math);color:var(--ink);overflow-x:auto;white-space:nowrap}
+.readout .hb{color:var(--hl-base)} .readout .hx{color:var(--hl-x)}
+.readout sub,.readout sup{font-size:.62em}
+.def{font-size:12.5px;line-height:1.7;color:var(--muted)}
+.def .m2{font-family:var(--f-math);font-size:15px;color:var(--ink)}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>對數式 ⇄ 指數式</h1>
+    <p>按下按鈕，log 化成木棒，把底數打過等號；右邊的指數同時縮小升到右上角。再按一次，整段動作倒帶還原。</p>
+  </header>
+  <div class="app">
+    <div class="left">
+      <div class="frame">
+        <div class="board" id="stage">
+          <span class="tag" id="tagLog">對數式</span>
+          <span class="tag" id="tagExp" style="opacity:0">指數式</span>
+        </div>
+        <div class="ledge"></div>
+      </div>
+      <div class="controls">
+        <button class="toggle" id="toggle" aria-pressed="false" type="button">
+          <span class="ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span id="toggleLabel">轉換成指數式</span>
+        </button>
+        <span class="hint">也可按 <kbd>空白鍵</kbd>；動作中再按會立即反向</span>
+      </div>
+    </div>
+
+    <aside class="panel" aria-label="自訂數值">
+      <h2>自訂數值</h2>
+      <div class="field">
+        <label for="inB"><span class="sw" style="background:var(--chalk-base)"></span>底數 b</label>
+        <input type="text" id="inB" value="10" maxlength="6" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="inX"><span class="sw" style="background:var(--chalk-x)"></span>指數 x</label>
+        <input type="text" id="inX" value="x" maxlength="6" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="chips" id="chips">
+        <button class="chip" type="button" data-b="10" data-x="x">10, x</button>
+        <button class="chip" type="button" data-b="10" data-x="3">10, 3</button>
+        <button class="chip" type="button" data-b="2" data-x="5">2, 5</button>
+        <button class="chip" type="button" data-b="3" data-x="-2">3, −2</button>
+      </div>
+      <p class="note" id="warn" hidden></p>
+      <div class="field">
+        <label>真數顯示</label>
+        <div class="seg">
+          <button type="button" id="mLit" aria-pressed="true">b<sup>x</sup> 形式</button>
+          <button type="button" id="mNum" aria-pressed="false">計算值</button>
+        </div>
+        <p class="note" id="numNote" hidden></p>
+      </div>
+      <div class="field">
+        <label for="inSpd">動畫速度</label>
+        <div class="range"><input type="range" id="inSpd" min="0" max="3" step="1" value="2"><output id="spdOut">1×</output></div>
+      </div>
+      <div class="readout">
+        <div>對數式<div class="m" id="roLog"></div></div>
+        <div>指數式<div class="m" id="roExp"></div></div>
+        <div class="def">定義：當 <span class="m2"><i>b</i> &gt; 0，<i>b</i> ≠ 1，<i>N</i> &gt; 0</span>，<br><span class="m2">log<sub><i>b</i></sub> <i>N</i> = <i>x</i> ⟺ <i>N</i> = <i>b</i><sup><i>x</i></sup></span></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const stage=$('stage'), btn=$('toggle'), lbl=$('toggleLabel');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const S={b:'10',x:'x',mode:'lit',speed:1,t:0,target:0,running:false,last:0};
+const act={}; let L=null;
+const CH=[240,239,228], WD=[205,145,85];
+
+const clamp=v=>v<0?0:v>1?1:v;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const lerp=(a,b,k)=>a+(b-a)*k;
+const eio=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+const eo3=k=>1-Math.pow(1-k,3);
+const mix=(a,b,k)=>`rgb(${a.map((v,i)=>Math.round(lerp(v,b[i],k))).join(',')})`;
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function tok(s){
+  if(!s) s='□';
+  let out='',buf='',it=null;
+  const wrap=(b,v)=>v?`<span class="v">${esc(b)}</span>`:esc(b);
+  for(const ch0 of s){
+    const c=ch0==='-'?'−':(ch0==='l'?'ℓ':ch0);
+    const isV=/[A-Za-zℓα-ωΑ-Ω]/.test(c);
+    if(it===null||isV===it){buf+=c;it=isV;}else{out+=wrap(buf,it);buf=c;it=isV;}
+  }
+  return out+wrap(buf,it);
+}
+function parseNum(s){
+  s=s.trim().replace(/−/g,'-');
+  if(/^-?\d+(\.\d+)?$/.test(s)) return Number(s);
+  const m=s.match(/^(-?\d+)\/(\d+)$/); if(m&&+m[2]!==0) return m[1]/m[2];
+  return NaN;
+}
+function numericArg(){
+  const b=parseNum(S.b), x=parseNum(S.x);
+  if(!isFinite(b)||!isFinite(x)||b<=0||b===1) return null;
+  const v=Math.pow(b,x);
+  if(!isFinite(v)||v<=0||v>1e15) return null;
+  const r=Number(v.toPrecision(12)), str=String(r);
+  if(!str.includes('e')&&(str.split('.')[1]||'').length<=6) return str;
+  if(Number.isInteger(x)&&x<0&&Number.isInteger(b)){const d=Math.pow(b,-x); if(d<=1e15) return '1/'+d;}
+  return null;
+}
+function argHTML(){
+  const n=S.mode==='num'?numericArg():null;
+  return n!==null?esc(n):`<span class="c-base">${tok(S.b)}</span><span class="s c-x">${tok(S.x)}</span>`;
+}
+
+function build(){
+  const W=stage.clientWidth, H=stage.clientHeight;
+  if(!W||!H) return;
+  stage.querySelectorAll('.row,.act,.stickwrap,.burst').forEach(n=>n.remove());
+  const arg=argHTML(), B=tok(S.b), X=tok(S.x);
+  const r1=document.createElement('div'); r1.className='row row1';
+  r1.innerHTML=`<span class="p log">log</span><span class="p sub base">${B}</span><span class="p arg">${arg}</span><span class="p eq">=</span><span class="p xr">${X}</span>`;
+  const r2=document.createElement('div'); r2.className='row row2';
+  r2.innerHTML=`<span class="p arg">${arg}</span><span class="p eq">=</span><span class="p base">${B}</span><span class="p sup xr">${X}</span>`;
+  stage.append(r1,r2);
+  let F=Math.min(H/5.2,120);
+  const setF=f=>{r1.style.fontSize=r2.style.fontSize=f+'px';};
+  setF(F);
+  const a1=r1.offsetWidth/F, a2=r2.offsetWidth/F;
+  F=Math.max(22,Math.min(F,W/(a1+3.3),0.9*W/a2));
+  setF(F);
+  const top=H*0.47-1.2*F;
+  for(const r of [r1,r2]){r.style.top=top+'px';r.style.left=(W-r.offsetWidth)/2+'px';}
+  const sr=stage.getBoundingClientRect();
+  const q=(r,s)=>{const b=r.querySelector(s).getBoundingClientRect();return{x:b.left-sr.left,y:b.top-sr.top,w:b.width,h:b.height};};
+  L={F,log:q(r1,'.log'),base1:q(r1,'.base'),arg1:q(r1,'.arg'),eq1:q(r1,'.eq'),x1:q(r1,'.xr'),
+       base2:q(r2,'.base'),arg2:q(r2,'.arg'),eq2:q(r2,'.eq'),x2:q(r2,'.xr')};
+
+  const mk=(cls,html)=>{const d=document.createElement('div');d.className='act '+cls;d.innerHTML=html;d.style.fontSize=F+'px';stage.append(d);return d;};
+  act.log=mk('',  'log');
+  act.arg=mk('',  arg);
+  act.eq =mk('',  '=');
+  act.x  =mk('c-x',X);
+  const sw=document.createElement('div'); sw.className='stickwrap';
+  const st=document.createElement('div'); st.className='stick'; sw.append(st); stage.append(sw);
+  act.sw=sw; act.st=st;
+  act.base=mk('c-base',B);
+  const bs=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  bs.setAttribute('class','burst'); bs.setAttribute('viewBox','-50 -50 100 100');
+  let g='';
+  for(let i=0;i<10;i++){const a=i*Math.PI/5+.2,r0=26,r1_=i%2?38:44;
+    g+=`<line x1="${(r0*Math.cos(a)).toFixed(1)}" y1="${(r0*Math.sin(a)).toFixed(1)}" x2="${(r1_*Math.cos(a)).toFixed(1)}" y2="${(r1_*Math.sin(a)).toFixed(1)}"/>`;}
+  bs.innerHTML=`<g stroke="#f4d36a" stroke-width="4.5" stroke-linecap="round">${g}</g>`;
+  stage.append(bs); act.burst=bs;
+
+  L.bw=act.base.offsetWidth; L.bh=act.base.offsetHeight;
+  L.sSub=L.base1.h/L.bh; L.sSup=L.x2.h/act.x.offsetHeight;
+  L.P={x:L.log.x+F*.04,y:L.log.y+L.log.h*.55};
+  L.c0={x:L.base1.x+L.base1.w/2,y:L.base1.y+L.base1.h/2};
+  L.c1={x:L.base2.x+L.base2.w/2,y:L.base2.y+L.base2.h/2};
+  const dx=L.c0.x-L.P.x, dy=L.c0.y-L.P.y;
+  L.hit=Math.atan2(dy,dx)*180/Math.PI;
+  L.len=Math.hypot(dx,dy)+L.base1.w*.35+F*.12;
+  // circular arc under the whole expression: c0 → lowest point → c1
+  let bottom=0;
+  for(const r of [r1,r2]) r.querySelectorAll('.p').forEach(el=>{const b=el.getBoundingClientRect();bottom=Math.max(bottom,b.bottom-sr.top);});
+  const mx=(L.c0.x+L.c1.x)/2, my=(L.c0.y+L.c1.y)/2;
+  const cdx=L.c1.x-L.c0.x, cdy=L.c1.y-L.c0.y, d=Math.hypot(cdx,cdy);
+  let nx=-cdy/d, ny=cdx/d; if(ny<0){nx=-nx;ny=-ny;}
+  const sag=Math.max((bottom+F*.6-my)/ny, F*.6);
+  const R=(d*d/4+sag*sag)/(2*sag);
+  const ox=mx+nx*(sag-R), oy=my+ny*(sag-R);
+  const g0=Math.atan2(L.c0.y-oy,L.c0.x-ox);
+  const g1=Math.atan2(L.c1.y-oy,L.c1.x-ox);
+  const an=Math.atan2(ny,nx);
+  const norm=a=>{while(a<0)a+=2*Math.PI;while(a>=2*Math.PI)a-=2*Math.PI;return a;};
+  const sweep=norm(g0-g1), viaBottom=norm(g0-an)<sweep;
+  L.arc={ox,oy,R,a0:g0,a1:viaBottom?g0-sweep:g0+(2*Math.PI-sweep)};
+  L.bsz=F*1.25;
+  bs.setAttribute('width',L.bsz); bs.setAttribute('height',L.bsz);
+}
+
+function render(){
+  if(!L) return;
+  const t=S.t, F=L.F;
+  // 1. "log" turns to wood and squeezes into a rod
+  const A=seg(t,0,.2), Ae=eio(A), sy=1-.7*Ae;
+  act.log.style.transform=`translate(${L.log.x}px,${L.log.y+L.log.h*(1-sy)/2}px) scale(1,${sy})`;
+  act.log.style.opacity=1-seg(t,.08,.2);
+  act.log.style.color=mix(CH,WD,Ae);
+  // 2. stick: morph → backswing → swing → follow-through
+  const Bk=seg(t,.2,.42), Ck=seg(t,.42,.5), Dk=seg(t,.5,.64);
+  const th=lerp(L.log.h*.42,F*.1,Ae);
+  const len=lerp(L.log.w,L.len,eio(Bk));
+  let ang;
+  if(t<.42) ang=lerp(0,-75,eio(Bk));
+  else if(t<.5) ang=lerp(-75,L.hit,Ck*Ck);
+  else ang=lerp(L.hit,L.hit+38,eo3(Dk));
+  const op=seg(t,.03,.16)*(1-seg(t,.55,.7));
+  act.sw.style.width=len+'px'; act.sw.style.height=th+'px';
+  act.sw.style.transform=`translate(${L.P.x}px,${L.P.y}px) rotate(${ang}deg) translate(0,${-th/2}px)`;
+  act.sw.style.opacity=op; act.sw.style.visibility=op<.002?'hidden':'visible';
+  const tp=lerp(0,30,Ae);
+  act.st.style.clipPath=`polygon(0 0,100% ${tp}%,100% ${100-tp}%,0 100%)`;
+  // 3. impact flash
+  const bk=seg(t,.47,.62), bo=Math.sin(Math.PI*bk), bsc=lerp(.4,1.5,bk);
+  act.burst.style.opacity=bo; act.burst.style.visibility=bo<.002?'hidden':'visible';
+  act.burst.style.transform=`translate(${L.c0.x-L.bsz/2}px,${L.c0.y-L.bsz/2}px) scale(${bsc})`;
+  act.burst.style.transformOrigin=`${L.bsz/2}px ${L.bsz/2}px`;
+  // 4. synchronized motion: base flies, x shrinks up-right, the rest re-centres
+  const k=eo3(seg(t,.5,.88)), u=1-k;
+  const aa=lerp(L.arc.a0,L.arc.a1,k);
+  const cx=L.arc.ox+L.arc.R*Math.cos(aa), cy=L.arc.oy+L.arc.R*Math.sin(aa);
+  const s=lerp(L.sSub,1,k), rot=reduce?0:360*k;
+  act.base.style.transform=`translate(${cx}px,${cy}px) rotate(${rot}deg) scale(${s}) translate(${-L.bw/2}px,${-L.bh/2}px)`;
+  act.x.style.transform=`translate(${lerp(L.x1.x,L.x2.x,k)}px,${lerp(L.x1.y,L.x2.y,k)}px) scale(${lerp(1,L.sSup,k)})`;
+  act.arg.style.transform=`translate(${lerp(L.arg1.x,L.arg2.x,k)}px,${lerp(L.arg1.y,L.arg2.y,k)}px)`;
+  act.eq.style.transform=`translate(${lerp(L.eq1.x,L.eq2.x,k)}px,${lerp(L.eq1.y,L.eq2.y,k)}px)`;
+  $('tagLog').style.opacity=1-seg(t,.45,.6);
+  $('tagExp').style.opacity=seg(t,.75,.9);
+}
+
+function tick(now){
+  const dt=Math.min(64,now-S.last); S.last=now;
+  const D=4400/S.speed, dir=S.target>S.t?1:-1;
+  S.t=clamp(S.t+dir*dt/D);
+  if((dir>0&&S.t>S.target)||(dir<0&&S.t<S.target)) S.t=S.target;
+  render();
+  if(S.t!==S.target) requestAnimationFrame(tick); else S.running=false;
+}
+function toggle(){
+  S.target=S.target?0:1; updateBtn();
+  if(!S.running){S.running=true;S.last=performance.now();requestAnimationFrame(tick);}
+}
+function updateBtn(){
+  const on=S.target===1;
+  btn.setAttribute('aria-pressed',on);
+  lbl.textContent=on?'還原成對數式':'轉換成指數式';
+}
+function updatePanel(){
+  const bN=parseNum(S.b), warn=$('warn');
+  if(isFinite(bN)&&(bN<=0||bN===1)){warn.hidden=false;warn.textContent='底數須滿足 b > 0 且 b ≠ 1。';}
+  else warn.hidden=true;
+  const n=numericArg(), mNum=$('mNum'), note=$('numNote');
+  mNum.disabled=n===null;
+  $('mLit').setAttribute('aria-pressed',S.mode!=='num'||n===null);
+  mNum.setAttribute('aria-pressed',S.mode==='num'&&n!==null);
+  if(S.mode==='num'&&n===null){note.hidden=false;note.textContent='b 與 x 需皆為數字，且結果可精確表示，才能顯示計算值；目前以 bˣ 形式顯示。';}
+  else note.hidden=true;
+  const B=`<span class="hb">${tok(S.b)}</span>`, X=`<span class="hx">${tok(S.x)}</span>`;
+  const N=(S.mode==='num'&&n!==null)?esc(n):`${B}<sup>${X}</sup>`;
+  $('roLog').innerHTML=`log<sub>${B}</sub> ${N} = ${X}`;
+  $('roExp').innerHTML=`${N} = ${B}<sup>${X}</sup>`;
+}
+function rebuild(){build();render();updatePanel();}
+
+btn.addEventListener('click',toggle);
+document.addEventListener('keydown',e=>{
+  if(e.code!=='Space') return;
+  const tag=(document.activeElement||{}).tagName;
+  if(tag==='INPUT'||tag==='BUTTON'||tag==='TEXTAREA') return;
+  e.preventDefault(); toggle();
+});
+$('inB').addEventListener('input',e=>{S.b=e.target.value.trim();rebuild();});
+$('inX').addEventListener('input',e=>{S.x=e.target.value.trim();rebuild();});
+$('chips').addEventListener('click',e=>{
+  const c=e.target.closest('.chip'); if(!c) return;
+  S.b=c.dataset.b; S.x=c.dataset.x; $('inB').value=S.b; $('inX').value=S.x.replace('-','−'); rebuild();
+});
+$('mLit').addEventListener('click',()=>{S.mode='lit';rebuild();});
+$('mNum').addEventListener('click',()=>{S.mode='num';rebuild();});
+const SPEEDS=[0.25,0.5,1,2];
+$('inSpd').addEventListener('input',e=>{S.speed=SPEEDS[+e.target.value];$('spdOut').textContent=S.speed+'×';});
+
+new ResizeObserver(()=>{build();render();}).observe(stage);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{build();render();});
+rebuild(); updateBtn();
+})();
+</script>
+
+</body>
+</html>
