@@ -93,6 +93,18 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
 .seg button:disabled{color:var(--muted);opacity:.55;cursor:not-allowed}
 .note{font-size:12.5px;color:var(--warn);line-height:1.5;margin:0}
 .note.ok{color:var(--accent)}
+.app2{margin-top:36px}
+.inv-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 16px;margin-bottom:12px}
+.inv-head h2{margin:0;font-family:var(--f-title);font-size:clamp(18px,2.2vw,22px);letter-spacing:.04em}
+.board2{display:grid;grid-template-columns:minmax(0,1fr)}
+.cell{position:relative;overflow:hidden;min-width:0}
+.row .ssub{font-size:.36em;vertical-align:.95em}
+.row .sa{margin-left:.14em}
+.row .lb{margin-left:.16em}
+.controls2{display:flex;margin-top:14px}
+.toggle.sm{font-size:15px;padding:9px 18px 9px 10px}
+.toggle.sm .ic{width:24px;height:24px}
+
 .note.info{color:var(--muted)}
 .note sup{font-size:.7em}
 .range{display:flex;align-items:center;gap:10px}
@@ -139,10 +151,10 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
       </div>
       <div class="field">
         <label for="inX"><span class="sw" style="background:var(--chalk-x)"></span>指數 x</label>
-        <input type="text" id="inX" value="x" maxlength="6" autocomplete="off" spellcheck="false">
+        <input type="text" id="inX" value="a" maxlength="6" autocomplete="off" spellcheck="false">
       </div>
       <div class="chips" id="chips">
-        <button class="chip" type="button" data-b="10" data-x="x">10, x</button>
+        <button class="chip" type="button" data-b="10" data-x="a">10, a</button>
         <button class="chip" type="button" data-b="10" data-x="3">10, 3</button>
         <button class="chip" type="button" data-b="2" data-x="5">2, 5</button>
         <button class="chip" type="button" data-b="3" data-x="-2">3, −2</button>
@@ -173,6 +185,24 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
       </div>
     </aside>
   </div>
+  <div class="app app2">
+    <div class="left">
+      <section class="inv2" aria-label="互逆關係">
+        <div class="inv-head">
+          <h2>互逆關係</h2>
+        </div>
+        <div class="frame">
+          <div class="board board2">
+            <div class="cell" id="cell1"></div>
+          </div>
+          <div class="ledge"></div>
+        </div>
+        <div class="controls2">
+          <button class="toggle sm" id="invBtn1" aria-pressed="false" type="button"><span class="ic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="invLbl1">化簡</span></button>
+        </div>
+      </section>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -180,7 +210,7 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
 const $=id=>document.getElementById(id);
 const stage=$('stage'), btn=$('toggle'), lbl=$('toggleLabel');
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const S={b:'10',x:'x',n:'N',mode:'lit',speed:1,t:0,target:0,running:false,last:0};
+const S={b:'10',x:'a',n:'N',mode:'lit',speed:1,t:0,target:0,running:false,last:0};
 const act={}; let L=null;
 const CH=[240,239,228], WD=[205,145,85];
 
@@ -422,7 +452,7 @@ function updatePanel(){
   const cus=S.mode==='cus';
   for(const id of ['inB','inX','inN']) $(id).placeholder=cus?'留空可自動求解':'';
 }
-function rebuild(){build();render();updatePanel();}
+function rebuild(){build();render();updatePanel();buildCells();}
 
 btn.addEventListener('click',toggle);
 document.addEventListener('keydown',e=>{
@@ -444,8 +474,102 @@ $('inN').addEventListener('input',e=>{S.n=e.target.value.trim();rebuild();});
 const SPEEDS=[0.25,0.5,1,2];
 $('inSpd').addEventListener('input',e=>{S.speed=SPEEDS[+e.target.value];$('spdOut').textContent=S.speed+'×';});
 
+/* ===== 互逆關係（第二塊黑板） ===== */
+const INV={cells:[]};
+const lerpBox=(p,q,k)=>({x:lerp(p.x,q.x,k),y:lerp(p.y,q.y,k),w:lerp(p.w,q.w,k),h:lerp(p.h,q.h,k)});
+const ctr=b=>({x:b.x+b.w/2,y:b.y+b.h/2});
+function putC(a,cx,cy,sx,sy,rot,op){
+  a.style.transform=`translate(${cx}px,${cy}px) rotate(${rot||0}deg) scale(${sx},${sy}) translate(${-a._w/2}px,${-a._h/2}px)`;
+  a.style.opacity=op; a.style.visibility=op<.002?'hidden':'visible';
+}
+function putBox(a,b,op=1){const c=ctr(b),s=b.h/a._h;putC(a,c.x,c.y,s,s,0,op);}
+function mkBurst(parent){
+  const bs=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  bs.setAttribute('class','burst'); bs.setAttribute('viewBox','-50 -50 100 100');
+  let g='';
+  for(let i=0;i<10;i++){const a=i*Math.PI/5+.2,r0=26,r1=i%2?38:44;
+    g+=`<line x1="${(r0*Math.cos(a)).toFixed(1)}" y1="${(r0*Math.sin(a)).toFixed(1)}" x2="${(r1*Math.cos(a)).toFixed(1)}" y2="${(r1*Math.sin(a)).toFixed(1)}"/>`;}
+  bs.innerHTML=`<g stroke="#f4d36a" stroke-width="4.5" stroke-linecap="round">${g}</g>`;
+  parent.append(bs); return bs;
+}
+function buildCell(c){
+  const el=c.el, W=el.clientWidth, H=el.clientHeight; if(!W||!H) return;
+  el.querySelectorAll('.row,.act,.stickwrap,.burst').forEach(n=>n.remove());
+  const b=eff().b, common=b==='10', B=tok(b), V=s=>`<span class="v">${s}</span>`;
+  const vv=c.kind===1?'a':'x', vc='c-x';
+  const tail=`<span class="p" data-k="v">${V(vv)}</span><span class="p eq" data-k="eq">=</span><span class="p" data-k="vr">${V(vv)}</span>`;
+  const head=c.kind===1
+    ? w=>`<span class="p" data-k="B">${B}</span><span class="p sup" data-k="log">log</span>${w?`<span class="p ssub" data-k="sub">${B}</span>`:''}<span class="p sup sa" data-k="v">${V('a')}</span><span class="p eq" data-k="eq">=</span><span class="p" data-k="vr">${V('a')}</span>`
+    : w=>`<span class="p" data-k="log">log</span>${w?`<span class="p sub" data-k="sub">${B}</span>`:''}<span class="p lb" data-k="B">${B}</span><span class="p sup" data-k="v">${V('x')}</span><span class="p eq" data-k="eq">=</span><span class="p" data-k="vr">${V('x')}</span>`;
+  const cont={v:[vc,V(vv)],eq:['','='],vr:[vc,V(vv)],log:['','log'],sub:['c-base',B],B:['c-base',B]};
+  const rows=[head(!common),head(true),tail].map(h=>{const r=document.createElement('div');r.className='row';r.innerHTML=h;el.append(r);return r;});
+  let F=Math.min(H/5.2,120);
+  const setF=f=>rows.forEach(r=>r.style.fontSize=f+'px');
+  setF(F);
+  F=Math.max(18,Math.min(F,.86*W/(rows[1].offsetWidth/F)));
+  setF(F);
+  const top=H*.5-1.2*F;
+  rows.forEach(r=>{r.style.top=top+'px';r.style.left=(W-r.offsetWidth)/2+'px';});
+  const er=el.getBoundingClientRect();
+  const boxes=r=>{const o={};r.querySelectorAll('[data-k]').forEach(n=>{const q=n.getBoundingClientRect();o[n.dataset.k]={x:q.left-er.left,y:q.top-er.top,w:q.width,h:q.height};});return o;};
+  const [r0,r1,r2]=rows.map(boxes);
+  for(const k in r1) if(!r0[k]) r0[k]=r1[k];
+  const A={};
+  const mk=k=>{const d=document.createElement('div');d.className='act '+cont[k][0];d.innerHTML=cont[k][1];d.style.fontSize=F+'px';el.append(d);d._w=d.offsetWidth;d._h=d.offsetHeight;A[k]=d;};
+  ['v','eq','vr','log','sub','B'].forEach(mk);
+  const bs=mkBurst(el);
+  const cB=ctr(r1.B), lg=r1.log, sb=r1.sub;
+  const gx=(Math.min(lg.x,sb.x)+Math.max(lg.x+lg.w,sb.x+sb.w))/2, gy=(Math.min(lg.y,sb.y)+Math.max(lg.y+lg.h,sb.y+sb.h))/2;
+  c.A=A; c.bs=bs;
+  c.L={F,r0,r1,r2,common,M:{x:(cB.x+gx)/2,y:(cB.y+gy)/2},bsz:F*1.1};
+  bs.setAttribute('width',c.L.bsz); bs.setAttribute('height',c.L.bsz);
+}
+function renderCell(c){
+  const L=c.L; if(!L) return;
+  const t=c.t, A=c.A;
+  const g=eio(seg(t,0,.15)), pre=k=>lerpBox(L.r0[k],L.r1[k],g);
+  const kk=eio(seg(t,.55,.9));
+  for(const k of ['v','eq','vr']) putBox(A[k],lerpBox(pre(k),L.r2[k],kk));
+  const subOp=L.common?.75*g:1;
+  {
+    const glow=seg(t,.1,.3), pulse=.12*Math.sin(Math.PI*seg(t,.18,.34));
+    const m=eio(seg(t,.32,.58)), fade=1-seg(t,.46,.6);
+    for(const k of ['B','log','sub']){
+      const a=A[k], p=pre(k), c0=ctr(p), s=p.h/a._h*(1+pulse)*(1-.65*m);
+      putC(a,lerp(c0.x,L.M.x,m),lerp(c0.y,L.M.y,m),s,s,0,(k==='sub'?subOp:1)*fade);
+      a.style.textShadow=glow>0?`0 0 ${(.35*glow).toFixed(3)}em rgba(244,211,106,${(.9*glow).toFixed(3)})`:'';
+    }
+  }
+  const bk=seg(t,.5,.66), at=L.M;
+  const bo=Math.sin(Math.PI*bk), bs=c.bs;
+  bs.style.opacity=bo; bs.style.visibility=bo<.002?'hidden':'visible';
+  bs.style.transformOrigin=`${L.bsz/2}px ${L.bsz/2}px`;
+  bs.style.transform=`translate(${at.x-L.bsz/2}px,${at.y-L.bsz/2}px) scale(${lerp(.4,1.5,bk)})`;
+}
+function buildCells(){INV.cells.forEach(c=>{buildCell(c);renderCell(c);});}
+function mkCell(id,kind,n){
+  const c={el:$(id),kind,n,t:0,target:0,running:false,last:0,btn:$('invBtn'+n),lbl:$('invLbl'+n)};
+  c.step=now=>{
+    const dt=Math.min(64,now-c.last); c.last=now;
+    const D=4400/S.speed, dir=c.target>c.t?1:-1;
+    c.t=clamp(c.t+dir*dt/D);
+    if((dir>0&&c.t>c.target)||(dir<0&&c.t<c.target)) c.t=c.target;
+    renderCell(c);
+    if(c.t!==c.target) requestAnimationFrame(c.step); else c.running=false;
+  };
+  c.btn.addEventListener('click',()=>{
+    c.target=c.target?0:1;
+    c.btn.setAttribute('aria-pressed',c.target===1);
+    c.lbl.textContent=c.target?'還原':'化簡';
+    if(!c.running){c.running=true;c.last=performance.now();requestAnimationFrame(c.step);}
+  });
+  INV.cells.push(c);
+  new ResizeObserver(()=>{buildCell(c);renderCell(c);}).observe(c.el);
+}
+mkCell('cell1',1,1);
+
 new ResizeObserver(()=>{build();render();}).observe(stage);
-if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{build();render();});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{build();render();buildCells();});
 rebuild(); updateBtn();
 })();
 </script>
