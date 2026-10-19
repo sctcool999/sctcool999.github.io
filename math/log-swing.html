@@ -93,14 +93,14 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
 .seg button:disabled{color:var(--muted);opacity:.55;cursor:not-allowed}
 .note{font-size:12.5px;color:var(--warn);line-height:1.5;margin:0}
 .note.ok{color:var(--accent)}
-.app2{margin-top:36px}
+.app2{margin-top:36px;grid-template-columns:minmax(0,1fr)}
 .inv-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 16px;margin-bottom:12px}
 .inv-head h2{margin:0;font-family:var(--f-title);font-size:clamp(18px,2.2vw,22px);letter-spacing:.04em}
 .board2{display:grid;grid-template-columns:minmax(0,1fr)}
 .cell{position:relative;overflow:hidden;min-width:0}
-.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
-.duo .board2{aspect-ratio:8/9}
-@media (max-width:640px){.duo{grid-template-columns:minmax(0,1fr)}.duo .board2{aspect-ratio:16/9}}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,.85fr);gap:20px}
+.duo .board2{aspect-ratio:auto;min-height:0;height:clamp(280px,32vw,400px)}
+@media (max-width:900px){.duo{grid-template-columns:minmax(0,1fr)}.duo .board2{height:auto;aspect-ratio:16/9;min-height:260px}}
 .row .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin-left:.06em}
 .row .frac .num,.row .frac .den{display:block;line-height:1;padding:0 .1em;white-space:nowrap}
 .row .frac .bar{display:block;align-self:stretch;height:.055em;margin:.14em 0}
@@ -221,6 +221,20 @@ kbd{font:500 12px var(--f-ui);border:1px solid var(--line);border-bottom-width:2
         </div>
         <div class="controls2">
           <button class="toggle sm" id="invBtn2" data-off="換底" data-on="還原" aria-pressed="false" type="button"><span class="ic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="invLbl2">換底</span></button>
+        </div>
+      </section>
+      <section class="inv2" aria-label="對數律">
+        <div class="inv-head">
+          <h2>對數律</h2>
+        </div>
+        <div class="frame">
+          <div class="board board2">
+            <div class="cell" id="cellPow"></div>
+          </div>
+          <div class="ledge"></div>
+        </div>
+        <div class="controls2">
+          <button class="toggle sm" id="invBtn3" data-off="移下 n" data-on="還原" aria-pressed="false" type="button"><span class="ic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span id="invLbl3">移下 n</span></button>
         </div>
       </section>
       </div>
@@ -526,7 +540,7 @@ function buildCell(c){
     : w=>`<span class="p" data-k="log">log</span>${w?`<span class="p sub" data-k="sub">${B}</span>`:''}<span class="p lb" data-k="B">${B}</span><span class="p sup" data-k="v">${V('x')}</span><span class="p eq" data-k="eq">=</span><span class="p" data-k="vr">${V('x')}</span>`;
   const cont={v:[vc,V(vv)],eq:['','='],vr:[vc,V(vv)],log:['','log'],sub:['c-base',B],B:['c-base',B]};
   const rows=[head(!common),head(true),tail].map(h=>{const r=document.createElement('div');r.className='row';r.innerHTML=h;el.append(r);return r;});
-  let F=Math.min(H/5.2,120);
+  let F=Math.min(H/5.2,120,INV.cap||1e9);
   const setF=f=>rows.forEach(r=>r.style.fontSize=f+'px');
   setF(F);
   F=Math.max(18,Math.min(F,.86*W/(rows[1].offsetWidth/F)));
@@ -569,7 +583,11 @@ function renderCell(c){
   bs.style.transformOrigin=`${L.bsz/2}px ${L.bsz/2}px`;
   bs.style.transform=`translate(${at.x-L.bsz/2}px,${at.y-L.bsz/2}px) scale(${lerp(.4,1.5,bk)})`;
 }
-function buildCells(){INV.cells.forEach(c=>{c.build(c);c.render(c);});}
+function buildCells(){
+  INV.cap=0; INV.cells.forEach(c=>c.build(c));
+  INV.cap=Math.min(...INV.cells.map(c=>c.L?c.L.F:1e9));
+  INV.cells.forEach(c=>{c.build(c);c.render(c);});
+}
 function mkCell(id,kind,n,build=buildCell,rend=renderCell){
   const c={el:$(id),kind,n,build,render:rend,t:0,target:0,running:false,last:0,btn:$('invBtn'+n),lbl:$('invLbl'+n)};
   c.step=now=>{
@@ -587,7 +605,7 @@ function mkCell(id,kind,n,build=buildCell,rend=renderCell){
     if(!c.running){c.running=true;c.last=performance.now();requestAnimationFrame(c.step);}
   });
   INV.cells.push(c);
-  new ResizeObserver(()=>{c.build(c);c.render(c);}).observe(c.el);
+  (INV.ro||(INV.ro=new ResizeObserver(()=>buildCells()))).observe(c.el);
 }
 mkCell('cell1',1,1);
 
@@ -599,7 +617,7 @@ function buildCob(c){
   const lhs=`<span class="p" data-k="log">log</span><span class="p sub" data-k="a">${Ab}</span><span class="p lb" data-k="r">${V('r')}</span>`;
   const end=lhs+`<span class="p eq" data-k="eq">=</span><span class="frac"><span class="num"><span class="p" data-k="nl">log</span><span class="p lb" data-k="nr">${V('r')}</span></span><span class="bar" data-k="bar"></span><span class="den"><span class="p" data-k="dl">log</span><span class="p lb" data-k="da">${Ab}</span></span></span>`;
   const rows=[lhs,end].map(h=>{const r=document.createElement('div');r.className='row';r.innerHTML=h;el.append(r);return r;});
-  let F=Math.min(H/5.2,120);
+  let F=Math.min(H/5.2,120,INV.cap||1e9);
   const setF=f=>rows.forEach(r=>r.style.fontSize=f+'px');
   setF(F);
   F=Math.max(18,Math.min(F,.86*W/(rows[1].offsetWidth/F)));
@@ -638,6 +656,43 @@ function renderCob(c){
   A.bar.style.opacity=bk>0?1:0; A.bar.style.visibility=bk>0?'visible':'hidden';
 }
 mkCell('cellCob',3,2,buildCob,renderCob);
+
+/* ===== 對數律：log a^n = n log a ===== */
+function buildPow(c){
+  const el=c.el, W=el.clientWidth, H=el.clientHeight; if(!W||!H) return;
+  el.querySelectorAll('.row,.act,.burst').forEach(n=>n.remove());
+  const V=s=>`<span class="v">${s}</span>`;
+  const rows=[
+    `<span class="p" data-k="log">log</span><span class="p lb" data-k="a">${V('a')}</span><span class="p sup" data-k="n">${V('n')}</span>`,
+    `<span class="p" data-k="n">${V('n')}</span><span class="p lb" data-k="log">log</span><span class="p lb" data-k="a">${V('a')}</span>`
+  ].map(h=>{const r=document.createElement('div');r.className='row';r.innerHTML=h;el.append(r);return r;});
+  let F=Math.min(H/5.2,120,INV.cap||1e9);
+  const setF=f=>rows.forEach(r=>r.style.fontSize=f+'px');
+  setF(F);
+  F=Math.max(18,Math.min(F,.86*W/(Math.max(...rows.map(r=>r.offsetWidth))/F)));
+  setF(F);
+  rows.forEach(r=>{r.style.top=(H*.5-1.2*F)+'px';r.style.left=(W-r.offsetWidth)/2+'px';});
+  const er=el.getBoundingClientRect();
+  const boxes=r=>{const o={};r.querySelectorAll('[data-k]').forEach(n=>{const q=n.getBoundingClientRect();o[n.dataset.k]={x:q.left-er.left,y:q.top-er.top,w:q.width,h:q.height};});return o;};
+  const [r1,r2]=rows.map(boxes);
+  const cont={log:['','log'],a:['c-base',V('a')],n:['c-x',V('n')]};
+  const A={};
+  for(const k of ['log','a','n']){const d=document.createElement('div');d.className='act '+cont[k][0];d.innerHTML=cont[k][1];d.style.fontSize=F+'px';el.append(d);d._w=d.offsetWidth;d._h=d.offsetHeight;A[k]=d;}
+  c.A=A; c.L={F,r1,r2};
+}
+function renderPow(c){
+  const L=c.L; if(!L) return;
+  const t=c.t, A=c.A, F=L.F, k=eio(seg(t,.05,.9));
+  for(const key of ['log','a']) putBox(A[key],lerpBox(L.r1[key],L.r2[key],k));
+  const p=L.r1.n, q=L.r2.n, c0=ctr(p), c1=ctr(q);
+  const mx=(c0.x+c1.x)/2, my=Math.min(c0.y,c1.y)-F*1.1;
+  const x=(1-k)*(1-k)*c0.x+2*(1-k)*k*mx+k*k*c1.x, y=(1-k)*(1-k)*c0.y+2*(1-k)*k*my+k*k*c1.y;
+  const s=lerp(p.h,q.h,k)/A.n._h;
+  putC(A.n,x,y,s,s,0,1);
+  const gl=Math.sin(Math.PI*k);
+  A.n.style.textShadow=gl>.001?`0 0 ${(.3*gl).toFixed(3)}em rgba(156,207,243,${(.85*gl).toFixed(3)})`:'';
+}
+mkCell('cellPow',4,3,buildPow,renderPow);
 
 new ResizeObserver(()=>{build();render();}).observe(stage);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{build();render();buildCells();});
