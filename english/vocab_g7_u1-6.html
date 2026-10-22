@@ -259,10 +259,9 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
     <div class="frow"><label for="fNew">每次新單字數</label>
       <select id="fNew"><option value="10">10 個</option><option value="20">20 個</option><option value="30">30 個</option><option value="999">全部</option></select></div>
     <div class="frow"><label for="fRate">發音速度</label>
-      <select id="fRate"><option value="0.65">慢</option><option value="0.85">稍慢</option><option value="1">正常</option></select></div>
+      <select id="fRate"><option value="0.75">慢</option><option value="0.9">稍慢</option><option value="1">正常</option></select></div>
     <div class="frow"><label for="fAuto">新卡片自動唸單字</label><label class="switch"><input type="checkbox" id="fAuto"><span></span></label></div>
-    <div class="frow"><label for="fRole">對話用兩種聲音朗讀</label><label class="switch"><input type="checkbox" id="fRole"><span></span></label></div>
-    <div class="frow"><label>測試發音</label><button class="btn ghost" style="height:36px" id="testVoice">▶ Hello!</button></div>
+    <div class="frow"><label>測試發音</label><button class="btn ghost" style="height:36px" id="testVoice">▶ 試聽</button></div>
   </div>
   <p class="note" id="voiceInfo"></p>
   <h2>資料同步（老師端）</h2>
@@ -347,13 +346,15 @@ const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x'+Date.now().toSt
 let S, storeOK = true;
 function blank(){
   return {v:1, cards:{}, opens:[], days:{}, student:{id:uid(), cls:'', seat:'', name:''},
-    settings:{newPer:20, rate:0.85, auto:false, role:true}, pending:[], created:Date.now()};
+    settings:{newPer:20, rate:1, auto:false, role:true}, pending:[], created:Date.now()};
 }
 function load(){
   try{
     const s = JSON.parse(localStorage.getItem(CONFIG.STORE_KEY) || 'null');
     S = s && s.v ? s : blank();
     S.settings = Object.assign(blank().settings, S.settings||{});
+    if(!S.settings.v2){ S.settings.rate = 1; S.settings.v2 = 1; } // 舊版預設 0.85 太慢，升級時改回正常速度
+    if(![0.75,0.9,1].includes(S.settings.rate)) S.settings.rate = 1;
   }catch(e){ storeOK = false; S = blank(); }
 }
 function save(){
@@ -437,12 +438,28 @@ function pickVoices(){
   TTS.b = find(PREF_B.filter(n => !TTS.a || !TTS.a.name.includes(n))) || us.find(v => v !== TTS.a) || TTS.a;
   TTS.voices = us;
   const vi = document.getElementById('voiceInfo');
-  if(vi) vi.textContent = TTS.a ? `使用聲音：${TTS.a.name}${TTS.b && TTS.b !== TTS.a ? '、' + TTS.b.name : ''}（美式英文）` :
-    (TTS.ok ? '找不到美式英文聲音，將使用系統預設英文發音。iPhone 可到「設定 › 輔助使用 › 語音內容 › 聲音 › 英文」下載 Samantha 等聲音。' : '此瀏覽器不支援語音朗讀。');
+  if(vi) vi.textContent = '發音：AI 語音預先錄製的美式英文音檔（需連網）。若音檔無法載入，會改用手機內建語音' + (TTS.a ? `（${TTS.a.name}）` : '') + '。';
 }
 if(TTS.ok){ pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
 let speakingBtn = null;
-function stopSpeak(){ if(TTS.ok) speechSynthesis.cancel(); if(speakingBtn){ speakingBtn.classList.remove('speaking'); speakingBtn = null; } }
+/* AI 錄製音檔（Kokoro）：audio/<unit>-<no>w.mp3 = 單字、s.mp3 = 例句；載入失敗才改用手機內建語音 */
+const AUDIO_DIR = 'audio/';
+const player = new Audio(); player.preload = 'auto';
+function playClip(file, fallback, btn){
+  stopSpeak();
+  if(btn){ btn.classList.add('speaking'); speakingBtn = btn; }
+  let fell = false;
+  const done = () => { if(btn && speakingBtn === btn){ btn.classList.remove('speaking'); speakingBtn = null; } };
+  const fb = () => { if(fell) return; fell = true; done(); speak(fallback, btn); };
+  player.onended = done; player.onerror = fb;
+  player.src = AUDIO_DIR + file;
+  player.defaultPlaybackRate = player.playbackRate = S.settings.rate;
+  const pr = player.play();
+  if(pr) pr.then(() => { player.playbackRate = S.settings.rate; }).catch(e => { if(e && e.name !== 'AbortError') fb(); });
+}
+const playWord = (w, btn) => playClip(w.id + 'w.mp3', [{text:wordSpeech(w.w)}], btn);
+const playSentence = (w, btn) => playClip(w.id + 's.mp3', sentenceParts(w), btn);
+function stopSpeak(){ try{ player.pause(); }catch(e){} if(TTS.ok) speechSynthesis.cancel(); if(speakingBtn){ speakingBtn.classList.remove('speaking'); speakingBtn = null; } }
 function speak(parts, btn){
   if(!TTS.ok){ toast('此瀏覽器不支援語音朗讀'); return; }
   stopSpeak();
@@ -644,7 +661,7 @@ function nextCard(){
   if(!SES.q.length){ SES.cur = null; updateHead(); return renderDone(); }
   SES.cur = SES.q.shift(); SES.revealed = false; SES.shownAt = Date.now();
   renderCard(); updateHead();
-  if(S.settings.auto) setTimeout(() => { const b = $('pw'); if(b && SES && !SES.revealed) speak([{text:wordSpeech(WMAP[SES.cur].w)}], b); }, 250);
+  if(S.settings.auto) setTimeout(() => { const b = $('pw'); if(b && SES && !SES.revealed) playWord(WMAP[SES.cur], b); }, 250);
 }
 const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5v5a1 1 0 001 1h3.2l4.1 3.6c.6.5 1.7.1 1.7-.8V5.7c0-.9-1.1-1.3-1.7-.8L8.2 8.5H5a1 1 0 00-1 1z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 function renderCard(){
@@ -659,8 +676,8 @@ function renderCard(){
     </div>
     <div id="ansBox"></div>
   </div>`;
-  $('pw').onclick = e => speak([{text:wordSpeech(w.w)}], e.currentTarget);
-  $('ps').onclick = e => speak(sentenceParts(w), e.currentTarget);
+  $('pw').onclick = e => playWord(w, e.currentTarget);
+  $('ps').onclick = e => playSentence(w, e.currentTarget);
   $('sFoot').innerHTML = `<button class="showbtn" id="showBtn">Show Answer</button>`;
   $('showBtn').onclick = reveal;
   $('sBody').scrollTop = 0;
@@ -803,7 +820,7 @@ function renderSettings(){
   const st = S.student, se = S.settings;
   $('fCls').value = st.cls; $('fSeat').value = st.seat; $('fName').value = st.name;
   $('fNew').value = String(se.newPer); $('fRate').value = String(se.rate);
-  $('fAuto').checked = se.auto; $('fRole').checked = se.role;
+  $('fAuto').checked = se.auto;
   $('syncState').textContent = CONFIG.SYNC_URL ? (S.lastSync ? '已連線 · 上次 ' + new Date(S.lastSync).toLocaleString('zh-TW', {hour12:false}) : '已設定，尚未上傳') : '未設定（只記錄在本機）';
   $('syncPending').textContent = CONFIG.SYNC_URL ? S.pending.length + ' 筆' : '—';
   pickVoices();
@@ -813,8 +830,7 @@ bindStudent('fCls','cls'); bindStudent('fSeat','seat'); bindStudent('fName','nam
 $('fNew').onchange = () => { S.settings.newPer = +$('fNew').value; save(); };
 $('fRate').onchange = () => { S.settings.rate = +$('fRate').value; save(); };
 $('fAuto').onchange = () => { S.settings.auto = $('fAuto').checked; save(); };
-$('fRole').onchange = () => { S.settings.role = $('fRole').checked; save(); };
-$('testVoice').onclick = e => speak([{text:'Hello! Nice to meet you.'}, {text:'Nice to meet you, too.', alt:true}], null);
+$('testVoice').onclick = e => playSentence(WMAP['1-9'], null);
 $('syncNow').onclick = async () => { if(!CONFIG.SYNC_URL) return toast('老師尚未設定上傳網址'); await flush(); renderSettings(); toast(S.pending.length ? '部分紀錄尚未上傳，請確認網路' : '已上傳'); };
 $('bkCopy').onclick = async () => {
   const code = btoa(unescape(encodeURIComponent(JSON.stringify({cards:S.cards, opens:S.opens, days:S.days, student:S.student, settings:S.settings}))));
