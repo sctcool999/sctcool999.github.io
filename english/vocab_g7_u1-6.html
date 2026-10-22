@@ -316,7 +316,7 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
    留空 = 不上傳，只在學生手機本機記錄（統計頁仍可看）。
    ===================================================================== */
 const CONFIG = {
-  SYNC_URL: '',
+  SYNC_URL: 'https://script.google.com/macros/s/AKfycbyUxEApnvOFBBPYKVd6Z76tlJUKWtrJgh_ikFIl78PmnAsccVGxlV_EdonvgLV4oYzX5g/exec',
   APP_ID: 'g7a-hanlin-u1-6',
   STORE_KEY: 'g7vocab.v1',
 };
@@ -505,10 +505,22 @@ function sentenceHTML(w){
 }
 
 /* ===== 上傳（Google Sheet） ===== */
-function logEvent(ev){
+function logEvent(ev, ts){
   if(!CONFIG.SYNC_URL) return;
-  S.pending.push(Object.assign({id:uid(), t:new Date().toISOString(), d:dk(Date.now())}, ev));
-  if(S.pending.length > 3000) S.pending = S.pending.slice(-3000);
+  ts = ts || Date.now();
+  S.pending.push(Object.assign({id:uid(), t:new Date(ts).toISOString(), d:dk(ts)}, ev));
+  if(S.pending.length > 3000 && !S.backfilling) S.pending = S.pending.slice(-3000);
+}
+/* 第一次接上後台時，把手機上已有的紀錄補傳（作答以每個字最後練習時間近似） */
+function backfill(){
+  if(!CONFIG.SYNC_URL || S.backfilled) return;
+  S.backfilling = true;
+  for(const t of S.opens) logEvent({type:'open', backfill:1}, t);
+  for(const [id, c] of Object.entries(S.cards)){
+    const w = WMAP[id]; if(!w || !c.seen) continue;
+    c.h.forEach((n, i) => { for(let k = 0; k < n; k++) logEvent({type:'review', w:id, word:w.w, u:w.u, r:i+1, ok:i ? 1 : 0, rt:c.rt || 0, ivl:c.ivl, ease:c.ease, st:c.st, part:'', mode:'backfill'}, c.last || Date.now()); });
+  }
+  S.backfilling = false; S.backfilled = 1; save();
 }
 let flushing = false;
 function payload(evs){ const st = S.student; return JSON.stringify({app:CONFIG.APP_ID, sid:st.id, cls:st.cls, seat:st.seat, name:st.name, ua:navigator.userAgent.slice(0,120), events:evs}); }
@@ -880,6 +892,7 @@ function askProfile(){
 /* ===== 啟動 ===== */
 load();
 if(CONFIG.SYNC_URL.startsWith('__')) CONFIG.SYNC_URL = '';
+backfill();
 recordOpen();
 show('vHome');
 if(!S.askedProfile && !S.student.name) askProfile();
