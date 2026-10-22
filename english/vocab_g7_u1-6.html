@@ -438,7 +438,7 @@ function pickVoices(){
   TTS.b = find(PREF_B.filter(n => !TTS.a || !TTS.a.name.includes(n))) || us.find(v => v !== TTS.a) || TTS.a;
   TTS.voices = us;
   const vi = document.getElementById('voiceInfo');
-  if(vi) vi.textContent = '發音：AI 語音預先錄製的美式英文音檔（需連網）。若音檔無法載入，會改用手機內建語音' + (TTS.a ? `（${TTS.a.name}）` : '') + '。';
+  if(vi) vi.textContent = '發音：AI 語音預先錄製的美式英文音檔（Kokoro，需連網）。只有在音檔無法載入時，才會暫時改用手機內建語音。';
 }
 if(TTS.ok){ pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
 let speakingBtn = null;
