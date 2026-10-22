@@ -447,7 +447,7 @@ function pickVoices(){
 if(TTS.ok){ pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
 let speakingBtn = null;
 /* AI 錄製音檔（Kokoro）：audio/<unit>-<no>w.mp3 = 單字、s.mp3 = 例句；載入失敗才改用手機內建語音 */
-const AUDIO_DIR = 'audio/';
+const AUDIO_DIR = 'audio/', AUDIO_VER = 3; // 重錄音檔時 +1，避免手機播到舊的暫存音檔
 const player = new Audio(); player.preload = 'auto';
 function playClip(file, fallback, btn){
   stopSpeak();
@@ -456,7 +456,7 @@ function playClip(file, fallback, btn){
   const done = () => { if(btn && speakingBtn === btn){ btn.classList.remove('speaking'); speakingBtn = null; } };
   const fb = () => { if(fell) return; fell = true; done(); speak(fallback, btn); };
   player.onended = done; player.onerror = fb;
-  player.src = AUDIO_DIR + file;
+  player.src = AUDIO_DIR + file + '?v=' + AUDIO_VER;
   player.defaultPlaybackRate = player.playbackRate = S.settings.rate;
   const pr = player.play();
   if(pr) pr.then(() => { player.playbackRate = S.settings.rate; }).catch(e => { if(e && e.name !== 'AbortError') fb(); });
