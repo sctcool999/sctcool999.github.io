@@ -316,7 +316,7 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
    留空 = 不上傳，只在學生手機本機記錄（統計頁仍可看）。
    ===================================================================== */
 const CONFIG = {
-  SYNC_URL: 'https://script.google.com/macros/s/AKfycbyUxEApnvOFBBPYKVd6Z76tlJUKWtrJgh_ikFIl78PmnAsccVGxlV_EdonvgLV4oYzX5g/exec',
+  SYNC_URL: 'https://script.google.com/macros/s/AKfycbzxPS7LQN6xV6VdnjC9HQSoAnnjqg2mDHJ_zMjYUrD2wPe_rd2aJ8FI-8Y0M_P0sPcNXw/exec',
   APP_ID: 'g7a-hanlin-u1-6',
   STORE_KEY: 'g7vocab.v1',
 };
@@ -513,14 +513,14 @@ function logEvent(ev, ts){
 }
 /* 第一次接上後台時，把手機上已有的紀錄補傳（作答以每個字最後練習時間近似） */
 function backfill(){
-  if(!CONFIG.SYNC_URL || S.backfilled) return;
+  if(!CONFIG.SYNC_URL || S.backfilled2) return; // v2：換新後台網址後重新補傳
   S.backfilling = true;
   for(const t of S.opens) logEvent({type:'open', backfill:1}, t);
   for(const [id, c] of Object.entries(S.cards)){
     const w = WMAP[id]; if(!w || !c.seen) continue;
     c.h.forEach((n, i) => { for(let k = 0; k < n; k++) logEvent({type:'review', w:id, word:w.w, u:w.u, r:i+1, ok:i ? 1 : 0, rt:c.rt || 0, ivl:c.ivl, ease:c.ease, st:c.st, part:'', mode:'backfill'}, c.last || Date.now()); });
   }
-  S.backfilling = false; S.backfilled = 1; save();
+  S.backfilling = false; S.backfilled2 = 1; save();
 }
 let flushing = false;
 function payload(evs){ const st = S.student; return JSON.stringify({app:CONFIG.APP_ID, sid:st.id, cls:st.cls, seat:st.seat, name:st.name, ua:navigator.userAgent.slice(0,120), events:evs}); }
