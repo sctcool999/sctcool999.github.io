@@ -100,6 +100,9 @@ h2{font-size:15px;color:var(--ink2);font-weight:600;margin:22px 4px 8px;letter-s
 .play svg{width:22px;height:22px}
 .play.small{width:47px;height:47px}
 .play.small svg{width:22px;height:22px}
+.play.big{width:94px;height:94px}
+.play.big svg{width:44px;height:44px}
+.sfplay{display:flex;justify-content:center}
 .play.speaking{animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--blue) 18%,transparent)}}
 .sent{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
@@ -665,6 +668,7 @@ function nextCard(){
   if(S.settings.auto) playWord(WMAP[SES.cur], $('pw')); // 在點擊當下直接播放，iPhone 才不會擋自動播放
 }
 const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5v5a1 1 0 001 1h3.2l4.1 3.6c.6.5 1.7.1 1.7-.8V5.7c0-.9-1.1-1.3-1.7-.8L8.2 8.5H5a1 1 0 00-1 1z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const SENT_BTN = `<div class="sfplay"><button class="play big" id="ps" aria-label="播放例句">${ICON_PLAY}</button></div>`;
 function renderCard(){
   const w = WMAP[SES.cur], c = card(w.id);
   const badge = SES.cram ? '<span class="pill cram">加強</span>' : (c.st === 0 ? '<span class="pill">新單字</span>' : '');
@@ -672,14 +676,14 @@ function renderCard(){
     <div class="tag">${badge}<span>Unit ${w.u} · ${w.sec} · #${w.n}</span></div>
     <div class="wordrow"><div class="word">${esc(w.w)}</div><button class="play" id="pw" aria-label="播放單字發音">${ICON_PLAY}</button></div>
     <div class="sent">
-      <div class="shd"><button class="play small" id="ps" aria-label="播放例句">${ICON_PLAY}</button><span>例句</span></div>
+      <div class="shd"><span>例句</span></div>
       ${sentenceHTML(w)}
     </div>
     <div id="ansBox"></div>
   </div>`;
   $('pw').onclick = e => playWord(w, e.currentTarget);
+  $('sFoot').innerHTML = SENT_BTN + `<button class="showbtn" id="showBtn">Show Answer</button>`;
   $('ps').onclick = e => playSentence(w, e.currentTarget);
-  $('sFoot').innerHTML = `<button class="showbtn" id="showBtn">Show Answer</button>`;
   $('showBtn').onclick = reveal;
   $('sBody').scrollTop = 0;
 }
@@ -691,11 +695,12 @@ function reveal(){
     <div class="mean">${w.pos ? `<span class="pos">${esc(w.pos)}</span>` : ''}${esc(w.zh)}</div>
     <div class="zs">${w.zs.map(z => `<div class="zhline">${esc(z)}</div>`).join('')}</div></div>`;
   const lbl = ['忘了','模糊','記得','很熟'];
-  $('sFoot').innerHTML = `<div class="rates">${[1,2,3,4].map(r => {
+  $('sFoot').innerHTML = SENT_BTN + `<div class="rates">${[1,2,3,4].map(r => {
     const ns = SES.cram ? null : nextState(c, r, now);
     const sub = SES.cram ? (r === 1 ? '再出現' : '') : (ns.st === 2 ? fmtIvl(ns.ivl*DAY) : fmtIvl(ns.due - now));
     return `<button class="r${r}" data-r="${r}">${lbl[r-1]}<small>${sub}</small></button>`; }).join('')}</div>`;
-  $('sFoot').querySelectorAll('button').forEach(b => b.onclick = () => answer(+b.dataset.r));
+  $('sFoot').querySelectorAll('.rates button').forEach(b => b.onclick = () => answer(+b.dataset.r));
+  $('ps').onclick = e => playSentence(w, e.currentTarget);
   setTimeout(() => { const a = document.querySelector('.ans'); if(a) a.scrollIntoView({block:'nearest', behavior:'smooth'}); }, 30);
 }
 function answer(r){
