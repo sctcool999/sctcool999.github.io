@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="國一單字">
+<meta name="theme-color" content="#F3F5F9">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,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">
+<title>國一上單字 U1–6</title>
+<style>
+/* ============ 設計變數 ============ */
+:root{
+  --bg:#F3F5F9; --card:#FFFFFF; --ink:#16202E; --ink2:#5B6677; --ink3:#97A0AE; --line:#E3E7EE;
+  --blue:#1F5FD6; --blue-soft:#E7EFFD; --hl:#1F5FD6;
+  --again:#D93A3A; --hard:#E08A1E; --good:#1E9E5A; --easy:#1F7FD6;
+  --new:#1F7FD6; --learn:#D93A3A; --rev:#1E9E5A;
+  --m0:#D5DAE3; --m1:#F2A65A; --m2:#7FC8A0; --m3:#1E9E5A;
+  --shadow:0 1px 2px rgba(20,30,50,.06),0 4px 14px rgba(20,30,50,.06);
+  --r:18px;
+  --font:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --round:ui-rounded,"SF Pro Rounded",-apple-system,"PingFang TC",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0F131A; --card:#1A202B; --ink:#EEF2F8; --ink2:#AAB4C3; --ink3:#6E7887; --line:#2A3240;
+    --blue:#6EA2FF; --blue-soft:#1E2B45; --hl:#7DADFF;
+    --again:#FF6B6B; --hard:#FFAA4D; --good:#4CCB85; --easy:#5AA8FF;
+    --new:#5AA8FF; --learn:#FF6B6B; --rev:#4CCB85;
+    --m0:#323B4A; --m1:#C47A32; --m2:#3E8E66; --m3:#4CCB85;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;
+  -webkit-text-size-adjust:100%;touch-action:manipulation;overscroll-behavior-y:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+input,select{font:inherit;color:var(--ink)}
+.hidden{display:none!important}
+.app{max-width:560px;margin:0 auto;min-height:100%;
+  padding:calc(env(safe-area-inset-top) + 8px) 16px calc(env(safe-area-inset-bottom) + 84px)}
+h1{font-family:var(--round);font-size:26px;margin:10px 2px 2px;letter-spacing:.3px}
+h2{font-size:15px;color:var(--ink2);font-weight:600;margin:22px 4px 8px;letter-spacing:.5px}
+.sub{color:var(--ink2);font-size:13px;margin:0 2px 6px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* ============ 底部分頁列 ============ */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;
+  background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar button{flex:1;max-width:180px;padding:8px 0 6px;font-size:11px;color:var(--ink3);display:flex;flex-direction:column;align-items:center;gap:2px}
+.tabbar button svg{width:24px;height:24px}
+.tabbar button.on{color:var(--blue)}
+
+/* ============ 首頁 ============ */
+.today{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.today div{background:var(--card);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)}
+.today b{display:block;font-family:var(--round);font-size:22px;line-height:1.2}
+.today span{font-size:12px;color:var(--ink2)}
+.parts{display:grid;gap:10px}
+.parts.two{grid-template-columns:1fr 1fr}
+.part{padding:14px 14px 12px;text-align:left;width:100%;display:block;transition:transform .12s}
+.part:active{transform:scale(.98)}
+.part .t{font-family:var(--round);font-weight:700;font-size:19px}
+.part .n{font-size:12px;color:var(--ink3);margin-left:6px;font-weight:400;font-family:var(--font)}
+.part .cnt{display:flex;gap:10px;font-size:13px;margin:6px 0 8px;color:var(--ink2)}
+.part .cnt i{font-style:normal;font-weight:700}
+.c-new{color:var(--new)} .c-learn{color:var(--learn)} .c-rev{color:var(--rev)}
+.mbar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--m0)}
+.mbar span{display:block;height:100%}
+.part.big{display:flex;align-items:center;gap:14px}
+.part.big .grow{flex:1}
+
+/* ============ 學習畫面 ============ */
+.study{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 4px) 0 0}
+.shead{display:flex;align-items:center;gap:8px;padding:4px 10px 6px;max-width:560px;width:100%;margin:0 auto}
+.iconbtn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink2)}
+.iconbtn:active{background:var(--line)}
+.iconbtn svg{width:24px;height:24px}
+.shead .ttl{flex:1;font-weight:700;font-size:15px;text-align:center}
+.shead .ttl small{display:block;font-weight:400;font-size:12px;color:var(--ink3)}
+.qcount{display:flex;gap:8px;font-weight:700;font-size:14px;font-family:var(--round)}
+.prog{height:3px;background:var(--line);max-width:560px;width:100%;margin:0 auto}
+.prog div{height:100%;background:var(--blue);width:0;transition:width .3s}
+.sbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 20px;max-width:560px;width:100%;margin:0 auto}
+.fc{padding:18px 18px 20px}
+.tag{font-size:12px;color:var(--ink3);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag .pill{background:var(--blue-soft);color:var(--blue);padding:1px 8px;border-radius:99px;font-weight:600}
+.tag .pill.cram{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
+.wordrow{display:flex;align-items:center;gap:12px;margin:14px 0 6px}
+.word{font-family:var(--round);font-size:38px;font-weight:700;line-height:1.15;letter-spacing:.2px;word-break:break-word}
+.play{flex:none;width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;
+  box-shadow:0 3px 10px color-mix(in srgb,var(--blue) 35%,transparent);transition:transform .1s}
+.play:active{transform:scale(.92)}
+.play svg{width:22px;height:22px}
+.play.small{width:36px;height:36px}
+.play.small svg{width:17px;height:17px}
+.play.speaking{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--blue) 18%,transparent)}}
+.sent{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
+.sent .shd{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--ink3)}
+.line{font-size:19px;line-height:1.55;margin:2px 0}
+.line .sp{color:var(--ink3);font-size:14px;font-weight:600;margin-right:4px}
+.hl{color:var(--hl);font-weight:800}
+.zhline{font-size:15px;color:var(--ink2);margin:0 0 6px}
+.ans{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);animation:fade .2s}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}}
+.ans .mean{font-size:22px;font-weight:700}
+.ans .pos{color:var(--ink3);font-weight:500;font-size:16px;margin-right:6px;font-style:italic}
+.ans .zs{margin-top:12px;background:var(--bg);border-radius:12px;padding:10px 12px}
+.ans .zs .zhline:last-child{margin:0}
+.sfoot{max-width:560px;width:100%;margin:0 auto;padding:10px 16px calc(env(safe-area-inset-bottom) + 12px)}
+.showbtn{width:100%;height:56px;border-radius:16px;background:var(--ink);color:var(--bg);font-weight:700;font-size:18px;letter-spacing:.5px}
+.showbtn:active{opacity:.85}
+.rates{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rates button{height:62px;border-radius:14px;color:#fff;font-weight:700;font-size:16px;line-height:1.15;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rates button small{font-weight:500;font-size:11.5px;opacity:.9;margin-top:3px}
+.rates button:active{filter:brightness(.9)}
+.r1{background:var(--again)} .r2{background:var(--hard)} .r3{background:var(--good)} .r4{background:var(--easy)}
+.done{text-align:center;padding:36px 20px}
+.done .big{font-size:52px}
+.done h3{font-family:var(--round);font-size:22px;margin:8px 0 4px}
+.done p{color:var(--ink2);margin:4px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 20px;border-radius:14px;font-weight:700;background:var(--blue);color:#fff}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.btn.warn{background:var(--again)}
+.btnrow{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+
+/* ============ 統計 ============ */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tile{padding:12px 14px}
+.tile b{font-family:var(--round);font-size:26px;display:block;line-height:1.15}
+.tile span{font-size:12.5px;color:var(--ink2)}
+.seg{display:flex;background:var(--line);border-radius:10px;padding:2px;gap:2px;margin-bottom:10px}
+.seg button{flex:1;height:30px;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink2)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.chart{padding:14px 12px 10px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:130px}
+.bars .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.bars .col i{display:block;width:100%;max-width:22px;background:var(--blue);border-radius:4px 4px 1px 1px;min-height:2px}
+.bars .col i.z{background:var(--line)}
+.bars .col em{font-style:normal;font-size:10.5px;color:var(--ink2);margin-bottom:2px;font-variant-numeric:tabular-nums}
+.xl{display:flex;gap:4px;margin-top:4px}
+.xl span{flex:1;text-align:center;font-size:10px;color:var(--ink3);white-space:nowrap;overflow:hidden;min-width:0}
+.ulist{padding:6px 14px}
+.urow{display:grid;grid-template-columns:56px 1fr 44px;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.urow:last-child{border:0}
+.urow .mbar{height:12px;border-radius:6px}
+.urow .pct{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2);font-size:13px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);padding:2px 4px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;height:30px;padding:0 12px;border-radius:99px;background:var(--card);box-shadow:var(--shadow);font-size:13px;font-weight:600;color:var(--ink2)}
+.chips button.on{background:var(--blue);color:#fff}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th{position:sticky;top:0;background:var(--card);font-size:11.5px;color:var(--ink2);font-weight:600;cursor:pointer;user-select:none}
+th.on{color:var(--blue)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card);z-index:1}
+td:first-child{font-weight:600;white-space:normal;min-width:96px;max-width:128px;line-height:1.3}
+th:first-child{z-index:2}
+td .st{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.toplist{padding:4px 14px}
+.toplist div{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.toplist div:last-child{border:0}
+.toplist small{color:var(--ink3)}
+.empty{color:var(--ink3);font-size:14px;text-align:center;padding:18px}
+
+/* ============ 設定 ============ */
+.form{padding:4px 14px}
+.frow{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;border-bottom:1px solid var(--line)}
+.frow:last-child{border:0}
+.frow label{font-size:15px}
+.frow input[type=text],.frow input[type=number]{width:130px;text-align:right;border:0;background:transparent;font-size:15px;padding:6px 0;outline:none}
+.frow select{border:0;background:transparent;font-size:15px;text-align:right;outline:none;direction:rtl}
+.switch{position:relative;width:51px;height:31px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:var(--line);border-radius:99px;transition:.2s}
+.switch span:before{content:"";position:absolute;width:27px;height:27px;left:2px;top:2px;background:#fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:.2s}
+.switch input:checked+span{background:var(--good)}
+.switch input:checked+span:before{transform:translateX(20px)}
+.note{font-size:12.5px;color:var(--ink2);margin:8px 4px;line-height:1.6}
+textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:10px;font:12px ui-monospace,Menlo,monospace}
+
+/* ============ 對話框 ============ */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,25,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(env(safe-area-inset-bottom) + 16px)}
+.modal .card{width:100%;max-width:420px;padding:20px;animation:fade .2s}
+.modal h3{margin:0 0 4px;font-family:var(--round);font-size:20px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:10px 16px;border-radius:12px;font-size:14px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ===== 首頁 ===== -->
+<div class="app" id="vHome">
+  <h1>國一上 英文單字</h1>
+  <div class="sub" id="hello"></div>
+  <div class="today" id="todayBox"></div>
+  <h2>單課</h2>
+  <div class="parts two" id="pSingle"></div>
+  <h2>兩課合併</h2>
+  <div class="parts" id="pDouble"></div>
+  <h2>總複習</h2>
+  <div class="parts" id="pAll"></div>
+  <div class="legend" style="margin-top:14px">
+    <span><i style="background:var(--m3)"></i>精熟</span><span><i style="background:var(--m2)"></i>熟悉</span>
+    <span><i style="background:var(--m1)"></i>學習中</span><span><i style="background:var(--m0)"></i>未學習</span>
+  </div>
+  <p class="note">數字說明：<b class="c-new">藍</b>＝新單字　<b class="c-learn">紅</b>＝學習中（幾分鐘後再出現）　<b class="c-rev">綠</b>＝今天該複習</p>
+</div>
+
+<!-- ===== 統計 ===== -->
+<div class="app hidden" id="vStats">
+  <h1>學習統計</h1>
+  <div class="sub" id="statWho"></div>
+  <h2>使用概況</h2>
+  <div class="tiles" id="tiles"></div>
+  <h2>開啟次數</h2>
+  <div class="card chart">
+    <div class="seg" id="segOpen"><button data-k="d" class="on">每日</button><button data-k="w">每週</button><button data-k="m">每月</button></div>
+    <div id="chOpen"></div>
+  </div>
+  <h2>每日作答數（近 14 天）</h2>
+  <div class="card chart"><div id="chRev"></div></div>
+  <h2>各 Unit 熟練度</h2>
+  <div class="card ulist" id="unitMastery"></div>
+  <div class="legend" style="margin-top:8px">
+    <span><i style="background:var(--m3)"></i>精熟（間隔 ≥ 21 天）</span><span><i style="background:var(--m2)"></i>熟悉</span>
+    <span><i style="background:var(--m1)"></i>學習中</span><span><i style="background:var(--m0)"></i>未學習</span>
+  </div>
+  <h2>最常答錯 Top 10</h2>
+  <div class="card toplist" id="topWrong"></div>
+  <h2>全部單字明細</h2>
+  <div class="chips" id="wFilter"></div>
+  <div class="card tablewrap"><table id="wTable"></table></div>
+  <p class="note">欄位：測＝已測驗次數　對／錯＝答對／答錯次數（按「忘了」算錯）　間隔＝目前複習間隔（天）　下次＝下次出現日期　易度＝記憶難易係數（越低代表越難記，預設 2.5）。點欄位標題可排序。</p>
+</div>
+
+<!-- ===== 設定 ===== -->
+<div class="app hidden" id="vSet">
+  <h1>設定</h1>
+  <h2>學生資料</h2>
+  <div class="card form">
+    <div class="frow"><label for="fCls">班級</label><input type="text" id="fCls" placeholder="例：701" inputmode="numeric"></div>
+    <div class="frow"><label for="fSeat">座號</label><input type="text" id="fSeat" placeholder="例：12" inputmode="numeric"></div>
+    <div class="frow"><label for="fName">姓名</label><input type="text" id="fName" placeholder="你的名字"></div>
+  </div>
+  <h2>學習</h2>
+  <div class="card form">
+    <div class="frow"><label for="fNew">每次新單字數</label>
+      <select id="fNew"><option value="10">10 個</option><option value="20">20 個</option><option value="30">30 個</option><option value="999">全部</option></select></div>
+    <div class="frow"><label for="fRate">發音速度</label>
+      <select id="fRate"><option value="0.65">慢</option><option value="0.85">稍慢</option><option value="1">正常</option></select></div>
+    <div class="frow"><label for="fAuto">新卡片自動唸單字</label><label class="switch"><input type="checkbox" id="fAuto"><span></span></label></div>
+    <div class="frow"><label for="fRole">對話用兩種聲音朗讀</label><label class="switch"><input type="checkbox" id="fRole"><span></span></label></div>
+    <div class="frow"><label>測試發音</label><button class="btn ghost" style="height:36px" id="testVoice">▶ Hello!</button></div>
+  </div>
+  <p class="note" id="voiceInfo"></p>
+  <h2>資料同步（老師端）</h2>
+  <div class="card form">
+    <div class="frow"><label>狀態</label><span id="syncState" style="color:var(--ink2);font-size:14px"></span></div>
+    <div class="frow"><label>待上傳紀錄</label><span id="syncPending" style="color:var(--ink2);font-size:14px"></span></div>
+    <div class="frow"><label>立即同步</label><button class="btn ghost" style="height:36px" id="syncNow">上傳</button></div>
+  </div>
+  <h2>備份與還原</h2>
+  <div class="card form" style="padding:14px">
+    <p class="note" style="margin-top:0">換手機或清除瀏覽紀錄前，先複製備份碼存起來；之後貼回下方即可還原學習進度。</p>
+    <div class="btnrow" style="margin-top:6px;justify-content:flex-start">
+      <button class="btn ghost" id="bkCopy">複製備份碼</button>
+      <button class="btn ghost" id="bkRestore">還原</button>
+    </div>
+    <textarea id="bkText" placeholder="在這裡貼上備份碼後按「還原」" style="margin-top:10px"></textarea>
+  </div>
+  <h2>重設</h2>
+  <div class="btnrow" style="justify-content:flex-start;margin-top:0"><button class="btn warn" id="resetAll">清除所有學習紀錄</button></div>
+  <p class="note">版本 1.0 · 單字與例句取自翰林版國一上課本 Word Bank（Unit 1–6）。</p>
+</div>
+
+<!-- ===== 學習畫面 ===== -->
+<div class="study hidden" id="vStudy">
+  <div class="shead">
+    <button class="iconbtn" id="sBack" aria-label="返回"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="ttl" id="sTitle"></div>
+    <div class="qcount" id="sCount"></div>
+  </div>
+  <div class="prog"><div id="sProg"></div></div>
+  <div class="sbody" id="sBody"></div>
+  <div class="sfoot" id="sFoot"></div>
+</div>
+
+<!-- ===== 底部分頁 ===== -->
+<nav class="tabbar" id="tabbar">
+  <button data-v="vHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg>練習</button>
+  <button data-v="vStats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>統計</button>
+  <button data-v="vSet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>設定</button>
+</nav>
+
+<div class="modal hidden" id="modal"><div class="card" id="modalCard"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   ★ 老師設定區 ★
+   SYNC_URL：貼上 Google Apps Script「網頁應用程式」網址（…/exec）。
+   留空 = 不上傳，只在學生手機本機記錄（統計頁仍可看）。
+   ===================================================================== */
+const CONFIG = {
+  SYNC_URL: '',
+  APP_ID: 'g7a-hanlin-u1-6',
+  STORE_KEY: 'g7vocab.v1',
+};
+
+/* ===== 單字資料：[unit, no, section, word, pos, 中文, [英文例句行], [中文翻譯行], [highlight 指定]] ===== */
+const RAW = [[1,1,"D","handsome","adj.","英俊的",["Brian: Your father is handsome.","Anna: Thank you."],["Brian：你爸爸很英俊。","Anna：謝謝。"],[]],[1,2,"D","new","adj.","新的",["Ryan: Is this your new school bag?","Alice: Yes, it is."],["Ryan：這是你的新書包嗎？","Alice：是的，沒錯。"],[]],[1,3,"D","classmate","n.","同學",["Dave: Look at that girl. Who's she?","Katie: That's Zoe. She's my classmate."],["Dave：你看那個女孩。她是誰？","Katie：那是 Zoe。她是我的同學。"],[]],[1,4,"D","young","adj.","年輕的",["Tony: Our new teacher is 24 years old.","Leah: He's young."],["Tony：我們的新老師 24 歲。","Leah：他很年輕。"],[]],[1,5,"D","woman","n.","女人（複數為 women）",["Who's that beautiful tall woman?"],["那位美麗又高䠷的女士是誰？"],[]],[1,6,"D","very","adv.","非常",["This tree is very tall."],["這棵樹非常高。"],[]],[1,7,"D","beautiful","adj.","美麗的",["Your school is big and beautiful."],["你的學校又大又漂亮。"],[]],[1,8,"D","too","adv.","也",["Alan: My dad is a teacher.","Gina: My dad is a teacher, too."],["Alan：我爸爸是老師。","Gina：我爸爸也是老師。"],[]],[1,9,"D","Nice to meet you.","","很高興認識你。",["Nelson: Mandy, this is Mr. Brown.","Mandy: Nice to meet you, Mr. Brown."],["Nelson：Mandy，這位是 Brown 先生。","Mandy：很高興認識你，Brown 先生。"],["Nice to meet you"]],[1,10,"D","cousin","n.","堂表兄弟姐妹",["Sharon is my cousin, not my sister."],["Sharon 是我的表姊妹，不是我的親姊妹。"],[]],[1,11,"D","really","adv.","真地",["Roy: I'm from Mill Junior High School.","Zoe: Oh, really? I am, too."],["Roy：我來自 Mill 國中。","Zoe：喔，真的嗎？我也是。"],[]],[1,12,"D","year(s) old","","…歲",["Her son is 17 years old."],["她的兒子 17 歲。"],["years old"]],[1,13,"D","I see.","","我知道了。",["Ed: This is not my umbrella. My umbrella is yellow.","Jo: I see."],["Ed：這不是我的雨傘。我的雨傘是黃色的。","Jo：我知道了。"],["I see"]],[1,14,"T","singer","n.","歌手",["Fred: Who's the man in the picture?","Kate: He's a singer."],["Fred：照片裡的男人是誰？","Kate：他是一位歌手。"],[]],[1,15,"T","office worker","n.","上班族",["I am an office worker, and my wife is, too."],["我是上班族，我太太也是。"],[]],[1,16,"T","housewife","n.","家庭主婦",["My grandmother is a housewife."],["我的奶奶是家庭主婦。"],[]],[1,17,"T","police officer","n.","警察",["This is my cousin. He is a police officer."],["這是我的表哥。他是一名警察。"],[]],[1,18,"T","writer","n.","作家",["Tyler: Are you a writer?","Dora: No, I'm not."],["Tyler：你是作家嗎？","Dora：不，我不是。"],[]],[1,19,"T","uncle","n.","叔伯；舅舅",["My uncle is a good cook."],["我的叔叔很會做菜。"],[]],[1,20,"T","aunt","n.","阿姨；姑姑",["Aunt Shelly is my mother's good friend."],["Shelly 阿姨是我媽媽的好朋友。"],[]],[1,21,"T","wife","n.","妻子",["Isn't his wife a doctor?"],["他的太太不是醫生嗎？"],[]],[1,22,"T","daughter","n.","女兒",["Julia is Mr. and Mrs. Wilson's daughter."],["Julia 是 Wilson 夫婦的女兒。"],[]],[1,23,"T","husband","n.","丈夫",["Her husband is a nurse."],["她的丈夫是一名護理師。"],[]],[1,24,"T","son","n.","兒子",["Mrs. Fang is a mother of three sons."],["方太太是三個兒子的媽媽。"],[]],[1,25,"R","dear","adj.","親愛的",["This is a picture of my dear students."],["這是我親愛的學生們的照片。"],[]],[1,26,"R","family","n.","家庭；家人",["Carl: How's your family?","Rita: They're fine. Thanks."],["Carl：你的家人好嗎？","Rita：他們都很好，謝謝。"],[]],[1,27,"R","elementary school","n.","國小",["My daughter is young. She is an elementary school student."],["我的女兒還小。她是國小學生。"],[]],[1,28,"R","junior high school","n.","國中",["Their mom is a junior high school teacher."],["他們的媽媽是國中老師。"],[]],[1,29,"R","baby","n.; adj.","嬰兒；年幼的",["The baby's father is Mr. Martin."],["這個嬰兒的爸爸是 Martin 先生。"],[]],[2,1,"D","house","n.","房子",["Jimmy is not in the house."],["Jimmy 不在房子裡。"],[]],[2,2,"D","parents","n.","父母親",["Her parents are very nice."],["她的父母人很好。"],[]],[2,3,"D","living room","n.","客廳",["The new sofa is in the living room."],["新沙發在客廳裡。"],[]],[2,4,"D","wall","n.","牆壁",["The walls of this room are thin."],["這個房間的牆壁很薄。"],[]],[2,5,"D","purple","adj.; n.","紫色（的）",["The singer's hair is purple."],["那位歌手的頭髮是紫色的。"],[]],[2,6,"D","favorite","adj.; n.","最喜愛（的）",["This is my favorite park. It's nice and big."],["這是我最喜歡的公園。它又好又大。"],[]],[2,7,"D","color","n.","顏色",["My favorite color is blue."],["我最喜歡的顏色是藍色。"],[]],[2,8,"D","kitchen","n.","廚房",["Is your aunt in the kitchen?"],["你的阿姨在廚房裡嗎？"],[]],[2,9,"D","dining room","n.","飯廳",["Aren't the eggs on the dining room table?"],["蛋不是在飯廳的桌子上嗎？"],[]],[2,10,"D","but","conj.","但是",["My room is big, but my bed is not."],["我的房間很大，但我的床不大。"],[]],[2,11,"D","gray","adj.; n.","灰色（的）",["My dad's car is gray."],["我爸爸的車是灰色的。"],[]],[2,12,"D","brown","adj.; n.","棕色（的）",["Jerry's dog is brown."],["Jerry 的狗是棕色的。"],[]],[2,13,"D","cookie","n.","餅乾",["Scott: What are those?","Lydia: They are cookies for my mom."],["Scott：那些是什麼？","Lydia：那些是要給我媽媽的餅乾。"],[]],[2,14,"D","mice","n.","老鼠（為 mouse 的複數）",["Two white mice are in the box."],["兩隻白老鼠在箱子裡。"],[]],[2,15,"D","maybe","adv.","可能",["Cody: Where's Rocky?","Dolly: Maybe he's in his dog house."],["Cody：Rocky 在哪裡？","Dolly：牠可能在牠的狗屋裡。"],[]],[2,16,"D","sofa","n.","沙發",["The old sofa is in my grandfather's bedroom."],["那張舊沙發在我爺爺的臥室裡。"],[]],[2,17,"D","hungry","adj.","餓的",["Luke: I'm hungry.","Nina: Here's a banana for you.","Luke: Thanks."],["Luke：我餓了。","Nina：這根香蕉給你。","Luke：謝謝。"],[]],[2,18,"T","notebook","n.","筆記本",["My notebooks are in my schoolbag."],["我的筆記本在我的書包裡。"],[]],[2,19,"T","marker","n.","記號筆；彩色筆",["Pete: Where is my pink marker?","Cara: It's under your desk."],["Pete：我的粉紅色彩色筆在哪裡？","Cara：在你的書桌下面。"],[]],[2,20,"T","brush","n.","毛筆；筆刷",["Your brush is under your bed."],["你的毛筆在你的床底下。"],[]],[2,21,"T","gift","n.","禮物",["Jack: What is this?","Alva: It's a gift for you."],["Jack：這是什麼？","Alva：這是給你的禮物。"],[]],[2,22,"T","pencil case","n.","鉛筆盒（= pencil box）",["My pencil case is on the desk."],["我的鉛筆盒在書桌上。"],[]],[2,23,"T","bathroom","n.","浴室；廁所",["Are you in the bathroom, Mom?"],["媽，妳在浴室裡嗎？"],[]],[2,24,"T","table","n.","桌子",["Sammy, your pencil is on the table."],["Sammy，你的鉛筆在桌子上。"],[]],[2,25,"T","bedroom","n.","臥室",["Her bedroom is next to the living room."],["她的臥室在客廳旁邊。"],[]],[2,26,"T","near","prep.","在…附近",["My uncle's farm is near the zoo."],["我叔叔的農場在動物園附近。"],[]],[2,27,"T","between","prep.","在…之間",["Tim: Who is that between your mom and dad?","Sue: She's my sister, Nina."],["Tim：在你爸媽中間的那個人是誰？","Sue：她是我的姊妹 Nina。"],[]],[2,28,"T","behind","prep.","在…後面",["Look! Kenny's cat is behind the tree."],["看！Kenny 的貓在樹後面。"],[]],[2,29,"T","in front of","prep.","在…前面",["The old tree is in front of our school."],["那棵老樹在我們學校前面。"],[]],[2,30,"R","special","adj.","特別的",["What's special about this pencil?"],["這枝鉛筆有什麼特別的？"],[]],[2,31,"R","inside","prep.","在…裡面",["Dan: What's inside the box?","Ada: They're apples from your grandma."],["Dan：箱子裡面是什麼？","Ada：是你奶奶送的蘋果。"],[]],[2,32,"R","right","adv.","就",["My house is right next to a park."],["我家就在一座公園旁邊。"],[]],[2,33,"R","each other","pron.","彼此；互相",["My classmates are nice to each other."],["我的同學們彼此都很友善。"],[]],[2,34,"R","above","prep.; adv.","在…上方；在上方",["The clock is above the TV."],["時鐘在電視上方。"],[]],[2,35,"R","enough","adj.; adv.; pron.","足夠（的）",["The dining table is not very big, but it's enough for a family of three."],["餐桌不是很大，但對三口之家來說已經足夠了。"],[]],[2,36,"R","person","n.","人（複數為 persons 或 people）",["Jeremy is a nice person."],["Jeremy 是個好人。"],[]],[3,1,"D","guy","n.","人；傢伙",["Mrs. Carter: Guys, don't run in the classroom.","Students: Sorry, Mrs. Carter."],["Carter 老師：各位，不要在教室裡奔跑。","學生們：對不起，Carter 老師。"],[]],[3,2,"D","magic","adj.; n.","神奇的；魔法",["Sally is a fan of magic."],["Sally 是個魔術迷。"],[]],[3,3,"D","with","prep.","用；和",["Chris: Where is Mom?","Ruby: She's in the car with Dad."],["Chris：媽媽在哪裡？","Ruby：她和爸爸在車上。"],[]],[3,4,"D","can","aux.","可以；會",["We can't eat in the lab."],["我們不可以在實驗室裡吃東西。"],["can't"]],[3,5,"D","many","adj.; pron.","許多（的）",["Many English teachers are women."],["許多英文老師是女性。"],[]],[3,6,"D","place","n.","地方",["John: What is this place? It's beautiful.","Lena: It's Regent Park."],["John：這是什麼地方？好漂亮。","Lena：這是 Regent 公園。"],[]],[3,7,"D","use","v.; n.","使用",["Evan: Can I use the bathroom?","Judy: Sure."],["Evan：我可以用一下廁所嗎？","Judy：當然。"],[]],[3,8,"D","sure","adv.; adj.","當然；確定的",["Toby: Is Johnny at school?","Zoey: I'm not sure."],["Toby：Johnny 在學校嗎？","Zoey：我不確定。"],[]],[3,9,"D","let's...","","讓我們一起…",["Let's watch TV now."],["我們現在來看電視吧。"],["Let's"]],[3,10,"D","careful","adj.","小心的",["Jason: Hey, be careful.","Cindy: Okay."],["Jason：嘿，小心點。","Cindy：好。"],[]],[3,11,"D","museum","n.","博物館",["Please don't run in the museum."],["請不要在博物館裡奔跑。"],[]],[3,12,"D","Hurry!","","快點！",["The bus is here. Hurry up, Sandy!"],["公車來了。快點，Sandy！"],["Hurry"]],[3,13,"D","please","int.","請；拜託",["Please close the door for me."],["請幫我關門。"],[]],[3,14,"D","wait","v.","等待",["Liam: Wait. Where is my bag?","Kelly: Isn't it on the kitchen table?"],["Liam：等等。我的包包在哪裡？","Kelly：不是在廚房的桌子上嗎？"],[]],[3,15,"D","man","n.","男人（複數為 men）",["That man is my uncle. He's a doctor."],["那個男人是我叔叔。他是醫生。"],[]],[3,16,"D","now","adv.","現在",["Freddy is in the bathroom now."],["Freddy 現在在浴室裡。"],[]],[3,17,"D","or","conj.","或者",["Don't eat or drink on the bus."],["不要在公車上吃東西或喝飲料。"],[]],[3,18,"D","time","n.","次；時間",["Please be careful this time."],["這次請小心一點。"],[]],[3,19,"D","wake up","","醒來；叫醒…",["Cathy: Can you go wake your sister up?","Frank: Yes, Mom."],["Cathy：你可以去叫醒你妹妹嗎？","Frank：好的，媽。"],["wake","up"]],[3,20,"D","class","n.","課；班級",["Please follow class rules."],["請遵守班規。"],[]],[3,21,"D","Oh my!","","天哪！",["Stan: What's that?","Pam: Oh my! It's a mummy."],["Stan：那是什麼？","Pam：天哪！是木乃伊。"],["Oh my"]],[3,22,"D","see","v.","看見",["Paul: Can you see the bird in the tree?","Tina: Yes. It's very cute."],["Paul：你看得到樹上的鳥嗎？","Tina：看得到，牠很可愛。"],[]],[3,23,"T","quiet","adj.","安靜的",["Ken is a quiet student."],["Ken 是個安靜的學生。"],[]],[3,24,"T","turn off","","關掉",["Sam, turn off the TV and go to bed now."],["Sam，現在把電視關掉，去睡覺。"],[]],[3,25,"T","sign","n.","標誌",["Ray: Look at the sign. You can't eat here.","Ava: Oh, sorry."],["Ray：你看那個標誌。這裡不可以吃東西。","Ava：喔，抱歉。"],[]],[3,26,"T","talk","v.","說話",["Let's not talk here."],["我們別在這裡說話。"],[]],[3,27,"T","fight","v.; n.","吵架；打架",["Leo, don't fight with your brother."],["Leo，不要和你弟弟吵架。"],[]],[3,28,"T","turn","n.","（依次輪到的）機會",["Brad: Is it my turn?","Lucy: Sorry, it's not. Please wait."],["Brad：輪到我了嗎？","Lucy：抱歉，還沒。請等一下。"],[]],[3,29,"R","follow","v.","遵守；跟隨",["Guys, please follow the museum rules and be good."],["各位，請遵守博物館的規則，要乖乖的。"],[]],[3,30,"R","rule","n.","規則",["Don't use your phone in class. It's a classroom rule."],["上課時不要用手機。這是教室規則。"],[]],[3,31,"R","safe","adj.","安全的",["Do not run in the lab. That's not safe."],["不要在實驗室裡奔跑，那樣不安全。"],[]],[3,32,"R","wash","v.","清洗",["We can wash your dad's car this afternoon."],["我們今天下午可以洗你爸爸的車。"],[]],[3,33,"R","hand","n.","手",["Mark: What's that in your hand?","Mary: It's a pen."],["Mark：你手上那是什麼？","Mary：是一枝筆。"],[]],[3,34,"R","after class","","下課後",["Let's play basketball after class."],["我們下課後去打籃球吧。"],[]],[4,1,"D","music video","n.","音樂影片",["Joe: Hey, what are you watching?","Eva: I am watching Mayday's new music video."],["Joe：嘿，你在看什麼？","Eva：我在看五月天的新音樂影片。"],[]],[4,2,"D","band","n.","樂團",["My favorite band is singing on stage."],["我最喜歡的樂團正在舞台上唱歌。"],[]],[4,3,"D","take a look","","看一看",["Jay is singing on TV. Come take a look."],["Jay 正在電視上唱歌。快來看一看。"],[]],[4,4,"D","all","adj.","所有的",["All the books in the box are from my aunt Lisa."],["箱子裡所有的書都是我的 Lisa 阿姨給的。"],[]],[4,5,"D","cute","adj.","可愛的",["Toto is a really cute dog."],["Toto 是一隻非常可愛的狗。"],[]],[4,6,"D","great","adj.","棒的",["Ollie: I can go to the concert with you.","Jane: Really? That's great!"],["Ollie：我可以和你一起去演唱會。","Jane：真的嗎？太棒了！"],[]],[4,7,"D","free","adj.","有空的",["Are you free for the meet-and-greet on Sunday?"],["你星期日有空去參加見面會嗎？"],[]],[4,8,"D","weekend","n.","週末",["The baseball game is this weekend."],["棒球比賽在這個週末。"],[]],[4,9,"D","Saturday","n.","星期六",["The welcome party is on Saturday night."],["歡迎派對在星期六晚上。"],[]],[4,10,"D","together","adv.","一起",["Let's go to school together."],["我們一起去上學吧。"],[]],[4,11,"D","ready","adj.","準備好的",["Are you ready for school?"],["你準備好去上學了嗎？"],[]],[4,12,"D","p.m.","adv.","下午；晚上",["It's 8:25 p.m. now."],["現在是晚上八點二十五分。"],["p.m."]],[4,13,"D","o'clock","adv.","…點鐘",["Can you wake me up at three o'clock in the afternoon?"],["你可以在下午三點叫醒我嗎？"],[]],[4,14,"D","day","n.","日；天",["It's a great day today."],["今天真是美好的一天。"],[]],[4,15,"D","today","adv.; n.","今天",["It is Teacher's Day today."],["今天是教師節。"],[]],[4,16,"D","Friday","n.","星期五",["Will: What day is it?","Erin: It's Friday."],["Will：今天星期幾？","Erin：星期五。"],[]],[4,17,"T","Sunday","n.","星期日",["The zoo is not open on Sundays."],["動物園星期日不開放。"],[]],[4,18,"T","Monday","n.","星期一",["The music class is on Monday afternoon."],["音樂課在星期一下午。"],[]],[4,19,"T","Tuesday","n.","星期二",["Can I go to your house on Tuesday?"],["我星期二可以去你家嗎？"],[]],[4,20,"T","Wednesday","n.","星期三",["Brenda is free this Wednesday. You can see the movie with her."],["Brenda 這個星期三有空。你可以和她去看電影。"],[]],[4,21,"T","Thursday","n.","星期四",["Thursday is between Wednesday and Friday."],["星期四在星期三和星期五之間。"],[]],[4,22,"T","week","n.","週；星期",["The new museum is open this week."],["新的博物館這週開放。"],[]],[4,23,"T","a.m.","adv.","上午；凌晨",["Isn't the basketball game at 10:50 a.m.?"],["籃球比賽不是在上午十點五十分嗎？"],["a.m."]],[4,24,"T","study","v.","研讀",["Peter is studying in his room."],["Peter 正在他的房間裡讀書。"],["studying"]],[4,25,"T","English","n.","英文",["Mr. Cheng is my English teacher."],["鄭老師是我的英文老師。"],[]],[4,26,"T","take a walk","","散步",["Let's take a walk together."],["我們一起去散步吧。"],[]],[4,27,"T","movie","n.","電影",["Nick: Is the new movie good?","Sara: Yes, it is."],["Nick：那部新電影好看嗎？","Sara：好看。"],[]],[4,28,"T","take a picture","","拍照",["Everyone is taking a picture with his or her favorite teacher."],["每個人都在和自己最喜歡的老師拍照。"],["taking a picture"]],[4,29,"R","party","n.","派對；宴會",["Felix: Where are you?","Jean: I'm at Timothy's party."],["Felix：你在哪裡？","Jean：我在 Timothy 的派對上。"],[]],[4,30,"R","report","v.; n.","報導",["The woman on TV is reporting from the singer's new house."],["電視上那位女士正在那位歌手的新家進行報導。"],["reporting"]],[4,31,"R","popular","adj.","受歡迎的",["The singer is very handsome and popular."],["那位歌手非常帥，而且很受歡迎。"],[]],[4,32,"R","fan","n.","…迷",["The fan is taking a picture with the writer."],["那位粉絲正在和作家拍照。"],[]],[4,33,"R","shake hands","","握手",["James is shaking hands with his teacher."],["James 正在和他的老師握手。"],["shaking hands"]],[4,34,"R","everyone","pron.","每個人（= everybody）",["The drinks are not enough for everyone."],["飲料不夠每個人喝。"],[]],[4,35,"R","sign","v.","簽名",["Rick: Can you sign this picture for me?","Ann: Sure."],["Rick：你可以幫我在這張照片上簽名嗎？","Ann：當然。"],[]],[5,1,"D","date","n.","日期",["The date of the concert is September twenty-first."],["演唱會的日期是九月二十一日。"],[]],[5,2,"D","November","n.","十一月",["Thanksgiving is in November."],["感恩節在十一月。"],[]],[5,3,"D","first","adj.; adv.; n.","第一（的）",["Sunday is the first day of the week."],["星期日是一週的第一天。"],[]],[5,4,"D","Thanksgiving","n.","感恩節",["People can have a day off on Thanksgiving in the USA."],["在美國，人們在感恩節可以放一天假。"],[]],[5,5,"D","important","adj.","重要的",["Basketball is important to Jesse."],["籃球對 Jesse 來說很重要。"],[]],[5,6,"D","holiday","n.","節日；假日",["Christmas is my favorite holiday."],["聖誕節是我最喜歡的節日。"],[]],[5,7,"D","when","adv.","何時",["Ben: When is their meet-and-greet?","Mia: It's this Saturday."],["Ben：他們的見面會是什麼時候？","Mia：這個星期六。"],[]],[5,8,"D","fourth","adj.; adv.; n.","第四（的）",["The fourth class today is English."],["今天的第四節課是英文。"],[]],[5,9,"D","birthday","n.","生日",["Tomorrow is my birthday."],["明天是我的生日。"],[]],[5,10,"D","also","adv.","也；此外",["Ted is my cousin, and he's also my classmate."],["Ted 是我的表哥，他也是我的同學。"],[]],[5,11,"D","before","prep.","在…之前",["Let's play a game before dinner."],["我們晚餐前來玩個遊戲吧。"],[]],[5,12,"D","around","adv.; prep.","圍繞；在…附近",["Are there many houses around the park?"],["公園附近有很多房子嗎？"],[]],[5,13,"D","How about...?","","那…呢？",["Steven: I am a K-pop fan. How about you, Lauren?","Lauren: I'm a fan of K-pop, too."],["Steven：我是韓國流行音樂迷。那妳呢，Lauren？","Lauren：我也是韓國流行音樂迷。"],["How about"]],[5,14,"D","second","adj.; adv.; n.","第二（的）",["Rose is Mr. Bean's second daughter."],["Rose 是 Bean 先生的二女兒。"],[]],[5,15,"D","next","adj.","下一個的",["Christmas Eve is next week."],["聖誕夜就在下週。"],[]],[5,16,"T","month","n.","月份",["My sister is seven months old."],["我妹妹七個月大。"],[]],[5,17,"T","January","n.","一月",["January is the first month of the year."],["一月是一年的第一個月。"],[]],[5,18,"T","February","n.","二月",["The holiday is in February."],["這個節日在二月。"],[]],[5,19,"T","March","n.","三月",["The baseball game is on March fifteenth."],["棒球比賽在三月十五日。"],[]],[5,20,"T","April","n.","四月",["April is between March and May."],["四月在三月和五月之間。"],[]],[5,21,"T","May","n.","五月",["Mother's Day is on the second Sunday of May."],["母親節在五月的第二個星期日。"],[]],[5,22,"T","June","n.","六月",["June first is on Saturday this year."],["今年的六月一日是星期六。"],[]],[5,23,"T","July","n.","七月",["July fourth is a very important day in the USA."],["七月四日在美國是非常重要的日子。"],[]],[5,24,"T","August","n.","八月",["Father's Day in Taiwan is on August eighth."],["台灣的父親節在八月八日。"],[]],[5,25,"T","September","n.","九月",["September twenty-eighth is Confucius' birthday."],["九月二十八日是孔子的生日。"],[]],[5,26,"T","October","n.","十月",["October is after September."],["十月在九月之後。"],[]],[5,27,"T","December","n.","十二月",["Next December I'm going to the USA with my friends."],["明年十二月我要和朋友去美國。"],[]],[5,28,"T","New Year's Eve","n.","元旦前夕",["New Year's Eve is on December 31."],["元旦前夕是十二月三十一日。"],[]],[5,29,"T","Christmas","n.","聖誕節",["It's Christmas today."],["今天是聖誕節。"],[]],[5,30,"G","third","adj.; adv.; n.","第三（的）",["March is the third month of the year."],["三月是一年的第三個月。"],[]],[5,31,"R","animal","n.","動物",["What's your favorite animal?"],["你最喜歡的動物是什麼？"],[]],[5,32,"R","cow","n.","牛；乳牛",["Don't touch the cow. It's eating."],["不要摸那頭牛，牠正在吃東西。"],[]],[5,33,"R","think","v.","想；認為",["Claire: Where can we go for dinner?","Asher: I'm thinking about Ma's Kitchen. It's great."],["Claire：我們可以去哪裡吃晚餐？","Asher：我在考慮 Ma's Kitchen，那家很棒。"],["thinking"]],[5,34,"R","lucky","adj.","幸運的",["Twelve is my lucky number."],["十二是我的幸運數字。"],[]],[5,35,"R","only","adv.; adj.","只是；唯一的",["He is only a boy, not a man."],["他只是個男孩，不是男人。"],[]],[5,36,"R","dinner","n.","晚餐",["Sammy is having dinner with her family."],["Sammy 正在和她的家人吃晚餐。"],[]],[6,1,"D","lion","n.","獅子",["Is there a lion under the tree?"],["樹下有一隻獅子嗎？"],[]],[6,2,"D","over there","","在那裡",["The woman over there is a cook."],["那邊那位女士是廚師。"],[]],[6,3,"D","king","n.","國王",["The beautiful house is for the king."],["那棟漂亮的房子是給國王的。"],[]],[6,4,"D","some","adj.; pron.","一些（的）",["There are some comic books on the desk."],["書桌上有一些漫畫書。"],[]],[6,5,"D","elephant","n.","大象",["There's an elephant in front of the bus."],["公車前面有一頭大象。"],[]],[6,6,"D","so","adv.","如此地",["Uncle Peter's farm is so big."],["Peter 叔叔的農場好大。"],[]],[6,7,"D","any","adj.; pron.","任何（的）",["There aren't any chairs in the classroom."],["教室裡沒有任何椅子。"],[]],[6,8,"D","tiger","n.","老虎",["Lions and tigers are big cats."],["獅子和老虎都是大型貓科動物。"],[]],[6,9,"D","zebra","n.","斑馬",["There are no zebras near here."],["這附近沒有斑馬。"],[]],[6,10,"D","back","n.","背；後面",["Is that a bird on the dog's back?"],["狗背上的那是一隻鳥嗎？"],[]],[6,11,"D","help","n.; v.","幫助；幫忙",["The watch is a great help to me."],["這支手錶對我幫助很大。"],[]],[6,12,"D","right","adj.","正確的",["Matt: Is she your sister?","Belle: That's right."],["Matt：她是你的姊妹嗎？","Belle：沒錯。"],[]],[6,13,"T","monkey","n.","猴子",["There are three monkeys in the tree."],["樹上有三隻猴子。"],[]],[6,14,"T","fox","n.","狐狸",["Are there two foxes over there?"],["那邊有兩隻狐狸嗎？"],[]],[6,15,"T","horse","n.","馬",["This horse is very old."],["這匹馬很老了。"],[]],[6,16,"T","rat","n.","老鼠",["There is a big rat in the kitchen."],["廚房裡有一隻大老鼠。"],[]],[6,17,"T","bear","n.","熊",["Are there any bears in Africa?"],["非洲有熊嗎？"],[]],[6,18,"R","world","n.","世界",["The lion is the king of the animal world."],["獅子是動物界之王。"],[]],[6,19,"R","example","n.","實例",["The Lins are a great example of a happy family."],["林家是幸福家庭的好榜樣。"],[]],[6,20,"R","bug","n.","蟲子",["Look! There is a bug in the pencil box."],["看！鉛筆盒裡有一隻蟲。"],[]],[6,21,"R","food","n.","食物",["I'm hungry. Let's eat some food."],["我餓了。我們吃點東西吧。"],[]],[6,22,"R","clean up","","清理；打掃",["Tom is cleaning up his room."],["Tom 正在打掃他的房間。"],["cleaning up"]],[6,23,"R","full","adj.","飽的；滿的",["Jason: Are you hungry?","Sarah: No. I'm full."],["Jason：你餓嗎？","Sarah：不餓，我吃飽了。"],[]],[6,24,"R","healthy","adj.","健康的",["Mary's daughter is a healthy girl."],["Mary 的女兒是個健康的女孩。"],[]],[6,25,"R","thanks to","","幸虧；由於",["Thanks to Mom, we can have a great dinner."],["多虧了媽媽，我們才能吃到一頓很棒的晚餐。"],[]],[6,26,"R","clean","adj.","乾淨的",["Their house is very clean."],["他們的房子非常乾淨。"],[]]];
+const SEC = {D:'Dialogue', T:'Theme Words', R:'Reading', G:'Grammar Focus'};
+const WORDS = RAW.map(r => ({id:r[0]+'-'+r[1], u:r[0], n:r[1], sec:SEC[r[2]], w:r[3], pos:r[4], zh:r[5], en:r[6], zs:r[7], hl:r[8]}));
+const WMAP = Object.fromEntries(WORDS.map(w => [w.id, w]));
+
+const PARTS = [
+  {id:'u1', name:'Unit 1', units:[1], g:'s'}, {id:'u2', name:'Unit 2', units:[2], g:'s'},
+  {id:'u3', name:'Unit 3', units:[3], g:'s'}, {id:'u4', name:'Unit 4', units:[4], g:'s'},
+  {id:'u5', name:'Unit 5', units:[5], g:'s'}, {id:'u6', name:'Unit 6', units:[6], g:'s'},
+  {id:'u12', name:'Unit 1–2', units:[1,2], g:'d'}, {id:'u34', name:'Unit 3–4', units:[3,4], g:'d'},
+  {id:'u56', name:'Unit 5–6', units:[5,6], g:'d'}, {id:'all', name:'Unit 1–6 總複習', units:[1,2,3,4,5,6], g:'a'},
+];
+
+/* ===== 時間工具 ===== */
+const MIN = 60e3, DAY = 864e5;
+const p2 = n => String(n).padStart(2,'0');
+const dk = t => { const d = new Date(t); return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); };
+const mk = t => { const d = new Date(t); return d.getFullYear()+'-'+p2(d.getMonth()+1); };
+const sod = t => { const d = new Date(t); d.setHours(0,0,0,0); return +d; };
+const wk = t => { const d = new Date(sod(t)); const wd = (d.getDay()+6)%7; return dk(+d - wd*DAY); }; // 週一為一週開始
+const eod = () => sod(Date.now()) + DAY - 1;
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,10));
+
+/* ===== 儲存 ===== */
+let S, storeOK = true;
+function blank(){
+  return {v:1, cards:{}, opens:[], days:{}, student:{id:uid(), cls:'', seat:'', name:''},
+    settings:{newPer:20, rate:0.85, auto:false, role:true}, pending:[], created:Date.now()};
+}
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(CONFIG.STORE_KEY) || 'null');
+    S = s && s.v ? s : blank();
+    S.settings = Object.assign(blank().settings, S.settings||{});
+  }catch(e){ storeOK = false; S = blank(); }
+}
+function save(){
+  try{ localStorage.setItem(CONFIG.STORE_KEY, JSON.stringify(S)); }
+  catch(e){ if(storeOK){ storeOK = false; toast('⚠️ 無法儲存紀錄（可能是無痕模式）'); } }
+}
+
+/* ===== 間隔重複排程（Anki SM-2 簡化版） =====
+   新卡學習步驟：1 分 → 10 分 → 畢業（1 天）；按「很熟」直接 4 天
+   複習卡：忘了→重學(10 分)、間隔減半、易度 −0.20
+           模糊→間隔 ×1.2、易度 −0.15
+           記得→間隔 × 易度
+           很熟→間隔 × 易度 × 1.3、易度 +0.15 */
+const STEPS = [1, 10], RELEARN = 10, GRAD = 1, EASY_GRAD = 4, MAX_IVL = 365, LEARN_AHEAD = 20*MIN;
+function card(id){ return S.cards[id] || {st:0, step:0, ivl:0, ease:2.5, due:0, lapses:0, seen:0, ok:0, ng:0, h:[0,0,0,0], last:0, rt:0}; }
+function nextState(c0, r, now){
+  const c = Object.assign({}, c0, {h:c0.h.slice()});
+  if(c.st === 0 || c.st === 1){
+    if(r === 1){ c.st = 1; c.step = 0; c.due = now + STEPS[0]*MIN; }
+    else if(r === 2){ c.st = 1; c.due = now + (c.step === 0 ? (STEPS[0]+STEPS[1])/2 : STEPS[c.step]) * MIN; }
+    else if(r === 3){
+      if(c.step + 1 < STEPS.length){ c.st = 1; c.step++; c.due = now + STEPS[c.step]*MIN; }
+      else { c.st = 2; c.ivl = GRAD; c.due = sod(now) + c.ivl*DAY; }
+    } else { c.st = 2; c.ivl = EASY_GRAD; c.due = sod(now) + c.ivl*DAY; }
+  } else if(c.st === 2){
+    if(r === 1){ c.lapses++; c.ease = Math.max(1.3, c.ease - .2); c.st = 3; c.ivl = Math.max(1, Math.round(c.ivl*.5)); c.due = now + RELEARN*MIN; }
+    else {
+      let iv;
+      if(r === 2){ c.ease = Math.max(1.3, c.ease - .15); iv = c.ivl*1.2; }
+      else if(r === 3){ iv = c.ivl*c.ease; }
+      else { iv = c.ivl*c.ease*1.3; c.ease += .15; }
+      c.ivl = Math.min(MAX_IVL, Math.max(c.ivl + 1, Math.round(iv)));
+      c.due = sod(now) + c.ivl*DAY;
+    }
+  } else { // st 3 重學中
+    if(r <= 2){ c.due = now + (r === 1 ? RELEARN : 15)*MIN; }
+    else { c.st = 2; if(r === 4) c.ivl += 1; c.due = sod(now) + c.ivl*DAY; }
+  }
+  c.ease = Math.round(c.ease*100)/100;
+  return c;
+}
+function fmtIvl(ms){
+  const m = Math.max(1, Math.round(ms/MIN));
+  if(m < 60) return m + ' 分';
+  if(m < 1440) return Math.round(m/60) + ' 小時';
+  const d = Math.round(m/1440);
+  if(d < 30) return d + ' 天';
+  return (Math.round(d/3)/10) + ' 個月';
+}
+function mastery(c){ // 0 未學習 1 學習中 2 熟悉 3 精熟
+  if(!c || c.st === 0) return 0;
+  if(c.st === 1 || c.st === 3) return 1;
+  return c.ivl >= 21 ? 3 : 2;
+}
+
+/* ===== 每個範圍的狀態統計 ===== */
+function partWords(p){ return WORDS.filter(w => p.units.includes(w.u)); }
+function partCounts(p){
+  const now = Date.now(), end = eod();
+  let nw = 0, lr = 0, rv = 0; const m = [0,0,0,0];
+  for(const w of partWords(p)){
+    const c = S.cards[w.id];
+    m[mastery(c)]++;
+    if(!c || c.st === 0) nw++;
+    else if(c.st === 1 || c.st === 3){ if(c.due <= end) lr++; }
+    else if(c.due <= end) rv++;
+  }
+  return {nw, lr, rv, m, total: partWords(p).length};
+}
+
+/* ===== 發音（Web Speech API，美式英文） ===== */
+const TTS = {voices:[], a:null, b:null, ok:'speechSynthesis' in window};
+const PREF_A = ['Samantha','Ava','Allison','Susan','Nicky','Google US English','Microsoft Aria','Microsoft Jenny','Zira'];
+const PREF_B = ['Aaron','Fred','Evan','Nathan','Tom','Alex','Microsoft Guy','Microsoft Guy Online','David','Google UK English Male'];
+function pickVoices(){
+  if(!TTS.ok) return;
+  const all = speechSynthesis.getVoices();
+  const us = all.filter(v => /en[-_]US/i.test(v.lang));
+  const find = list => { for(const n of list){ const v = us.find(v => v.name.includes(n)); if(v) return v; } return null; };
+  TTS.a = find(PREF_A) || us.find(v => v.localService) || us[0] || null;
+  TTS.b = find(PREF_B.filter(n => !TTS.a || !TTS.a.name.includes(n))) || us.find(v => v !== TTS.a) || TTS.a;
+  TTS.voices = us;
+  const vi = document.getElementById('voiceInfo');
+  if(vi) vi.textContent = TTS.a ? `使用聲音：${TTS.a.name}${TTS.b && TTS.b !== TTS.a ? '、' + TTS.b.name : ''}（美式英文）` :
+    (TTS.ok ? '找不到美式英文聲音，將使用系統預設英文發音。iPhone 可到「設定 › 輔助使用 › 語音內容 › 聲音 › 英文」下載 Samantha 等聲音。' : '此瀏覽器不支援語音朗讀。');
+}
+if(TTS.ok){ pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
+let speakingBtn = null;
+function stopSpeak(){ if(TTS.ok) speechSynthesis.cancel(); if(speakingBtn){ speakingBtn.classList.remove('speaking'); speakingBtn = null; } }
+function speak(parts, btn){
+  if(!TTS.ok){ toast('此瀏覽器不支援語音朗讀'); return; }
+  stopSpeak();
+  if(btn){ btn.classList.add('speaking'); speakingBtn = btn; }
+  parts.forEach((p, i) => {
+    const u = new SpeechSynthesisUtterance(p.text);
+    u.lang = 'en-US'; u.rate = S.settings.rate; u.pitch = 1;
+    const v = p.alt && S.settings.role ? TTS.b : TTS.a;
+    if(v) u.voice = v;
+    if(i === parts.length - 1) u.onend = u.onerror = () => { if(speakingBtn === btn && btn){ btn.classList.remove('speaking'); speakingBtn = null; } };
+    speechSynthesis.speak(u);
+  });
+}
+const SPK = /^([A-Z][A-Za-z.' ]{0,20}):\s+(.*)$/;
+function wordSpeech(w){ return w.replace(/\(s\)/g,'s').replace(/\.\.\.|…/g,'').replace(/[?!]$/,'').trim(); }
+function sentenceParts(w){
+  const names = [];
+  return w.en.map(line => {
+    const m = line.match(SPK); let text = line, alt = false;
+    if(m){ text = m[2]; let k = names.indexOf(m[1]); if(k < 0){ names.push(m[1]); k = names.length - 1; } alt = k % 2 === 1; }
+    return {text, alt};
+  });
+}
+
+/* ===== 例句：標示單字（藍色粗體） ===== */
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function hlRegex(w){
+  const pats = w.hl.length ? w.hl.map(reEsc) : [reEsc(w.w) + "(?:s|es|'s|ed|d|ing)?"];
+  return new RegExp("(^|[^A-Za-z])(" + pats.join('|') + ")(?![A-Za-z])", 'gi');
+}
+function sentenceHTML(w){
+  const rx = hlRegex(w);
+  return w.en.map(line => {
+    const m = line.match(SPK);
+    const body = esc(m ? m[2] : line).replace(rx, '$1<b class="hl">$2</b>');
+    return `<div class="line">${m ? `<span class="sp">${esc(m[1])}:</span>` : ''}${body}</div>`;
+  }).join('');
+}
+
+/* ===== 上傳（Google Sheet） ===== */
+function logEvent(ev){
+  if(!CONFIG.SYNC_URL) return;
+  S.pending.push(Object.assign({id:uid(), t:new Date().toISOString(), d:dk(Date.now())}, ev));
+  if(S.pending.length > 3000) S.pending = S.pending.slice(-3000);
+}
+let flushing = false;
+function payload(evs){ const st = S.student; return JSON.stringify({app:CONFIG.APP_ID, sid:st.id, cls:st.cls, seat:st.seat, name:st.name, ua:navigator.userAgent.slice(0,120), events:evs}); }
+async function flush(){
+  if(!CONFIG.SYNC_URL || flushing || !S.pending.length || !navigator.onLine) return;
+  flushing = true;
+  const batch = S.pending.slice(0, 200);
+  try{
+    await fetch(CONFIG.SYNC_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload(batch)});
+    const ids = new Set(batch.map(e => e.id));
+    S.pending = S.pending.filter(e => !ids.has(e.id));
+    S.lastSync = Date.now(); save();
+  }catch(e){ /* 離線時保留，下次再傳 */ }
+  flushing = false;
+  if(S.pending.length && !flushing) setTimeout(flush, 1500);
+}
+function beaconFlush(){
+  if(!CONFIG.SYNC_URL || !S.pending.length || !navigator.sendBeacon) return;
+  const batch = S.pending.slice(0, 200);
+  if(navigator.sendBeacon(CONFIG.SYNC_URL, new Blob([payload(batch)], {type:'text/plain;charset=utf-8'}))){
+    const ids = new Set(batch.map(e => e.id));
+    S.pending = S.pending.filter(e => !ids.has(e.id)); S.lastSync = Date.now(); save();
+  }
+}
+
+/* ===== 開啟次數 ===== */
+let hiddenAt = 0;
+function recordOpen(){
+  const now = Date.now();
+  S.opens.push(now);
+  if(S.opens.length > 5000) S.opens = S.opens.slice(-5000);
+  logEvent({type:'open'});
+  save();
+}
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){ hiddenAt = Date.now(); stopSpeak(); beaconFlush(); save(); }
+  else {
+    if(hiddenAt && Date.now() - hiddenAt > 10*MIN){ recordOpen(); flush(); }  // 離開超過 10 分鐘再回來 = 新的一次開啟
+    hiddenAt = 0;
+    if(cur.view === 'vHome') renderHome();
+  }
+});
+window.addEventListener('pagehide', () => { beaconFlush(); save(); });
+window.addEventListener('online', flush);
+
+/* ===== 介面共用 ===== */
+const $ = id => document.getElementById(id);
+let toastT;
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
+const cur = {view:'vHome'};
+function show(v){
+  ['vHome','vStats','vSet'].forEach(id => $(id).classList.toggle('hidden', id !== v));
+  document.querySelectorAll('#tabbar button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  cur.view = v; window.scrollTo(0,0);
+  if(v === 'vHome') renderHome(); else if(v === 'vStats') renderStats(); else renderSettings();
+}
+document.querySelectorAll('#tabbar button').forEach(b => b.onclick = () => show(b.dataset.v));
+function mbarHTML(m, total){
+  const cols = ['var(--m3)','var(--m2)','var(--m1)'];
+  return `<div class="mbar">${[3,2,1].map((k,i) => m[k] ? `<span style="width:${m[k]/total*100}%;background:${cols[i]}"></span>` : '').join('')}</div>`;
+}
+function openModal(html){ $('modalCard').innerHTML = html; $('modal').classList.remove('hidden'); }
+function closeModal(){ $('modal').classList.add('hidden'); }
+
+/* ===== 首頁 ===== */
+function renderHome(){
+  const st = S.student;
+  $('hello').textContent = (st.name ? `嗨，${st.name}！` : '') + `Unit 1–6 · 共 ${WORDS.length} 個單字`;
+  const today = dk(Date.now()), dd = S.days[today] || {r:0, ok:0, ms:0};
+  const streak = calcStreak();
+  $('todayBox').innerHTML = `<div><b>${dd.r}</b><span>今日作答</span></div><div><b>${Math.round(dd.ms/MIN)}</b><span>今日分鐘</span></div><div><b>${streak}</b><span>連續天數 🔥</span></div>`;
+  const make = p => {
+    const c = partCounts(p), learned = c.total - c.m[0];
+    return `<button class="card part ${p.g === 's' ? '' : 'big'}" data-p="${p.id}">
+      <div class="grow"><div class="t">${p.name}<span class="n">${c.total} 字</span></div>
+      <div class="cnt"><span class="c-new"><i>${c.nw}</i> 新</span><span class="c-learn"><i>${c.lr}</i> 學</span><span class="c-rev"><i>${c.rv}</i> 複</span>
+      <span style="margin-left:auto;color:var(--ink3)">${Math.round(learned/c.total*100)}%</span></div>
+      ${mbarHTML(c.m, c.total)}</div></button>`;
+  };
+  $('pSingle').innerHTML = PARTS.filter(p => p.g === 's').map(make).join('');
+  $('pDouble').innerHTML = PARTS.filter(p => p.g === 'd').map(make).join('');
+  $('pAll').innerHTML = PARTS.filter(p => p.g === 'a').map(make).join('');
+  document.querySelectorAll('.part').forEach(b => b.onclick = () => startSession(PARTS.find(p => p.id === b.dataset.p)));
+}
+function calcStreak(){
+  let n = 0, t = Date.now();
+  if(!(S.days[dk(t)] && S.days[dk(t)].r)) t -= DAY; // 今天還沒練不算中斷
+  while(S.days[dk(t)] && S.days[dk(t)].r){ n++; t -= DAY; }
+  return n;
+}
+
+/* ===== 學習流程 ===== */
+let SES = null;
+function buildQueue(p, cram){
+  const now = Date.now(), end = eod(), ws = partWords(p);
+  if(cram){
+    const seen = ws.filter(w => S.cards[w.id] && S.cards[w.id].seen);
+    const pool = (seen.length >= 5 ? seen : ws).slice();
+    pool.sort((a,b) => {
+      const A = card(a.id), B = card(b.id);
+      return (B.ng - B.ok*.5) - (A.ng - A.ok*.5) || A.ease - B.ease || A.last - B.last || Math.random() - .5;
+    });
+    return pool.slice(0, 20).sort(() => Math.random() - .5).map(w => w.id);
+  }
+  const learn = [], rev = [], fresh = [];
+  for(const w of ws){
+    const c = S.cards[w.id];
+    if(!c || c.st === 0) fresh.push(w.id);
+    else if(c.st === 1 || c.st === 3){ if(c.due <= end) learn.push(w.id); }
+    else if(c.due <= end) rev.push(w.id);
+  }
+  learn.sort((a,b) => S.cards[a].due - S.cards[b].due);
+  rev.sort((a,b) => S.cards[a].due - S.cards[b].due);
+  const nw = fresh.slice(0, S.settings.newPer);
+  // 複習與新字交錯出現
+  const q = [...learn], step = nw.length ? Math.max(1, Math.round(rev.length / nw.length)) : 1;
+  let ri = 0, ni = 0;
+  while(ri < rev.length || ni < nw.length){
+    for(let k = 0; k < step && ri < rev.length; k++) q.push(rev[ri++]);
+    if(ni < nw.length) q.push(nw[ni++]);
+  }
+  return q;
+}
+function startSession(p, cram=false){
+  const q = buildQueue(p, cram);
+  SES = {p, cram, q, done:0, total:q.length, ok:0, ng:0, t0:Date.now(), cur:null, shownAt:0, revealed:false, again:new Set()};
+  $('vStudy').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  $('sTitle').innerHTML = `${p.name}<small>${cram ? '加強練習（不影響排程）' : '今日練習'}</small>`;
+  nextCard();
+}
+function endSession(){
+  stopSpeak();
+  $('vStudy').classList.add('hidden');
+  document.body.style.overflow = '';
+  SES = null; save(); flush(); renderHome();
+}
+$('sBack').onclick = endSession;
+function updateHead(){
+  const now = Date.now(), end = eod();
+  let n = 0, l = 0, r = 0;
+  const ids = SES.cur ? [SES.cur, ...SES.q] : SES.q;
+  for(const id of ids){
+    const c = S.cards[id];
+    if(SES.cram){ r++; continue; }
+    if(!c || c.st === 0) n++; else if(c.st === 1 || c.st === 3) l++; else r++;
+  }
+  $('sCount').innerHTML = SES.cram ? `<span class="c-rev">${r}</span>` : `<span class="c-new">${n}</span><span class="c-learn">${l}</span><span class="c-rev">${r}</span>`;
+  const tot = SES.done + ids.length;
+  $('sProg').style.width = (tot ? SES.done/tot*100 : 100) + '%';
+}
+function nextCard(){
+  stopSpeak();
+  if(!SES.q.length){ SES.cur = null; updateHead(); return renderDone(); }
+  SES.cur = SES.q.shift(); SES.revealed = false; SES.shownAt = Date.now();
+  renderCard(); updateHead();
+  if(S.settings.auto) setTimeout(() => { const b = $('pw'); if(b && SES && !SES.revealed) speak([{text:wordSpeech(WMAP[SES.cur].w)}], b); }, 250);
+}
+const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5v5a1 1 0 001 1h3.2l4.1 3.6c.6.5 1.7.1 1.7-.8V5.7c0-.9-1.1-1.3-1.7-.8L8.2 8.5H5a1 1 0 00-1 1z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+function renderCard(){
+  const w = WMAP[SES.cur], c = card(w.id);
+  const badge = SES.cram ? '<span class="pill cram">加強</span>' : (c.st === 0 ? '<span class="pill">新單字</span>' : '');
+  $('sBody').innerHTML = `<div class="card fc">
+    <div class="tag">${badge}<span>Unit ${w.u} · ${w.sec} · #${w.n}</span></div>
+    <div class="wordrow"><div class="word">${esc(w.w)}</div><button class="play" id="pw" aria-label="播放單字發音">${ICON_PLAY}</button></div>
+    <div class="sent">
+      <div class="shd"><button class="play small" id="ps" aria-label="播放例句">${ICON_PLAY}</button><span>例句</span></div>
+      ${sentenceHTML(w)}
+    </div>
+    <div id="ansBox"></div>
+  </div>`;
+  $('pw').onclick = e => speak([{text:wordSpeech(w.w)}], e.currentTarget);
+  $('ps').onclick = e => speak(sentenceParts(w), e.currentTarget);
+  $('sFoot').innerHTML = `<button class="showbtn" id="showBtn">Show Answer</button>`;
+  $('showBtn').onclick = reveal;
+  $('sBody').scrollTop = 0;
+}
+function reveal(){
+  if(!SES || SES.revealed) return;
+  SES.revealed = true; SES.rt = Date.now() - SES.shownAt;
+  const w = WMAP[SES.cur], c = card(w.id), now = Date.now();
+  $('ansBox').innerHTML = `<div class="ans">
+    <div class="mean">${w.pos ? `<span class="pos">${esc(w.pos)}</span>` : ''}${esc(w.zh)}</div>
+    <div class="zs">${w.zs.map(z => `<div class="zhline">${esc(z)}</div>`).join('')}</div></div>`;
+  const lbl = ['忘了','模糊','記得','很熟'];
+  $('sFoot').innerHTML = `<div class="rates">${[1,2,3,4].map(r => {
+    const ns = SES.cram ? null : nextState(c, r, now);
+    const sub = SES.cram ? (r === 1 ? '再出現' : '') : (ns.st === 2 ? fmtIvl(ns.ivl*DAY) : fmtIvl(ns.due - now));
+    return `<button class="r${r}" data-r="${r}">${lbl[r-1]}<small>${sub}</small></button>`; }).join('')}</div>`;
+  $('sFoot').querySelectorAll('button').forEach(b => b.onclick = () => answer(+b.dataset.r));
+  setTimeout(() => { const a = document.querySelector('.ans'); if(a) a.scrollIntoView({block:'nearest', behavior:'smooth'}); }, 30);
+}
+function answer(r){
+  if(!SES || !SES.revealed) return;
+  const id = SES.cur, now = Date.now(), c0 = card(id);
+  const rt = Math.min(SES.rt || 0, 120e3), spent = Math.min(now - SES.shownAt, 90e3);
+  let c = SES.cram ? Object.assign({}, c0, {h:c0.h.slice()}) : nextState(c0, r, now);
+  c.seen++; c.h[r-1]++; c.last = now; c.rt = Math.round(((c0.rt || rt) * (c.seen - 1) + rt) / c.seen);
+  if(r === 1) c.ng++; else c.ok++;
+  S.cards[id] = c;
+  const d = dk(now); const dd = S.days[d] || (S.days[d] = {r:0, ok:0, ms:0});
+  dd.r++; if(r > 1) dd.ok++; dd.ms += spent;
+  r > 1 ? SES.ok++ : SES.ng++;
+  logEvent({type:'review', w:id, word:WMAP[id].w, u:WMAP[id].u, r, ok:r > 1 ? 1 : 0, rt, ivl:c.ivl, ease:c.ease, st:c.st, part:SES.p.id, mode:SES.cram ? 'cram' : 'srs'});
+  save();
+  if(S.pending.length >= 10) flush();
+  // 再次排入本次練習：學習中的卡片（或加強模式中答錯）
+  const requeue = SES.cram ? r === 1 : ((c.st === 1 || c.st === 3) && c.due <= now + LEARN_AHEAD);
+  if(requeue){
+    const pos = Math.min(SES.q.length, r === 1 ? 3 : 6);
+    SES.q.splice(pos, 0, id);
+  } else SES.done++;
+  nextCard();
+}
+function renderDone(){
+  const mins = Math.max(1, Math.round((Date.now() - SES.t0)/MIN)), n = SES.ok + SES.ng;
+  const empty = n === 0;
+  $('sBody').innerHTML = `<div class="done">
+    <div class="big">${empty ? '🎉' : '✅'}</div>
+    <h3>${empty ? '這個範圍今天都完成了！' : '本次練習完成'}</h3>
+    ${empty ? '<p>目前沒有到期的單字，明天再回來複習。</p>' : `<p>作答 ${n} 次 · 正確率 ${Math.round(SES.ok/n*100)}% · 約 ${mins} 分鐘</p>`}
+    <p style="font-size:13px;color:var(--ink3);margin-top:10px">想多練一點？「加強練習」會挑出你最常答錯的單字，不會改變複習排程。</p>
+    <div class="btnrow"><button class="btn ghost" id="dHome">回首頁</button><button class="btn" id="dCram">加強練習 20 字</button></div></div>`;
+  $('sFoot').innerHTML = '';
+  $('dHome').onclick = endSession;
+  $('dCram').onclick = () => { const p = SES.p; startSession(p, true); };
+  save(); flush();
+}
+document.addEventListener('keydown', e => {
+  if(!SES || $('vStudy').classList.contains('hidden')) return;
+  if((e.key === ' ' || e.key === 'Enter') && !SES.revealed){ e.preventDefault(); reveal(); }
+  else if(SES.revealed && '1234'.includes(e.key)) answer(+e.key);
+});
+
+/* ===== 統計頁 ===== */
+let openMode = 'd', wFilter = 0, wSort = {k:'u', dir:1};
+function countBy(keyFn, keys){ const m = Object.fromEntries(keys.map(k => [k, 0])); for(const t of S.opens){ const k = keyFn(t); if(k in m) m[k]++; } return keys.map(k => m[k]); }
+const dayLbl = t => { const d = new Date(t); return d.getDate() === 1 ? (d.getMonth()+1) + '/1' : String(d.getDate()); };
+function barsHTML(vals, labels){
+  const max = Math.max(1, ...vals);
+  if(!vals.some(v => v)) return '<div class="empty" style="height:130px;display:grid;place-items:center">尚無紀錄</div>';
+  return `<div class="bars">${vals.map(v => `<div class="col"><em>${v || ''}</em><i class="${v ? '' : 'z'}" style="height:${v ? Math.max(4, v/max*100) : 2}%"></i></div>`).join('')}</div>
+    <div class="xl">${labels.map(l => `<span>${l}</span>`).join('')}</div>`;
+}
+function renderOpenChart(){
+  const now = Date.now(); let keys = [], labels = [];
+  if(openMode === 'd'){ for(let i = 13; i >= 0; i--){ const t = now - i*DAY; keys.push(dk(t)); labels.push(i === 0 ? '今' : dayLbl(t)); } }
+  else if(openMode === 'w'){ for(let i = 7; i >= 0; i--){ const t = now - i*7*DAY, k = wk(t); keys.push(k); labels.push(i === 0 ? '本週' : k.slice(5).replace('-','/')); } }
+  else { const d = new Date(); for(let i = 5; i >= 0; i--){ const t = +new Date(d.getFullYear(), d.getMonth() - i, 15); keys.push(mk(t)); labels.push((new Date(t).getMonth()+1) + '月'); } }
+  const fn = openMode === 'd' ? dk : openMode === 'w' ? wk : mk;
+  $('chOpen').innerHTML = barsHTML(countBy(fn, keys), labels);
+}
+document.querySelectorAll('#segOpen button').forEach(b => b.onclick = () => {
+  openMode = b.dataset.k; document.querySelectorAll('#segOpen button').forEach(x => x.classList.toggle('on', x === b)); renderOpenChart();
+});
+function renderStats(){
+  const st = S.student, now = Date.now();
+  $('statWho').textContent = [st.cls && st.cls + ' 班', st.seat && st.seat + ' 號', st.name].filter(Boolean).join(' ') || '（尚未填寫學生資料，可到「設定」填寫）';
+  const today = dk(now), week = wk(now), month = mk(now);
+  const oD = S.opens.filter(t => dk(t) === today).length, oW = S.opens.filter(t => wk(t) === week).length, oM = S.opens.filter(t => mk(t) === month).length;
+  let seen = 0, ok = 0, ng = 0; for(const c of Object.values(S.cards)){ seen += c.seen; ok += c.ok; ng += c.ng; }
+  const dd = S.days[today] || {r:0, ok:0, ms:0};
+  const totalMin = Math.round(Object.values(S.days).reduce((a, d) => a + d.ms, 0)/MIN);
+  const studyDays = Object.values(S.days).filter(d => d.r).length;
+  const learned = WORDS.filter(w => mastery(S.cards[w.id]) > 0).length;
+  const tiles = [
+    [oD, '今日開啟次數'], [oW, '本週開啟次數'], [oM, '本月開啟次數'], [S.opens.length, '累計開啟次數'],
+    [dd.r, '今日作答'], [Math.round(dd.ms/MIN) + ' 分', '今日學習時間'],
+    [calcStreak() + ' 天', '連續學習'], [studyDays + ' 天', '累計學習天數'],
+    [seen, '累計作答次數'], [seen ? Math.round(ok/seen*100) + '%' : '—', '整體正確率'],
+    [learned + ' / ' + WORDS.length, '已學過單字'], [totalMin + ' 分', '累計學習時間'],
+  ];
+  $('tiles').innerHTML = tiles.map(([v, l]) => `<div class="card tile"><b>${v}</b><span>${l}</span></div>`).join('');
+  renderOpenChart();
+  const keys = [], labels = [];
+  for(let i = 13; i >= 0; i--){ const t = now - i*DAY; keys.push(dk(t)); labels.push(i === 0 ? '今' : dayLbl(t)); }
+  $('chRev').innerHTML = barsHTML(keys.map(k => (S.days[k] || {}).r || 0), labels);
+  $('unitMastery').innerHTML = [1,2,3,4,5,6].map(u => {
+    const ws = WORDS.filter(w => w.u === u), m = [0,0,0,0]; ws.forEach(w => m[mastery(S.cards[w.id])]++);
+    return `<div class="urow"><b>Unit ${u}</b>${mbarHTML(m, ws.length)}<span class="pct">${Math.round((ws.length - m[0])/ws.length*100)}%</span></div>`;
+  }).join('');
+  const wrong = WORDS.map(w => ({w, c:S.cards[w.id]})).filter(x => x.c && x.c.ng).sort((a,b) => b.c.ng - a.c.ng || a.c.ok - b.c.ok).slice(0, 10);
+  $('topWrong').innerHTML = wrong.length ? wrong.map(x => `<div><span><b>${esc(x.w.w)}</b> <small>${esc(x.w.zh)}</small></span><span><span class="c-learn">錯 ${x.c.ng}</span> <small>/ 測 ${x.c.seen}</small></span></div>`).join('') : '<div class="empty">還沒有答錯紀錄</div>';
+  $('wFilter').innerHTML = ['全部',1,2,3,4,5,6].map((u, i) => `<button data-u="${i}" class="${wFilter === i ? 'on' : ''}">${i ? 'U' + u : u}</button>`).join('');
+  $('wFilter').querySelectorAll('button').forEach(b => b.onclick = () => { wFilter = +b.dataset.u; renderStats(); });
+  renderTable();
+}
+const COLS = [
+  {k:'w', t:'單字'}, {k:'u', t:'U'}, {k:'m', t:'狀態'}, {k:'seen', t:'測'}, {k:'ok', t:'對'}, {k:'ng', t:'錯'},
+  {k:'acc', t:'正確率'}, {k:'ivl', t:'間隔'}, {k:'due', t:'下次'}, {k:'ease', t:'易度'}, {k:'rt', t:'思考秒'},
+];
+const MLBL = ['未學習','學習中','熟悉','精熟'], MCOL = ['var(--m0)','var(--m1)','var(--m2)','var(--m3)'];
+function renderTable(){
+  const rows = WORDS.filter(w => !wFilter || w.u === wFilter).map(w => {
+    const c = S.cards[w.id];
+    return {w, c, k:{w:w.w.toLowerCase(), u:w.u*100 + w.n, m:mastery(c), seen:c ? c.seen : 0, ok:c ? c.ok : 0, ng:c ? c.ng : 0,
+      acc:c && c.seen ? c.ok/c.seen : -1, ivl:c && c.st ? c.ivl : -1, due:c && c.st ? c.due : 9e15, ease:c && c.st ? c.ease : 9, rt:c && c.seen ? c.rt : 9e9}};
+  });
+  rows.sort((a,b) => (a.k[wSort.k] > b.k[wSort.k] ? 1 : a.k[wSort.k] < b.k[wSort.k] ? -1 : a.k.u - b.k.u) * wSort.dir);
+  const today = sod(Date.now());
+  const fmtDue = c => { if(!c || !c.st) return '—'; const d = sod(c.due); if(d <= today) return '今天'; if(d - today === DAY) return '明天'; const x = new Date(c.due); return (x.getMonth()+1) + '/' + x.getDate(); };
+  $('wTable').innerHTML = `<thead><tr>${COLS.map(c => `<th data-k="${c.k}" class="${wSort.k === c.k ? 'on' : ''}">${c.t}${wSort.k === c.k ? (wSort.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead>
+  <tbody>${rows.map(({w, c, k}) => `<tr><td>${esc(w.w)}</td><td>${w.u}</td><td><span class="st" style="background:${MCOL[k.m]}"></span>${MLBL[k.m]}</td>
+    <td>${k.seen}</td><td>${k.ok}</td><td>${k.ng}</td><td>${k.acc < 0 ? '—' : Math.round(k.acc*100) + '%'}</td>
+    <td>${k.ivl < 0 ? '—' : k.ivl + ' 天'}</td><td>${fmtDue(c)}</td><td>${k.ease === 9 ? '—' : k.ease.toFixed(2)}</td><td>${c && c.seen ? (c.rt/1000).toFixed(1) : '—'}</td></tr>`).join('')}</tbody>`;
+  $('wTable').querySelectorAll('th').forEach(th => th.onclick = () => {
+    const k = th.dataset.k; wSort = {k, dir: wSort.k === k ? -wSort.dir : (['seen','ng','ivl'].includes(k) ? -1 : 1)}; renderTable();
+  });
+}
+
+/* ===== 設定頁 ===== */
+function renderSettings(){
+  const st = S.student, se = S.settings;
+  $('fCls').value = st.cls; $('fSeat').value = st.seat; $('fName').value = st.name;
+  $('fNew').value = String(se.newPer); $('fRate').value = String(se.rate);
+  $('fAuto').checked = se.auto; $('fRole').checked = se.role;
+  $('syncState').textContent = CONFIG.SYNC_URL ? (S.lastSync ? '已連線 · 上次 ' + new Date(S.lastSync).toLocaleString('zh-TW', {hour12:false}) : '已設定，尚未上傳') : '未設定（只記錄在本機）';
+  $('syncPending').textContent = CONFIG.SYNC_URL ? S.pending.length + ' 筆' : '—';
+  pickVoices();
+}
+const bindStudent = (id, key) => $(id).onchange = () => { S.student[key] = $(id).value.trim(); save(); logEvent({type:'profile'}); flush(); };
+bindStudent('fCls','cls'); bindStudent('fSeat','seat'); bindStudent('fName','name');
+$('fNew').onchange = () => { S.settings.newPer = +$('fNew').value; save(); };
+$('fRate').onchange = () => { S.settings.rate = +$('fRate').value; save(); };
+$('fAuto').onchange = () => { S.settings.auto = $('fAuto').checked; save(); };
+$('fRole').onchange = () => { S.settings.role = $('fRole').checked; save(); };
+$('testVoice').onclick = e => speak([{text:'Hello! Nice to meet you.'}, {text:'Nice to meet you, too.', alt:true}], null);
+$('syncNow').onclick = async () => { if(!CONFIG.SYNC_URL) return toast('老師尚未設定上傳網址'); await flush(); renderSettings(); toast(S.pending.length ? '部分紀錄尚未上傳，請確認網路' : '已上傳'); };
+$('bkCopy').onclick = async () => {
+  const code = btoa(unescape(encodeURIComponent(JSON.stringify({cards:S.cards, opens:S.opens, days:S.days, student:S.student, settings:S.settings}))));
+  $('bkText').value = code;
+  try{ await navigator.clipboard.writeText(code); toast('備份碼已複製'); }catch(e){ $('bkText').select(); toast('請手動複製下方文字'); }
+};
+$('bkRestore').onclick = () => {
+  try{
+    const o = JSON.parse(decodeURIComponent(escape(atob($('bkText').value.trim()))));
+    if(!o.cards) throw 0;
+    openModal(`<h3>還原備份？</h3><p class="note">目前手機上的學習紀錄會被備份碼內容取代。</p>
+      <div class="btnrow"><button class="btn ghost" id="mNo">取消</button><button class="btn" id="mYes">還原</button></div>`);
+    $('mNo').onclick = closeModal;
+    $('mYes').onclick = () => { Object.assign(S, {cards:o.cards, opens:o.opens || [], days:o.days || {}, student:Object.assign(S.student, o.student || {}), settings:Object.assign(S.settings, o.settings || {})}); save(); closeModal(); toast('已還原'); renderSettings(); };
+  }catch(e){ toast('備份碼格式不正確'); }
+};
+$('resetAll').onclick = () => {
+  openModal(`<h3>清除所有學習紀錄？</h3><p class="note">所有單字的熟練度、作答次數與開啟紀錄都會刪除，無法復原。學生資料會保留。</p>
+    <div class="btnrow"><button class="btn ghost" id="mNo">取消</button><button class="btn warn" id="mYes">確定清除</button></div>`);
+  $('mNo').onclick = closeModal;
+  $('mYes').onclick = () => { const st = S.student, se = S.settings; S = blank(); S.student = st; S.settings = se; save(); closeModal(); toast('已清除'); show('vHome'); };
+};
+$('modal').onclick = e => { if(e.target.id === 'modal') closeModal(); };
+
+/* ===== 首次使用：填寫學生資料 ===== */
+function askProfile(){
+  openModal(`<h3>歡迎使用 👋</h3><p class="note" style="margin-top:4px">請填寫班級、座號與姓名，老師才看得到你的練習紀錄。之後可在「設定」修改。</p>
+    <div class="form" style="padding:0">
+      <div class="frow"><label>班級</label><input type="text" id="aCls" placeholder="例：701" inputmode="numeric"></div>
+      <div class="frow"><label>座號</label><input type="text" id="aSeat" placeholder="例：12" inputmode="numeric"></div>
+      <div class="frow"><label>姓名</label><input type="text" id="aName" placeholder="你的名字"></div>
+    </div>
+    <div class="btnrow"><button class="btn ghost" id="aSkip">稍後</button><button class="btn" id="aOK">開始</button></div>`);
+  $('aSkip').onclick = () => { S.askedProfile = true; save(); closeModal(); };
+  $('aOK').onclick = () => {
+    S.student.cls = $('aCls').value.trim(); S.student.seat = $('aSeat').value.trim(); S.student.name = $('aName').value.trim();
+    S.askedProfile = true; save(); logEvent({type:'profile'}); flush(); closeModal(); renderHome();
+  };
+}
+
+/* ===== 啟動 ===== */
+load();
+if(CONFIG.SYNC_URL.startsWith('__')) CONFIG.SYNC_URL = '';
+recordOpen();
+show('vHome');
+if(!S.askedProfile && !S.student.name) askProfile();
+flush();
+setInterval(flush, 60e3);
+</script>
+</body>
+</html>
