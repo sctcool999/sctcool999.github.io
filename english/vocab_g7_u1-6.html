@@ -98,8 +98,8 @@ h2{font-size:15px;color:var(--ink2);font-weight:600;margin:22px 4px 8px;letter-s
   box-shadow:0 3px 10px color-mix(in srgb,var(--blue) 35%,transparent);transition:transform .1s}
 .play:active{transform:scale(.92)}
 .play svg{width:22px;height:22px}
-.play.small{width:36px;height:36px}
-.play.small svg{width:17px;height:17px}
+.play.small{width:47px;height:47px}
+.play.small svg{width:22px;height:22px}
 .play.speaking{animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--blue) 18%,transparent)}}
 .sent{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
@@ -260,7 +260,7 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
       <select id="fNew"><option value="10">10 個</option><option value="20">20 個</option><option value="30">30 個</option><option value="999">全部</option></select></div>
     <div class="frow"><label for="fRate">發音速度</label>
       <select id="fRate"><option value="0.75">慢</option><option value="0.9">稍慢</option><option value="1">正常</option></select></div>
-    <div class="frow"><label for="fAuto">新卡片自動唸單字</label><label class="switch"><input type="checkbox" id="fAuto"><span></span></label></div>
+    <div class="frow"><label for="fAuto">每題自動唸單字</label><label class="switch"><input type="checkbox" id="fAuto"><span></span></label></div>
     <div class="frow"><label>測試發音</label><button class="btn ghost" style="height:36px" id="testVoice">▶ 試聽</button></div>
   </div>
   <p class="note" id="voiceInfo"></p>
@@ -346,7 +346,7 @@ const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x'+Date.now().toSt
 let S, storeOK = true;
 function blank(){
   return {v:1, cards:{}, opens:[], days:{}, student:{id:uid(), cls:'', seat:'', name:''},
-    settings:{newPer:20, rate:1, auto:false, role:true}, pending:[], created:Date.now()};
+    settings:{newPer:20, rate:1, auto:true, role:true}, pending:[], created:Date.now()};
 }
 function load(){
   try{
@@ -355,6 +355,7 @@ function load(){
     S.settings = Object.assign(blank().settings, S.settings||{});
     if(!S.settings.v2){ S.settings.rate = 1; S.settings.v2 = 1; } // 舊版預設 0.85 太慢，升級時改回正常速度
     if(![0.75,0.9,1].includes(S.settings.rate)) S.settings.rate = 1;
+    if(!S.settings.v3){ S.settings.auto = true; S.settings.v3 = 1; } // 改為預設每題自動唸單字
   }catch(e){ storeOK = false; S = blank(); }
 }
 function save(){
@@ -661,7 +662,7 @@ function nextCard(){
   if(!SES.q.length){ SES.cur = null; updateHead(); return renderDone(); }
   SES.cur = SES.q.shift(); SES.revealed = false; SES.shownAt = Date.now();
   renderCard(); updateHead();
-  if(S.settings.auto) setTimeout(() => { const b = $('pw'); if(b && SES && !SES.revealed) playWord(WMAP[SES.cur], b); }, 250);
+  if(S.settings.auto) playWord(WMAP[SES.cur], $('pw')); // 在點擊當下直接播放，iPhone 才不會擋自動播放
 }
 const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5v5a1 1 0 001 1h3.2l4.1 3.6c.6.5 1.7.1 1.7-.8V5.7c0-.9-1.1-1.3-1.7-.8L8.2 8.5H5a1 1 0 00-1 1z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 function renderCard(){
