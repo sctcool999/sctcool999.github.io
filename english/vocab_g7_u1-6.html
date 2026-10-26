@@ -1038,7 +1038,7 @@ async function chooseAccount(sid){
     if(!CONFIG.SYNC_URL) return toast('找不到這個帳號的紀錄');
     openModal('<h3>正在載入學習紀錄…</h3><p class="note">第一次在這台裝置使用這個帳號，正在從老師的後台還原你的進度。</p>');
     try{
-      const j = await fetchJSON('?a=state&sid=' + encodeURIComponent(sid));
+      const j = await fetchJSON('?a=state&id=' + encodeURIComponent(sid)); // sid 是 Apps Script 保留參數
       if(!j || !j.ok) throw new Error('bad');
       s = rebuildFromServer({id:sid, cls:a ? a.cls : '', seat:a ? a.seat : '', name:a ? a.name : ''}, j);
       closeModal(); toast(`已還原 ${Object.keys(s.cards).length} 個單字的進度`);
