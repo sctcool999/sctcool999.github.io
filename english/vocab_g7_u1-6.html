@@ -210,6 +210,12 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
 .modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,25,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(env(safe-area-inset-bottom) + 16px)}
 .modal .card{width:100%;max-width:420px;padding:20px;animation:fade .2s}
 .modal h3{margin:0 0 4px;font-family:var(--round);font-size:20px}
+.acct{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:14px 16px;margin-bottom:8px;text-align:left;font-size:17px}
+.acct:active{transform:scale(.98)}
+.acct-tags{display:flex;gap:6px;flex:none}
+.acct-tags .pill{background:var(--blue-soft);color:var(--blue);padding:1px 8px;border-radius:99px;font-weight:600;font-size:13px}
+.acct-tags .pill.cram{background:color-mix(in srgb,var(--hard) 18%,transparent);color:var(--hard)}
+.acct-new{width:100%;margin-top:14px;height:54px;font-size:17px}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%);background:var(--ink);color:var(--bg);
   padding:10px 16px;border-radius:12px;font-size:14px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
 .toast.on{opacity:1}
@@ -217,8 +223,17 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
 </head>
 <body>
 
+<!-- ===== 選擇帳號 ===== -->
+<div class="app hidden" id="vAcct">
+  <h1>選擇帳號</h1>
+  <div class="sub" id="acctState">正在讀取帳號清單…</div>
+  <div id="acctList"></div>
+  <button class="btn ghost acct-new" id="acctNew">＋ 新建帳號</button>
+  <p class="note">第一次在新的手機或新的主畫面圖示使用時，選自己的帳號就會從老師的後台還原學習進度。</p>
+</div>
+
 <!-- ===== 首頁 ===== -->
-<div class="app" id="vHome">
+<div class="app hidden" id="vHome">
   <h1>國一上 英文單字</h1>
   <div class="sub" id="hello"></div>
   <div class="today" id="todayBox"></div>
@@ -266,6 +281,7 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
 <div class="app hidden" id="vSet">
   <h1>設定</h1>
   <h2>學生資料</h2>
+  <div class="btnrow" style="justify-content:flex-start;margin:0 0 10px"><button class="btn ghost" id="switchAcct">切換帳號</button></div>
   <div class="card form">
     <div class="frow"><label for="fCls">班級</label><input type="text" id="fCls" placeholder="例：701" inputmode="numeric"></div>
     <div class="frow"><label for="fSeat">座號</label><input type="text" id="fSeat" placeholder="例：12" inputmode="numeric"></div>
@@ -314,7 +330,7 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
 </div>
 
 <!-- ===== 底部分頁 ===== -->
-<nav class="tabbar" id="tabbar">
+<nav class="tabbar hidden" id="tabbar">
   <button data-v="vHome" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg>練習</button>
   <button data-v="vStats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>統計</button>
   <button data-v="vSet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>設定</button>
@@ -365,19 +381,48 @@ function blank(){
   return {v:1, cards:{}, opens:[], days:{}, student:{id:uid(), cls:'', seat:'', name:''},
     settings:{newPer:20, rate:1, auto:true, role:true}, pending:[], created:Date.now()};
 }
-function load(){
+/* 一台裝置可存多個帳號：每個帳號一份紀錄（key = STORE_KEY:p:<學生ID>），CUR 記住上次使用的帳號 */
+const PKEY = () => CONFIG.STORE_KEY + ':p:', CURKEY = () => CONFIG.STORE_KEY + ':cur';
+const lsGet = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
+const lsSet = (k, v) => { try{ localStorage.setItem(k, v); return true; }catch(e){ return false; } };
+const lsDel = k => { try{ localStorage.removeItem(k); }catch(e){} };
+function normalize(s){
+  s.settings = Object.assign(blank().settings, s.settings||{});
+  if(!s.settings.v2){ s.settings.rate = 1; s.settings.v2 = 1; } // 舊版預設 0.85 太慢，升級時改回正常速度
+  if(![0.75,0.9,1].includes(s.settings.rate)) s.settings.rate = 1;
+  if(!s.settings.v3){ s.settings.auto = true; s.settings.v3 = 1; } // 改為預設每題自動唸單字
+  s.pending = s.pending || []; s.cards = s.cards || {}; s.opens = s.opens || []; s.days = s.days || {};
+  return s;
+}
+function migrateOld(){ // 舊版只存一份紀錄：搬成帳號格式
+  const old = lsGet(CONFIG.STORE_KEY);
+  if(!old) return;
+  try{ const s = JSON.parse(old); if(s && s.student && s.student.id){ if(!lsGet(PKEY() + s.student.id)) lsSet(PKEY() + s.student.id, old); if(!lsGet(CURKEY())) lsSet(CURKEY(), s.student.id); } }catch(e){}
+  lsDel(CONFIG.STORE_KEY);
+}
+function loadProfile(id){
+  try{ const s = JSON.parse(lsGet(PKEY() + id) || 'null'); return s && s.v ? normalize(s) : null; }catch(e){ return null; }
+}
+function localProfiles(){
+  const out = [];
   try{
-    const s = JSON.parse(localStorage.getItem(CONFIG.STORE_KEY) || 'null');
-    S = s && s.v ? s : blank();
-    S.settings = Object.assign(blank().settings, S.settings||{});
-    if(!S.settings.v2){ S.settings.rate = 1; S.settings.v2 = 1; } // 舊版預設 0.85 太慢，升級時改回正常速度
-    if(![0.75,0.9,1].includes(S.settings.rate)) S.settings.rate = 1;
-    if(!S.settings.v3){ S.settings.auto = true; S.settings.v3 = 1; } // 改為預設每題自動唸單字
-  }catch(e){ storeOK = false; S = blank(); }
+    for(let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if(!k || !k.startsWith(PKEY())) continue;
+      try{ const s = JSON.parse(localStorage.getItem(k)); if(s && s.student) out.push({sid:s.student.id, cls:s.student.cls, seat:s.student.seat, name:s.student.name, pending:(s.pending||[]).length, seen:Object.values(s.cards||{}).reduce((a, c) => a + (c.seen||0), 0)}); }catch(e){}
+    }
+  }catch(e){}
+  return out;
+}
+function load(){
+  migrateOld();
+  const cur = lsGet(CURKEY());
+  S = (cur && loadProfile(cur)) || normalize(blank());
 }
 function save(){
-  try{ localStorage.setItem(CONFIG.STORE_KEY, JSON.stringify(S)); }
-  catch(e){ if(storeOK){ storeOK = false; toast('⚠️ 無法儲存紀錄（可能是無痕模式）'); } }
+  if(!S || !S.chosen) return; // 尚未選帳號前不存檔
+  if(!lsSet(PKEY() + S.student.id, JSON.stringify(S)) && storeOK){ storeOK = false; toast('⚠️ 無法儲存紀錄（可能是無痕模式）'); }
+  lsSet(CURKEY(), S.student.id);
 }
 
 /* ===== 間隔重複排程（Anki SM-2 簡化版） =====
@@ -387,7 +432,7 @@ function save(){
            記得→間隔 × 易度
            很熟→間隔 × 易度 × 1.3、易度 +0.15 */
 const STEPS = [1, 10], RELEARN = 10, GRAD = 1, EASY_GRAD = 4, MAX_IVL = 365, LEARN_AHEAD = 20*MIN;
-function card(id){ return S.cards[id] || {st:0, step:0, ivl:0, ease:2.5, due:0, lapses:0, seen:0, ok:0, ng:0, h:[0,0,0,0], last:0, rt:0}; }
+function card(id, st){ return (st || S).cards[id] || {st:0, step:0, ivl:0, ease:2.5, due:0, lapses:0, seen:0, ok:0, ng:0, h:[0,0,0,0], last:0, rt:0}; }
 function nextState(c0, r, now){
   const c = Object.assign({}, c0, {h:c0.h.slice()});
   if(c.st === 0 || c.st === 1){
@@ -540,7 +585,7 @@ function backfill(){
 let flushing = false;
 function payload(evs){ const st = S.student; return JSON.stringify({app:CONFIG.APP_ID, sid:st.id, cls:st.cls, seat:st.seat, name:st.name, ua:navigator.userAgent.slice(0,120), events:evs}); }
 async function flush(){
-  if(!CONFIG.SYNC_URL || flushing || !S.pending.length || !navigator.onLine) return;
+  if(!CONFIG.SYNC_URL || flushing || !S || !S.chosen || !S.pending.length || !navigator.onLine) return;
   flushing = true;
   const batch = S.pending.slice(0, 200);
   try{
@@ -553,7 +598,7 @@ async function flush(){
   if(S.pending.length && !flushing) setTimeout(flush, 1500);
 }
 function beaconFlush(){
-  if(!CONFIG.SYNC_URL || !S.pending.length || !navigator.sendBeacon) return;
+  if(!CONFIG.SYNC_URL || !S || !S.chosen || !S.pending.length || !navigator.sendBeacon) return;
   const batch = S.pending.slice(0, 200);
   if(navigator.sendBeacon(CONFIG.SYNC_URL, new Blob([payload(batch)], {type:'text/plain;charset=utf-8'}))){
     const ids = new Set(batch.map(e => e.id));
@@ -573,7 +618,7 @@ function recordOpen(){
 document.addEventListener('visibilitychange', () => {
   if(document.hidden){ hiddenAt = Date.now(); stopSpeak(); beaconFlush(); save(); }
   else {
-    if(hiddenAt && Date.now() - hiddenAt > 10*MIN){ recordOpen(); flush(); }  // 離開超過 10 分鐘再回來 = 新的一次開啟
+    if(hiddenAt && Date.now() - hiddenAt > 10*MIN && S && S.chosen){ showAccounts(); }  // 離開超過 10 分鐘再回來 = 新的一次進入：重新選帳號
     hiddenAt = 0;
     if(cur.view === 'vHome') renderHome();
   }
@@ -914,15 +959,120 @@ function askProfile(){
   };
 }
 
+/* ===== 帳號：每次開啟先選帳號 ===== */
+const WBY = {}; WORDS.forEach(w => { const k = w.u + '|' + w.w; if(!WBY[k]) WBY[k] = w.id; });
+let ACC = {list:[], ok:false, loading:false};
+async function fetchJSON(q){
+  const r = await fetch(CONFIG.SYNC_URL + q, {method:'GET', cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+async function loadAccounts(){
+  ACC.loading = true; renderAccounts();
+  let server = null;
+  if(CONFIG.SYNC_URL && navigator.onLine !== false){
+    try{ const j = await fetchJSON('?a=accounts'); if(j && j.ok) server = j.accounts; }catch(e){}
+  }
+  const local = localProfiles(), map = {};
+  if(server){
+    for(const a of server) map[a.sid] = Object.assign({}, a, {local:false, pending:0});
+    for(const l of local){
+      if(map[l.sid]) Object.assign(map[l.sid], {local:true, pending:l.pending, seen:l.seen});
+      else if(l.pending) map[l.sid] = Object.assign({}, l, {local:true, unsynced:true}); // 還沒上傳成功的新帳號
+      // 其他：後台已刪除的帳號，不再列出
+    }
+  } else for(const l of local) map[l.sid] = Object.assign({}, l, {local:true});
+  ACC = {list:Object.values(map).filter(a => a.name || a.cls || a.seat), ok:!!server, loading:false};
+  renderAccounts();
+}
+const accLabel = a => `${a.cls ? esc(String(a.cls)) + ' 班　' : ''}${a.seat ? esc(String(a.seat)) + ' 號　' : ''}<b>${esc(String(a.name || '（未填姓名）'))}</b>`;
+function renderAccounts(){
+  const box = $('acctList'), cur = lsGet(CURKEY());
+  $('acctState').textContent = ACC.loading ? '正在讀取帳號清單…' : (CONFIG.SYNC_URL && !ACC.ok ? '⚠️ 連不到老師的後台，只顯示這台裝置上的帳號' : '點選自己的名字開始練習');
+  if(ACC.loading && !ACC.list.length){ box.innerHTML = '<div class="empty">讀取中…</div>'; return; }
+  const list = ACC.list.slice().sort((a, b) => String(a.cls).localeCompare(String(b.cls), 'zh', {numeric:true}) || (+a.seat || 0) - (+b.seat || 0) || String(a.name).localeCompare(String(b.name), 'zh'));
+  const curA = list.find(a => a.sid === cur);
+  const row = a => `<button class="card acct" data-sid="${esc(a.sid)}"><span>${accLabel(a)}</span><span class="acct-tags">${a.unsynced ? '<span class="pill cram">未上傳</span>' : ''}</span></button>`;
+  let html = curA ? `<h2>這台裝置上次使用</h2>${row(curA)}` : '';
+  const groups = {};
+  for(const a of list) if(a !== curA) (groups[a.cls || '未填班級'] = groups[a.cls || '未填班級'] || []).push(a);
+  for(const [g, arr] of Object.entries(groups)) html += `<h2>${esc(g)}${/^\d+$/.test(g) ? ' 班' : ''}</h2>` + arr.map(row).join('');
+  box.innerHTML = html || '<div class="empty">目前沒有帳號，請按下方「新建帳號」</div>';
+  box.querySelectorAll('.acct').forEach(b => b.onclick = () => chooseAccount(b.dataset.sid));
+}
+function rebuildFromServer(student, data){ // 依後台紀錄重建學習進度
+  const s = normalize(blank()); s.student = student; s.backfilled2 = 1; s.restored = Date.now();
+  s.opens = (data.opens || []).filter(Boolean).sort((a, b) => a - b);
+  const rows = (data.reviews || []).slice().sort((a, b) => a[4] - b[4]);
+  for(const [cid, u, word, r, t, mode, rt, ivl, ease] of rows){
+    const id = cid && WMAP[cid] ? cid : WBY[u + '|' + word];
+    if(!id || !(r >= 1 && r <= 4) || !t) continue;
+    const c0 = card(id, s); let c;
+    if(mode === 'srs') c = nextState(c0, r, t);
+    else {
+      c = Object.assign({}, c0, {h:c0.h.slice()});
+      if(mode === 'backfill'){ if(ivl > 0){ c.st = 2; c.ivl = ivl; c.due = sod(t) + ivl*DAY; } else if(!c.st){ c.st = 1; c.due = t; } if(ease) c.ease = ease; }
+    }
+    c.seen++; c.h[r-1]++; c.last = t; c.rt = Math.round(((c0.rt || 0) * (c.seen - 1) + rt*1000) / c.seen);
+    if(r === 1) c.ng++; else c.ok++;
+    s.cards[id] = c;
+    const d = dk(t), dd = s.days[d] || (s.days[d] = {r:0, ok:0, ms:0}); dd.r++; if(r > 1) dd.ok++; dd.ms += Math.min(rt*1000, 60e3) + 3000;
+  }
+  return s;
+}
+async function chooseAccount(sid){
+  if(S && S.chosen && S.student.id !== sid){ beaconFlush(); save(); }
+  const a = ACC.list.find(x => x.sid === sid);
+  let s = loadProfile(sid);
+  if(!s){
+    if(!CONFIG.SYNC_URL) return toast('找不到這個帳號的紀錄');
+    openModal('<h3>正在載入學習紀錄…</h3><p class="note">第一次在這台裝置使用這個帳號，正在從老師的後台還原你的進度。</p>');
+    try{
+      const j = await fetchJSON('?a=state&sid=' + encodeURIComponent(sid));
+      if(!j || !j.ok) throw new Error('bad');
+      s = rebuildFromServer({id:sid, cls:a ? a.cls : '', seat:a ? a.seat : '', name:a ? a.name : ''}, j);
+      closeModal(); toast(`已還原 ${Object.keys(s.cards).length} 個單字的進度`);
+    }catch(e){ closeModal(); return toast('無法載入，請確認網路後再試一次'); }
+  }
+  enterAccount(s);
+}
+function enterAccount(s){
+  S = s; S.chosen = 1; S.askedProfile = true; save();
+  $('vAcct').classList.add('hidden'); $('tabbar').classList.remove('hidden');
+  backfill(); recordOpen(); logEvent({type:'profile'}); show('vHome'); flush();
+}
+function showAccounts(){
+  stopSpeak(); if(SES) endSession();
+  ['vHome','vStats','vSet'].forEach(id => $(id).classList.add('hidden'));
+  $('vAcct').classList.remove('hidden'); $('tabbar').classList.add('hidden');
+  window.scrollTo(0, 0); loadAccounts();
+}
+function newAccount(){
+  openModal(`<h3>新建帳號</h3><p class="note" style="margin-top:4px">請填寫班級、座號與姓名，老師才看得到你的練習紀錄。</p>
+    <div class="form" style="padding:0">
+      <div class="frow"><label>班級</label><input type="text" id="aCls" placeholder="例：701" inputmode="numeric"></div>
+      <div class="frow"><label>座號</label><input type="text" id="aSeat" placeholder="例：12" inputmode="numeric"></div>
+      <div class="frow"><label>姓名</label><input type="text" id="aName" placeholder="你的名字"></div>
+    </div>
+    <div class="btnrow"><button class="btn ghost" id="aCancel">取消</button><button class="btn" id="aOK">建立</button></div>`);
+  $('aCancel').onclick = closeModal;
+  $('aOK').onclick = () => {
+    const cls = $('aCls').value.trim(), seat = $('aSeat').value.trim(), name = $('aName').value.trim();
+    if(!cls || !seat || !name) return toast('班級、座號、姓名都要填');
+    const same = ACC.list.find(x => String(x.cls).trim() === cls && String(x.seat).trim() === seat && String(x.name).trim().toLowerCase() === name.toLowerCase());
+    if(same){ closeModal(); toast('已經有這個帳號，直接幫你登入'); return chooseAccount(same.sid); }
+    const s = normalize(blank()); s.student = {id:uid(), cls, seat, name}; s.backfilled2 = 1;
+    closeModal(); enterAccount(s);
+  };
+}
+$('acctNew').onclick = newAccount;
+$('switchAcct').onclick = showAccounts;
+
 /* ===== 啟動 ===== */
 load();
 if(CONFIG.SYNC_URL.startsWith('__')) CONFIG.SYNC_URL = '';
-backfill();
-recordOpen();
-show('vHome');
-if(!S.askedProfile && !S.student.name) askProfile();
-flush();
-setInterval(flush, 60e3);
+showAccounts();
+setInterval(() => { if(S && S.chosen) flush(); }, 60e3);
 </script>
 </body>
 </html>
