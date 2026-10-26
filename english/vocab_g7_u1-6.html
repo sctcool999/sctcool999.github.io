@@ -983,7 +983,15 @@ async function loadAccounts(){
       // 其他：後台已刪除的帳號，不再列出
     }
   } else for(const l of local) map[l.sid] = Object.assign({}, l, {local:true});
-  ACC = {list:Object.values(map).filter(a => a.name || a.cls || a.seat), ok:!!server, loading:false, oldBackend:!server && ACC.oldBackend};
+  // 同班級＋座號＋姓名的重複帳號：只留作答紀錄最多的那個（未上傳的除外）
+  const best = {};
+  for(const x of Object.values(map)){
+    if(!(x.name || x.cls || x.seat)) continue;
+    const k = [x.cls, x.seat, x.name].map(v => String(v || '').trim().toLowerCase()).join('|');
+    if(!best[k] || (x.n || x.seen || 0) > (best[k].n || best[k].seen || 0)) best[k] = x;
+  }
+  const keep = Object.values(map).filter(x => (x.name || x.cls || x.seat) && (x.unsynced || Object.values(best).includes(x)));
+  ACC = {list:keep, ok:!!server, loading:false, oldBackend:!server && ACC.oldBackend};
   renderAccounts();
 }
 const accLabel = a => `${a.cls ? esc(String(a.cls)) + ' 班　' : ''}${a.seat ? esc(String(a.seat)) + ' 號　' : ''}<b>${esc(String(a.name || '（未填姓名）'))}</b>`;
