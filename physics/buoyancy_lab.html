@@ -218,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <path d="M0 0 L10 5 L0 10 Z" fill="#6fb4ff"/></marker>
     </defs>`;
 
-    o += `<text x="40" y="${Y(HC) - 18}" fill="#7f8ea0" font-size="17">示意圖：物體已放大</text>`;
+    o += `<text x="40" y="${Y(HC) - 40}" fill="#7f8ea0" font-size="17">示意圖：物體已放大</text>`;
+    o += `<text x="40" y="${Y(HC) - 16}" fill="#c5d6e8" font-size="17">燒杯截面積 A<tspan font-size="13" dy="4">杯</tspan><tspan dy="-4"> = ${A0} cm²</tspan></text>`;
 
     // 物體位置（px）
     const top = Y(r.yb + r.H), bot = Y(r.yb), xL = CX - OBJW / 2;
@@ -351,6 +352,11 @@ document.addEventListener('DOMContentLoaded', () => {
              彈簧秤 $T = W - B = ${r.W} - ${fmt(r.B)} = ${fmt(r.T)}${gw}$`;
       }
       t += `<div class="sub">臺秤 $= 2200 + B = ${fmt(r.scale)}${gw}$（浮力的反作用力）</div>`;
+    }
+    if (r.rise > 0.005) {
+      const exact = S.shape === 'straight';
+      t += `<div class="sub">液面上升 $\\Delta h ${exact ? '=' : '\\approx'} \\dfrac{V_{\\text{排}}}{A_{\\text{杯}}} = \\dfrac{${fmt(r.Vd)}}{${A0}} \\approx ${(r.Vd / A0).toFixed(2)}\\ \\text{cm}$`
+         + (exact ? '' : `<br>杯壁傾斜，截面積隨高度改變，實際上升 ${r.rise.toFixed(2)} cm`) + `</div>`;
     }
     info.innerHTML = t;
     renderMath(info);
