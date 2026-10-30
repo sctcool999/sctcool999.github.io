@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>浮力實驗室</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e131a; --panel:#141b24; --panel2:#19222d; --line:#253140; --grid:#1c2633;
+  --text:#dbe4ee; --muted:#8696a8; --accent:#4fb8e0; --accent-ink:#06202b;
+  --W:#ff7a4d; --B:#4c9cff; --T:#b48cff; --N:#7ed46b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans TC",system-ui,sans-serif}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;align-items:baseline;gap:14px;margin:0 0 14px}
+header h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:30px;margin:0;letter-spacing:.06em}
+header p{margin:0;color:var(--muted);font-size:15px}
+.lab{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.stage{background:#111821;border:1px solid var(--line);border-radius:12px;padding:6px;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px}
+.stage svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:4px 14px 10px;font-size:15px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px}
+.side{display:flex;flex-direction:column;gap:6px;min-width:0}
+.info{background:#12303d;border:1px solid #1f4b5c;border-radius:12px;padding:12px 14px;font-size:16.5px;line-height:1.75}
+.info b{color:#fff}
+.info .hl{color:var(--accent);font-weight:700}
+.info .sub{color:var(--muted);font-size:15px}
+.group{border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+.group h3{margin:0 0 8px;font-size:15px;color:#aebccb;font-weight:700;letter-spacing:.05em}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1px solid #2c3a4b;background:#121922;color:var(--text);font:inherit;font-size:16px;padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .15s}
+.pill:hover{background:#1c2734}
+.pill.on:hover{background:var(--accent)}
+.pill.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.slider{display:flex;align-items:center;gap:12px}
+.slider input{flex:1;accent-color:var(--accent);height:24px}
+.slider output{font-family:"JetBrains Mono",monospace;font-size:16px;min-width:86px;text-align:right}
+.check{display:flex;align-items:center;gap:10px;font-size:16px;cursor:pointer;margin-top:4px}
+.check input{width:20px;height:20px;accent-color:var(--accent)}
+.hidden{display:none!important}
+.essence{margin-top:28px}
+.essence header h2{font-family:"Noto Serif TC",serif;font-weight:900;font-size:28px;margin:0}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:15.5px;line-height:1.8}
+.card h4{margin:0 0 6px;color:var(--accent);font-size:18px}
+.card p{margin:0}
+.katex{font-size:1.05em}
+@media (max-width:980px){.lab{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cards{grid-template-columns:1fr}header{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>浮力實驗室</h1><p>調整物體與液體，觀察浮力、排開液體與秤讀數的關係</p></header>
+
+  <section class="lab">
+    <div class="stage">
+      <svg id="svg" viewBox="0 0 880 720" role="img" aria-label="浮力實驗示意圖"></svg>
+      <div class="legend">
+        <span><i style="background:var(--W)"></i>重力 W</span>
+        <span><i style="background:var(--B)"></i>浮力 B</span>
+        <span><i style="background:var(--T)"></i>拉力 T</span>
+        <span><i style="background:var(--N)"></i>杯底支撐力 N</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="info" id="info"></div>
+
+      <div class="group"><h3>實驗方式</h3>
+        <div class="pills" data-key="mode">
+          <button class="pill" data-v="direct">直接放入液體</button>
+          <button class="pill" data-v="spring">用彈簧秤吊著放入</button>
+        </div>
+      </div>
+      <div class="group"><h3>液體</h3>
+        <div class="pills" data-key="liq">
+          <button class="pill" data-v="alc">酒精 0.8</button>
+          <button class="pill" data-v="oil">油 0.9</button>
+          <button class="pill" data-v="water">水 1.0</button>
+          <button class="pill" data-v="salt">鹽水 1.2</button>
+        </div>
+      </div>
+      <div class="group"><h3>容器形狀</h3>
+        <div class="pills" data-key="shape">
+          <button class="pill" data-v="straight">直筒燒杯</button>
+          <button class="pill" data-v="narrowTop">上窄下寬</button>
+          <button class="pill" data-v="wideTop">上寬下窄</button>
+        </div>
+      </div>
+      <div class="group"><h3>物體質量</h3>
+        <div class="slider"><input type="range" id="m" min="10" max="300" step="1"><output id="mOut"></output></div>
+      </div>
+      <div class="group"><h3>物體體積</h3>
+        <div class="slider"><input type="range" id="v" min="20" max="200" step="1"><output id="vOut"></output></div>
+      </div>
+      <div class="group" id="depthGroup"><h3>下降深度</h3>
+        <div class="slider"><input type="range" id="d" min="0" max="10" step="0.1"><output id="dOut"></output></div>
+      </div>
+      <div class="group">
+        <label class="check"><input type="checkbox" id="showV" checked>標出排開液體的部分（V排）</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="essence">
+    <header><h2>看穿本質</h2><p>換了包裝，還認得出是哪一招嗎？</p></header>
+    <div class="cards">
+      <div class="card"><h4>漂浮平衡</h4><p>漂浮或懸浮時，浮力＝重量：$B = W$。<br>沉入比例 $\dfrac{V_{\text{排}}}{V} = \dfrac{\rho_{\text{物}}}{\rho_{\text{液}}}$，密度越接近液體，沉得越深。</p></div>
+      <div class="card"><h4>阿基米德</h4><p>完全沒入時，浮力＝體積×液體密度：$B = \rho_{\text{液}}V$。<br>一般情況 $B = \rho_{\text{液}}V_{\text{排}}$（gw），浮力等於排開液體的重量。</p></div>
+      <div class="card"><h4>反作用力</h4><p>浮力的反作用力會壓在液體和容器上，臺秤讀數因此增加 $B$。<br>直接放入：臺秤 $= 2200 + W$<br>彈簧秤吊著：臺秤 $= 2200 + B$，彈簧秤 $T = W - B$</p></div>
+      <div class="card"><h4>比較排開量</h4><p>比較前後排開液體的量：同一個漂浮物體放進不同液體，$V_{\text{排}}$ 不同，但 $B = W$ 不變；液體密度越大，$V_{\text{排}}$ 越小。</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // ===== 常數（實際單位：cm、g、gw） =====
+  const K = 19;            // px / cm（垂直）
+  const Y0 = 610;          // 杯底 y(px)
+  const CX = 270;          // 容器中心 x(px)
+  const HC = 18;           // 容器高 cm
+  const H0 = 12;           // 原液面高 cm
+  const A0 = 150;          // 原液面處截面積 cm²
+  const AREA = 25;         // 物體底面積 cm²（示意圖寬度放大）
+  const OBJW = 170;        // 物體繪製寬度 px
+  const BASE = 2200;       // 容器＋液體 gw
+  const L_STR = 6;         // 吊繩長 cm
+  const CYL = {x:610, w:80, bottom:Y0, full:Y0-220};
+
+  const LIQ = {
+    alc:  {rho:0.8, fill:'#2b7480'},
+    oil:  {rho:0.9, fill:'#7a6824'},
+    water:{rho:1.0, fill:'#1d5c8c'},
+    salt: {rho:1.2, fill:'#174a82'}
+  };
+  const SHAPE = {
+    straight: {wb:160, wt:160},
+    narrowTop:{wb:195, wt:120},
+    wideTop:  {wb:120, wt:195}
+  };
+
+  const S = {mode:'direct', liq:'water', shape:'straight', m:80, v:157, d:0, showV:true};
+
+  const $ = id => document.getElementById(id);
+  const svg = $('svg'), info = $('info');
+  const clamp = (x,a,b) => Math.min(b, Math.max(a, x));
+  const fmt = x => (Math.abs(x - Math.round(x)) < 0.05 ? String(Math.round(x)) : x.toFixed(1));
+  const rhoStr = r => r.toFixed(1);
+
+  const halfW = y => { const s = SHAPE[S.shape]; return s.wb + (s.wt - s.wb) * y / HC; };
+  // ∫_{H0}^{h} A(y) dy，A(y) = A0 · w(y)/w(H0)
+  const Aint = h => {
+    const s = SHAPE[S.shape], w0 = halfW(H0);
+    return A0 / w0 * (s.wb * (h - H0) + (s.wt - s.wb) / (2 * HC) * (h * h - H0 * H0));
+  };
+  const bisect = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; f(mid) > 0 ? hi = mid : lo = mid; } return (lo + hi) / 2; };
+  const surfFor = Vd => bisect(h => Aint(h) - Vd, H0, H0 + 6);
+  const yb0 = () => H0 + 0.5;                       // 彈簧秤起始：物體底在原液面上 0.5 cm
+  const dMax = H => +(yb0() - (H0 - 3 - H)).toFixed(1); // 最深：物體頂在原液面下 3 cm
+
+  function compute() {
+    const W = S.m, V = S.v, H = V / AREA, rl = LIQ[S.liq].rho, ro = W / V, eps = 1e-9;
+    const r = {W, V, H, rl, ro, T:0, N:0, slack:false};
+    if (S.mode === 'direct') {
+      if (ro < rl - eps) { r.st='float'; r.Vd = W / rl; r.h = surfFor(r.Vd); r.yb = r.h - r.Vd / AREA; r.B = W; }
+      else if (Math.abs(ro - rl) <= eps) { r.st='suspend'; r.Vd = V; r.h = surfFor(V); r.yb = (r.h - H) / 2; r.B = W; }
+      else { r.st='sink'; r.Vd = V; r.h = surfFor(V); r.yb = 0; r.B = rl * V; r.N = W - r.B; }
+      r.scale = BASE + W;
+      r.hook = null;
+    } else {
+      const ybH = yb0() - S.d;
+      let h = bisect(hh => Aint(hh) - AREA * clamp(hh - ybH, 0, H), H0, H0 + 6);
+      let s = clamp(h - ybH, 0, H);
+      r.Vd = AREA * s; r.B = rl * r.Vd; r.h = h; r.yb = ybH;
+      if (r.B > W + eps) {                       // 浮力足以撐起物體 → 漂浮、繩子鬆弛
+        r.st = 'slack'; r.slack = true;
+        r.Vd = W / rl; r.h = surfFor(r.Vd); r.yb = r.h - r.Vd / AREA; r.B = W; r.T = 0;
+      } else {
+        r.T = W - r.B;
+        r.st = s <= 1e-6 ? 'air' : (s >= H - 1e-6 ? 'full' : 'partial');
+      }
+      r.hook = Math.max(ybH + H + L_STR, r.yb + H + 1.5); // 彈簧秤掛鉤高度 cm
+      r.scale = BASE + r.B;
+    }
+    r.rise = r.h - H0;
+    return r;
+  }
+
+  // ===== 繪圖 =====
+  const Y = cm => Y0 - cm * K;
+  function arrow(x, y1, len, dir, color, label, side) {
+    if (len < 1) return '';
+    const y2 = y1 + dir * len, hs = Math.min(14, len * 0.6);
+    const tx = side === 'L' ? x - 10 : x + 10, anchor = side === 'L' ? 'end' : 'start';
+    return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2 - dir * hs * 0.8}" stroke="${color}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M${x - 9} ${y2 - dir * hs} L${x + 9} ${y2 - dir * hs} L${x} ${y2} Z" fill="${color}"/>
+      <text x="${tx}" y="${y2 + (dir > 0 ? -4 : 14)}" fill="${color}" stroke="#0e131a" stroke-width="5" paint-order="stroke" font-family="JetBrains Mono" font-weight="700" font-size="19" text-anchor="${anchor}">${label}</text>`;
+  }
+
+  function draw(r) {
+    const liq = LIQ[S.liq];
+    const shape = SHAPE[S.shape];
+    let o = `<defs>
+      <pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="12" stroke="#9fd0ff" stroke-width="2.4"/></pattern>
+      <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 Z" fill="#6fb4ff"/></marker>
+    </defs>`;
+
+    o += `<text x="40" y="${Y(HC) - 18}" fill="#7f8ea0" font-size="17">示意圖：物體已放大</text>`;
+
+    // 物體位置（px）
+    const top = Y(r.yb + r.H), bot = Y(r.yb), xL = CX - OBJW / 2;
+    const surf = Y(r.h);
+
+    // 物體
+    o += `<rect x="${xL}" y="${top}" width="${OBJW}" height="${r.H * K}" fill="#b27b3e" stroke="#e0a868" stroke-width="2"/>`;
+
+    // 液體
+    const pts = [[CX - halfW(0), Y0], [CX - halfW(r.h), surf], [CX + halfW(r.h), surf], [CX + halfW(0), Y0]];
+    o += `<polygon points="${pts.map(p => p.join(',')).join(' ')}" fill="${liq.fill}" fill-opacity="0.8"/>`;
+    o += `<line x1="${CX - halfW(r.h)}" y1="${surf}" x2="${CX + halfW(r.h)}" y2="${surf}" stroke="#7cc4ff" stroke-width="2.5"/>`;
+
+    // V排
+    const subTop = Math.max(top, surf);
+    if (S.showV && bot - subTop > 0.5) {
+      o += `<rect x="${xL}" y="${subTop}" width="${OBJW}" height="${bot - subTop}" fill="url(#hatch)" stroke="#9fd0ff" stroke-width="2.5" stroke-dasharray="8 5"/>`;
+      o += `<text x="${xL + 8}" y="${bot - 8}" fill="#cfe7ff" stroke="#0e131a" stroke-width="5" paint-order="stroke" font-size="20" font-weight="700">V<tspan font-size="15" dy="4">排</tspan></text>`;
+    }
+
+    // 原液面與上升量
+    const y0s = Y(H0);
+    o += `<line x1="${CX - halfW(H0)}" y1="${y0s}" x2="${CX + halfW(H0)}" y2="${y0s}" stroke="#c5d6e8" stroke-opacity=".7" stroke-width="1.5" stroke-dasharray="7 6"/>`;
+    o += `<text x="${CX + halfW(H0) - 10}" y="${y0s + 22}" fill="#c5d6e8" fill-opacity=".85" font-size="16" text-anchor="end">原液面</text>`;
+    if (r.rise > 0.005) {
+      o += `<text x="${CX + halfW(r.h) - 10}" y="${surf - 8}" fill="#c5d6e8" font-size="16" text-anchor="end">升 ${r.rise.toFixed(2)} cm</text>`;
+    }
+
+    // 容器與刻度
+    const wallL = `${CX - shape.wt},${Y(HC)} ${CX - shape.wb},${Y0} ${CX + shape.wb},${Y0} ${CX + shape.wt},${Y(HC)}`;
+    o += `<polyline points="${wallL}" fill="none" stroke="#a9bacb" stroke-width="4" stroke-linejoin="round"/>`;
+    for (let c = 1; c < HC; c++) {
+      const x = CX - halfW(c), y = Y(c), len = c % 5 === 0 ? 16 : 9;
+      o += `<line x1="${x}" y1="${y}" x2="${x + len}" y2="${y}" stroke="#a9bacb" stroke-width="1.6"/>`;
+    }
+
+    // 臺秤
+    o += `<rect x="40" y="${Y0 + 6}" width="460" height="9" rx="3" fill="#6f8296"/>`;
+    o += `<rect x="40" y="${Y0 + 30}" width="210" height="52" rx="9" fill="#0d1218" stroke="#5d6e80" stroke-width="2"/>`;
+    o += `<text x="58" y="${Y0 + 63}" fill="#9aabbd" font-size="18">臺秤</text>`;
+    o += `<text x="234" y="${Y0 + 65}" fill="#e8f0f8" font-family="JetBrains Mono" font-weight="700" font-size="25" text-anchor="end">${fmt(r.scale)} gw</text>`;
+
+    // 量筒（排開的液體）
+    const cx2 = CYL.x + CYL.w / 2, cylTop = CYL.full - 20;
+    o += `<text x="${CYL.x + 28}" y="${cylTop - 44}" fill="#6fb4ff" font-size="20" font-weight="700">排開的液體</text>`;
+    o += `<text x="${CYL.x + 20}" y="${cylTop - 20}" fill="#9aabbd" font-size="16">（滿格＝完全沒入）</text>`;
+    const frac = clamp(r.Vd / r.V, 0, 1), fy = CYL.bottom - frac * (CYL.bottom - CYL.full);
+    if (frac > 0.002) {
+      o += `<rect x="${CYL.x}" y="${fy}" width="${CYL.w}" height="${CYL.bottom - fy}" fill="${liq.fill}" fill-opacity=".9"/>`;
+      if (S.showV) o += `<rect x="${CYL.x}" y="${fy}" width="${CYL.w}" height="${CYL.bottom - fy}" fill="url(#hatch)"/>`;
+      o += `<line x1="${CYL.x}" y1="${fy}" x2="${CYL.x + CYL.w}" y2="${fy}" stroke="#7cc4ff" stroke-width="2.5"/>`;
+    }
+    o += `<polyline points="${CYL.x},${cylTop} ${CYL.x},${CYL.bottom} ${CYL.x + CYL.w},${CYL.bottom} ${CYL.x + CYL.w},${cylTop}" fill="none" stroke="#a9bacb" stroke-width="3.5"/>`;
+    o += `<rect x="${CYL.x - 12}" y="${CYL.bottom}" width="${CYL.w + 24}" height="8" rx="3" fill="#6f8296"/>`;
+    [['全',1],['3/4',.75],['1/2',.5],['1/4',.25],['0',0]].forEach(([t, f]) => {
+      const y = CYL.bottom - f * (CYL.bottom - CYL.full);
+      o += `<line x1="${CYL.x + CYL.w - 14}" y1="${y}" x2="${CYL.x + CYL.w + 6}" y2="${y}" stroke="#a9bacb" stroke-width="1.6"/>`;
+      o += `<text x="${CYL.x + CYL.w + 12}" y="${y + 6}" fill="#9aabbd" font-size="16">${t}</text>`;
+    });
+    o += `<text x="${cx2}" y="${Y0 + 46}" fill="#e8f0f8" font-family="JetBrains Mono" font-weight="700" font-size="26" text-anchor="middle">${fmt(r.Vd)}</text>`;
+    o += `<text x="${cx2}" y="${Y0 + 68}" fill="#9aabbd" font-size="16" text-anchor="middle">cm³</text>`;
+    o += `<text x="${cx2}" y="${Y0 + 92}" fill="#9aabbd" font-size="17" text-anchor="middle">重 ${fmt(r.rl * r.Vd)} gw＝浮力</text>`;
+
+    // 溢流示意虛線箭頭
+    if (frac > 0.002) {
+      const sx = CX + shape.wt + 4, sy = Y(HC) - 6;
+      o += `<path d="M${sx} ${sy} C ${sx + 40} ${sy - 120}, ${CYL.x - 40} ${sy - 120}, ${CYL.x + 16} ${cylTop + 18}" fill="none" stroke="#6fb4ff" stroke-width="3" stroke-dasharray="9 7" marker-end="url(#ah)"/>`;
+    }
+
+    // 彈簧秤
+    if (S.mode === 'spring') {
+      const hookY = Y(r.hook), bodyB = hookY - 12, bodyT = bodyB - 66;
+      o += `<line x1="${CX}" y1="0" x2="${CX}" y2="${bodyT}" stroke="#7f8ea0" stroke-width="3"/>`;
+      o += `<rect x="${CX - 34}" y="${bodyT}" width="68" height="66" rx="8" fill="#232c38" stroke="${'#b48cff'}" stroke-width="2.5"/>`;
+      o += `<text x="${CX}" y="${bodyT + 22}" fill="#c9b4ff" font-size="13" text-anchor="middle">彈簧秤</text>`;
+      o += `<text x="${CX}" y="${bodyT + 50}" fill="#fff" font-family="JetBrains Mono" font-weight="700" font-size="20" text-anchor="middle">${fmt(r.T)}</text>`;
+      o += `<path d="M${CX} ${bodyB} L${CX} ${hookY - 3} m-6 0 a6 6 0 1 0 6 -6" fill="none" stroke="#a9bacb" stroke-width="2.5"/>`;
+      if (r.slack) {
+        const mid = (hookY + top) / 2;
+        o += `<path d="M${CX} ${hookY} Q ${CX + 46} ${mid} ${CX} ${top}" fill="none" stroke="#cfd8e3" stroke-width="2" stroke-dasharray="2 0"/>`;
+      } else {
+        o += `<line x1="${CX}" y1="${hookY}" x2="${CX}" y2="${top}" stroke="#cfd8e3" stroke-width="2"/>`;
+      }
+    }
+
+    // 力箭頭
+    const midY = (top + bot) / 2;
+    const room = [[r.W, Y0 + 95 - midY], [r.B, midY - 40], [r.N, bot - 40]];
+    if (S.mode === 'spring') room.push([r.T, top - Y(r.hook) - 4]);
+    let KF = 1.2;
+    room.forEach(([f, px]) => { if (f > 0.05) KF = Math.min(KF, Math.max(px, 30) / f); });
+    const bx = S.mode === 'spring' ? CX - 28 : CX;   // 吊繩在 CX，浮力箭頭左移避開
+    o += arrow(bx, midY, r.B * KF, -1, '#4c9cff', `B ${fmt(r.B)}`, 'L');
+    o += arrow(CX, midY, r.W * KF, 1, '#ff7a4d', `W ${fmt(r.W)}`, 'R');
+    if (S.mode === 'spring' && r.T > 0.05) o += arrow(CX + 38, top, r.T * KF, -1, '#b48cff', `T ${fmt(r.T)}`, 'R');
+    if (r.N > 0.05) o += arrow(CX - 46, bot, r.N * KF, -1, '#7ed46b', `N ${fmt(r.N)}`, 'L');
+
+    svg.innerHTML = o;
+  }
+
+  function explain(r) {
+    const ro2 = r.ro.toFixed(2), rl = rhoStr(r.rl), gw = '\\ \\text{gw}';
+    const pct = Math.round(r.ro / r.rl * 100);
+    let t = '';
+    if (S.mode === 'direct') {
+      if (r.st === 'float') {
+        t = `物體密度 ${ro2} ＜ 液體密度 ${rl}，所以<b>漂浮</b><br>
+             浮力 ＝ 重量 ＝ <span class="hl">${r.W} gw</span>，沉入比例 $= ${ro2} \\div ${rl} \\approx ${pct}\\%$`;
+      } else if (r.st === 'suspend') {
+        t = `物體密度 ＝ 液體密度 ＝ ${rl}，所以<b>懸浮</b><br>
+             浮力 ＝ 重量 ＝ <span class="hl">${r.W} gw</span>，沉入比例 $= 100\\%$`;
+      } else {
+        t = `物體密度 ${ro2} ＞ 液體密度 ${rl}，所以<b>下沉</b>到杯底<br>
+             完全沒入：$B = \\rho_{\\text{液}}V = ${rl} \\times ${r.V} = ${fmt(r.B)}${gw}$<br>
+             杯底支撐力 $N = W - B = ${r.W} - ${fmt(r.B)} = ${fmt(r.N)}${gw}$`;
+      }
+      t += `<div class="sub">臺秤 $= 2200 + W = ${fmt(r.scale)}${gw}$</div>`;
+    } else {
+      if (r.st === 'air') {
+        t = `物體尚未碰到液體：$B = 0$<br>彈簧秤 $T = W = ${r.W}${gw}$`;
+      } else if (r.st === 'slack') {
+        t = `浮力已足以撐起物體（$\\rho_{\\text{物}} < \\rho_{\\text{液}}$），繩子<b>鬆弛</b><br>
+             彈簧秤 $T = 0$，物體漂浮：$B = W = ${r.W}${gw}$`;
+      } else {
+        const head = r.st === 'full'
+          ? `<b>完全沒入</b>：再往下，$V_{\\text{排}}$ 與 $B$ 都不再改變`
+          : `<b>部分沒入</b>：繼續下降 → $V_{\\text{排}}$ 增加 → $B$ 增加`;
+        t = `${head}<br>
+             $B = \\rho_{\\text{液}}V_{\\text{排}} = ${rl} \\times ${fmt(r.Vd)} = ${fmt(r.B)}${gw}$<br>
+             彈簧秤 $T = W - B = ${r.W} - ${fmt(r.B)} = ${fmt(r.T)}${gw}$`;
+      }
+      t += `<div class="sub">臺秤 $= 2200 + B = ${fmt(r.scale)}${gw}$（浮力的反作用力）</div>`;
+    }
+    info.innerHTML = t;
+    renderMath(info);
+  }
+
+  function renderMath(el) {
+    if (window.renderMathInElement) {
+      renderMathInElement(el, {delimiters:[{left:'$', right:'$', display:false}], throwOnError:false});
+    }
+  }
+
+  function syncUI() {
+    document.querySelectorAll('.pills').forEach(g => {
+      g.querySelectorAll('.pill').forEach(b => b.classList.toggle('on', b.dataset.v === S[g.dataset.key]));
+    });
+    $('m').value = S.m; $('v').value = S.v;
+    $('mOut').textContent = `${S.m} g`;
+    $('vOut').textContent = `${S.v} cm³`;
+    const dm = dMax(S.v / AREA);
+    $('d').max = dm; S.d = clamp(S.d, 0, dm); $('d').value = S.d;
+    $('dOut').textContent = `${S.d.toFixed(1)} cm`;
+    $('depthGroup').classList.toggle('hidden', S.mode !== 'spring');
+    $('showV').checked = S.showV;
+  }
+
+  function update() {
+    syncUI();
+    const r = compute();
+    draw(r);
+    explain(r);
+  }
+
+  document.querySelectorAll('.pills').forEach(g => {
+    g.addEventListener('click', e => {
+      const b = e.target.closest('.pill'); if (!b) return;
+      S[g.dataset.key] = b.dataset.v;
+      if (g.dataset.key === 'mode') S.d = 0;
+      update();
+    });
+  });
+  $('m').addEventListener('input', e => { S.m = +e.target.value; update(); });
+  $('v').addEventListener('input', e => { S.v = +e.target.value; update(); });
+  $('d').addEventListener('input', e => { S.d = +e.target.value; update(); });
+  $('showV').addEventListener('change', e => { S.showV = e.target.checked; update(); });
+
+  renderMath(document.querySelector('.cards'));
+  update();
+});
+</script>
+</body>
+</html>
