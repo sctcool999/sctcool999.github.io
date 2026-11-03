@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>反作用力</title>
+<style>
+  @page { size: 183mm 258mm; margin: 8mm 8mm 8mm 12mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; color: #000; }
+  body { font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif; }
+  .page { width: 163mm; margin: 0 auto; }
+  @media screen { .page { padding: 8mm 0; } }
+  .head { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+  .rule { font-size: 14px; font-weight: 700; line-height: 1.9; margin: 0 0 4px; }
+  .rule p { margin: 0; }
+  .ar { width: 40px; height: 24px; vertical-align: -5px; margin: 0 2px; }
+  .note { font-size: 13px; line-height: 1.7; margin: 0 0 10px; }
+  .note p { margin: 0; }
+  .m { font-family: "Times New Roman", serif; font-style: italic; font-size: 1.1em; }
+  .fig { height: 64mm; width: auto; display: block; margin: 0 auto; }
+  .d { font-size: 13px; line-height: 1.7; margin: 4px 0 0; }
+  .d p { margin: 0; }
+  .eq { display: grid; grid-template-columns: auto auto auto auto; column-gap: 10px; justify-content: center; margin-top: 6px; }
+  .eq .r { text-align: right; }
+  .tblwrap { margin-top: 12px; break-inside: avoid; }
+  .t { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .t caption { padding: 0 0 8px; line-height: 1.5; }
+  .t th, .t td { border: 1px solid #000; padding: 6px 8px; text-align: center; vertical-align: middle; }
+  .t th { color: #7B2FBE; font-weight: 700; white-space: nowrap; }
+  .t .s { font-size: 10.5px; }
+  .t th .s { white-space: normal; }
+  .t .n { white-space: nowrap; }
+  .sec { break-inside: avoid; }
+  .figrow { display: flex; align-items: center; justify-content: center; gap: 6mm; }
+  .figrow .fig { margin: 0; }
+  .wbox { width: 84mm; border: 1px solid #888; border-radius: 4px; padding: 3mm 4mm; font-size: 13px; line-height: 1.7; }
+  .wbox p { margin: 0; }
+  .wt { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .weq { display: grid; grid-template-columns: auto auto auto; column-gap: 8px; justify-content: center; margin: 2px 0; }
+  .weq .r { text-align: right; }
+  .cond { display: grid; grid-template-columns: auto auto auto; column-gap: 10px; justify-content: start; }
+  .ttl { display: block; font-size: 19px; font-weight: 700; line-height: 1.4; margin: 0 0 6px; }
+  .t caption .sub { display: block; font-size: 14px; font-weight: 700; line-height: 1.9; margin-top: 2px; }
+  .ttl { color: #4A1D78; background: #F3ECFA; border-left: 5px solid #7B2FBE; padding: 3px 10px; }
+  @media print { * { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="sec">
+  <div class="head ttl">《 怎麼判別？作用力/反作用力 》</div>
+  <div class="rule">
+    <p>「A對B、B對A」的力 <svg class="ar" viewBox="0 0 40 24" aria-label="成立"><path d="M14 6.5 L18.5 11 L26 2.5" fill="none" stroke="#2E9E3E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 18 H37 M31 13.5 L37 18 L31 22.5" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 大小相等、方向相反、共線，作用在不同物體上</p>
+    <p>大小相等、方向相反、共線，作用在不同物體上 <svg class="ar" viewBox="0 0 40 24" aria-label="不成立"><path d="M15.5 2.5 L24.5 11 M24.5 2.5 L15.5 11" fill="none" stroke="#D93025" stroke-width="2.4" stroke-linecap="round"/><path d="M2 18 H37 M31 13.5 L37 18 L31 22.5" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 不一定是「A對B、B對A」的力</p>
+  </div>
+  <div class="note">
+    <p>※ 判斷方法：找出施力者與受力者，「A對B」的反作用力就是「B對A」</p>
+    <p>※ 平衡力也是大小相等、方向相反、共線，但作用在<b>同一</b>物體上，所以容易搞混</p>
+  </div>
+</div>
+
+<div class="sec">
+<div class="figrow">
+<svg class="fig" viewBox="194 28 300 366" role="img" aria-label="物體置於磅秤上的受力圖">
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+  <rect x="295" y="86" width="90" height="82" rx="2" fill="#ececec" stroke="#333" stroke-width="1"/>
+  <path d="M200 156 Q214 168 235 168 L445 168 Q466 168 480 156 L482 160 Q468 174 445 174 L235 174 Q212 174 198 160 Z" fill="#f2f2f2" stroke="#333" stroke-width="1"/>
+  <rect x="266" y="174" width="6" height="56" fill="#666"/>
+  <rect x="408" y="174" width="6" height="56" fill="#666"/>
+  <rect x="262" y="230" width="156" height="135" rx="10" fill="#9FE1CB" stroke="#0F6E56" stroke-width="1"/>
+  <rect x="248" y="365" width="184" height="24" rx="4" fill="#9FE1CB" stroke="#0F6E56" stroke-width="1"/>
+  <circle cx="340" cy="300" r="58" fill="#fff" stroke="#333" stroke-width="1"/>
+  <circle cx="340" cy="300" r="42" fill="none" stroke="#E24B4A" stroke-width="0.8" opacity=".6"/>
+  <g stroke="#333" stroke-width="1">
+    <line x1="340" y1="244" x2="340" y2="250"/><line x1="368" y1="251.5" x2="365" y2="256.7"/><line x1="388.5" y1="272" x2="383.3" y2="275"/><line x1="396" y1="300" x2="390" y2="300"/><line x1="388.5" y1="328" x2="383.3" y2="325"/><line x1="368" y1="348.5" x2="365" y2="343.3"/><line x1="340" y1="356" x2="340" y2="350"/><line x1="312" y1="348.5" x2="315" y2="343.3"/><line x1="291.5" y1="328" x2="296.7" y2="325"/><line x1="284" y1="300" x2="290" y2="300"/><line x1="291.5" y1="272" x2="296.7" y2="275"/><line x1="312" y1="251.5" x2="315" y2="256.7"/>
+  </g>
+  <line x1="329.6" y1="306" x2="379.8" y2="277" stroke="#E24B4A" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="340" cy="300" r="4" fill="#E24B4A"/>
+  <line x1="340" y1="127" x2="340" y2="64" stroke="#EF9F27" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <line x1="340" y1="127" x2="340" y2="190" stroke="#EF9F27" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <circle cx="340" cy="127" r="3.5" fill="#EF9F27"/>
+  <text x="350" y="78" font-size="14" font-weight="700" fill="#EF9F27">N</text>
+  <text x="350" y="200" font-size="14" font-weight="700" fill="#EF9F27">F<tspan baseline-shift="sub" font-size="11">g</tspan></text>
+  <line x1="315" y1="168" x2="315" y2="231" stroke="#639922" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="305" y="208" text-anchor="end" font-size="14" font-weight="700" fill="#639922">N′</text>
+  <line x1="385" y1="110" x2="454" y2="110" stroke="#888" stroke-width="0.6" stroke-dasharray="3 3"/>
+  <text x="458" y="114" font-size="12" fill="#444">物體</text>
+  <line x1="418" y1="300" x2="454" y2="300" stroke="#888" stroke-width="0.6" stroke-dasharray="3 3"/>
+  <text x="458" y="304" font-size="12" fill="#444">磅秤</text>
+</svg>
+<div class="wbox">
+  <div class="wt">實重 vs 視重</div>
+  <p><b>實重</b>：物體受到的重力</p>
+  <p style="padding-left:3em">= 地球對該物體的萬有引力 = <span class="m" style="color:#EF9F27">F<sub>g</sub></span> = <span class="m">mg</span></p>
+  <p style="padding-left:3em">（與運動狀態無關）</p>
+  <p><b>視重</b>：磅秤的讀數，即下壓力 <span class="m" style="color:#639922">N′</span></p>
+</div>
+</div>
+
+<div class="d">
+  <p id="l1" style="white-space:nowrap"><span style="color:#EF9F27;font-weight:700">橘色（作用在物體上）：</span><span class="m">N</span> 是磅秤給物體的正向力，方向向上；<span class="m">F<sub>g</sub></span> 是物體受到的重力（實重），方向向下。</p>
+  <p id="l2"><span style="color:#639922;font-weight:700">綠色（作用在磅秤上）：</span><span class="m">N′</span> 是物體對磅秤的下壓力，方向向下。<span class="m">N′</span> 才是真正影響磅秤上讀數的力（視重）</p>
+  <div class="eq">
+    <span class="r"><span class="m" style="color:#EF9F27">N</span></span><span>=</span><span><span class="m" style="color:#EF9F27">F<sub>g</sub></span></span><span>（二力平衡）</span>
+    <span class="r"><span class="m" style="color:#EF9F27">N</span></span><span>=</span><span><span class="m" style="color:#639922">N′</span></span><span>（牛頓第三運動定律：互為作用力/反作用力）</span>
+    <span class="r">∴ <span class="m" style="color:#EF9F27">F<sub>g</sub></span></span><span>=</span><span><span class="m" style="color:#639922">N′</span></span><span>（實重 = 視重：兩力數值&amp;方向相同，但是作用在不同物體上）</span>
+  </div>
+  <p style="margin-top:4px">※ 計算物體的合力時，只算作用在物體上的力（<span style="color:#EF9F27;font-weight:700">橘色</span>）；<span class="m" style="color:#639922">N′</span> 作用在磅秤上，不列入。</p>
+</div>
+</div>
+
+<div class="tblwrap" id="tw">
+<table class="t" id="tb">
+<caption style="text-align:left"><span class="ttl">《 相互作用力 vs 平衡力 》</span><span class="sub">(當兩者都是大小相等、方向相反、共線時，該怎麼區分？)</span></caption>
+<tr><th>比較項目</th><th>相互作用力</th><th>平衡力</th></tr>
+<tr><th>同時性</th><td>同時產生、同時消失</td><td>未必同時</td></tr>
+<tr><th>作用物</th><td>A 對 B／B 對 A</td><td>皆對 A</td></tr>
+<tr><th>性質</th><td>相同</td><td>未必相同</td></tr>
+<tr><th>與運動的關係</th><td>與運動無關<br><span class="s"><span class="n">(當電梯中放置一物體，此時無論電梯是怎麼加速度</span><br><span class="n">運動或靜止，物體對電梯的壓力=電梯給物體的正向力)</span></span></td><td>靜止、等速度<br><span class="s"><span class="n">(只有電梯是靜止/等速時，物體受到的</span><br><span class="n">重力=物體受到的正向力，才會成立)</span></span></td></tr>
+<tr><th>合力<br><span class="s">(合力定義: 作用在同一物體上)</span></th><td>不可求<br><span class="s">(因為作用在不同物體上)</span></td><td>為 0</td></tr>
+</table>
+</div>
+
+</div>
+<script>
+(function(){
+  var w=document.getElementById('tw'), t=document.getElementById('tb');
+  function fit(){ t.style.zoom=1; var k=w.clientWidth/t.scrollWidth; if(k<1) t.style.zoom=k;
+    var p=document.getElementById('l1'), f=13; p.style.fontSize=f+'px';
+    while(p.scrollWidth>p.clientWidth && f>9){ f-=0.25; p.style.fontSize=f+'px'; }
+    document.getElementById('l2').style.fontSize=f+'px'; }
+  function fitPage(){ var pg=document.querySelector('.page'); pg.style.zoom=1;
+    var cs=getComputedStyle(pg), pad=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+    var h=pg.scrollHeight-pad, avail=242*96/25.4-12;
+    if(h>avail) pg.style.zoom=avail/h; }
+  window.addEventListener('beforeprint',fitPage);
+  fit(); window.addEventListener('beforeprint',fit); window.addEventListener('resize',fit);
+})();
+</script>
+</body>
+</html>
