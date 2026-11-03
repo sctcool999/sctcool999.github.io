@@ -101,6 +101,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) { a.card { transition: none; } a.card:hover { transform: none; } }
+  .nav { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600;
+         color: var(--byline); text-decoration: none; border: 1px solid var(--border);
+         border-radius: 999px; padding: 4px 14px; background: var(--card); }
+  .nav:hover { border-color: var(--byline); }
 </style>
 </head>
 <body>
@@ -109,6 +113,7 @@
   <header>
     <h1>數學・物理 互動教材<span class="byline">Scott老師編輯修訂</span></h1>
     <p class="lead">點選卡片開啟教材</p>
+    <a class="nav" href="junior/">國中公式整理 →</a>
   </header>
 
   <!-- ===================== 數學 ===================== -->
