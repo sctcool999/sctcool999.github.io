@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>因數倍數拆與疊</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Math&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+/* 鏡像版面：每一段左欄永遠是「拆＝最大公因數」(藍)，右欄永遠是「疊＝最小公倍數」(橘)，方格紙底 */
+:root{
+  --paper:#f4f6f1; --grid:#e2e7dc; --card:#ffffff; --ink:#1c2330; --muted:#5b6474; --line:#cfd5ca;
+  --cut:#2356c4; --cut-mid:#b3c7f2; --cut-soft:#dfe8fb;
+  --stack:#c9570c; --stack-mid:#f3c19b; --stack-soft:#fbe6d6;
+  --bad:#bf3528; --bad-soft:#f8dad6; --good:#1f7f55;
+  --f-display:"LXGW WenKai TC","Kaiti TC","BiauKai","DFKai-SB",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11151b; --grid:#1a2028; --card:#181e27; --ink:#e6e9ee; --muted:#9aa3b2; --line:#2e3642;
+  --cut:#83a9ff; --cut-mid:#2f4677; --cut-soft:#1d2a47;
+  --stack:#ff9c57; --stack-mid:#6b3b1d; --stack-soft:#3d2517;
+  --bad:#ff7d70; --bad-soft:#46211d; --good:#5fd19a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11151b; --grid:#1a2028; --card:#181e27; --ink:#e6e9ee; --muted:#9aa3b2; --line:#2e3642;
+  --cut:#83a9ff; --cut-mid:#2f4677; --cut-soft:#1d2a47;
+  --stack:#ff9c57; --stack-mid:#6b3b1d; --stack-soft:#3d2517;
+  --bad:#ff7d70; --bad-soft:#46211d; --good:#5fd19a; color-scheme:dark}
+
+body{background-color:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+main{max-width:1000px;margin:0 auto;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.25;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,5vw,2.8rem)}
+h2{font-size:clamp(1.35rem,3.4vw,1.7rem)}
+h3{font-size:1.15rem}
+p{margin:0}
+[hidden]{display:none!important}
+.c{color:var(--cut)} .s{color:var(--stack)}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;color:var(--muted);font-weight:500}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.katex math{font-family:"Noto Sans Math","STIX Two Math","Cambria Math",math;font-size:1.12em}
+.mrow{overflow-x:auto;max-width:100%;padding-block:2px}
+.eqs{display:grid;grid-template-columns:max-content max-content;column-gap:.25em;row-gap:4px;align-items:baseline}
+.eqs .lhs{text-align:right}
+
+/* header */
+header{display:grid;gap:18px}
+.lede{max-width:62ch;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.controls label{display:flex;align-items:center;gap:8px;font-weight:500}
+.controls input{width:4.6em;font:600 1.1rem var(--f-mono);padding:6px 8px;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+.controls input:focus-visible,button:focus-visible{outline:3px solid var(--cut);outline-offset:2px}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font:500 .85rem var(--f-body);padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted);cursor:pointer}
+.presets button:hover{color:var(--ink);border-color:var(--ink)}
+.warn{color:var(--bad);font-size:.9rem}
+
+.chain{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.node{display:grid;justify-items:center;align-content:center;gap:4px;text-align:center;padding:12px 8px;border-radius:8px;min-width:0}
+.node.cut{background:var(--cut-soft)} .node.stack{background:var(--stack-soft)}
+.node .tag{font-size:.82rem;font-weight:700;letter-spacing:.06em}
+.node.cut .tag{color:var(--cut)} .node.stack .tag{color:var(--stack)}
+.node .note{font-size:.85rem;color:var(--muted)}
+.node .m{font-size:1.25rem}
+.given .m{font:600 1.5rem var(--f-mono)}
+.arrow{align-self:center;font-family:var(--f-display);font-size:1.5rem;font-weight:700;white-space:nowrap}
+.arrow.cut{color:var(--cut)} .arrow.stack{color:var(--stack)}
+.arrow .narrow{display:none}
+.rule{font-family:var(--f-display);font-size:1.2rem;background:var(--card);border:1px dashed var(--ink);border-radius:8px;padding:12px 16px}
+@media (max-width:680px){
+  .chain{grid-template-columns:1fr}
+  .chain .arrow.cut{order:2} .chain .node.cut{order:1} .chain .given{order:3} .chain .arrow.stack{order:4} .chain .node.stack{order:5}
+  .arrow{justify-self:center;font-size:1.2rem}
+  .arrow .wide{display:none} .arrow .narrow{display:inline}
+}
+
+/* sections */
+section.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px clamp(16px,3vw,26px);display:grid;gap:16px}
+.shead{display:grid;gap:4px}
+.shead p{color:var(--muted);max-width:68ch}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.duo{grid-template-columns:1fr}}
+.side{display:grid;gap:10px;align-content:start;min-width:0;padding:14px;border-radius:8px;border:1px solid var(--line)}
+.side.cut{background:linear-gradient(var(--cut-soft),transparent 70px)}
+.side.stack{background:linear-gradient(var(--stack-soft),transparent 70px)}
+.side-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{font-family:var(--f-display);font-size:1.15rem;font-weight:700}
+.cut .badge{color:var(--cut)} .stack .badge{color:var(--stack)}
+.play{font:600 .88rem var(--f-body);padding:6px 14px;border-radius:6px;cursor:pointer;border:1.5px solid;background:var(--card)}
+.cut .play{color:var(--cut);border-color:var(--cut)} .stack .play{color:var(--stack);border-color:var(--stack)}
+.play:hover{filter:brightness(1.1)}
+.side svg{width:100%;height:auto;display:block}
+.hint{font-size:.9rem;color:var(--muted)}
+.status{font-size:.93rem;min-height:1.6em}
+.result{font-size:1.05rem}
+.log{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:600 .82rem var(--f-mono);padding:2px 9px;border-radius:999px;border:1px solid}
+.chip.no{color:var(--bad);border-color:var(--bad);background:var(--bad-soft)}
+.chip.ok.c{color:var(--card);background:var(--cut);border-color:var(--cut)}
+.chip.ok.s{color:var(--card);background:var(--stack);border-color:var(--stack)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.86rem;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.full{border:1px dashed var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px}
+
+/* svg parts */
+.num{fill:var(--ink);font:600 15px var(--f-mono)}
+.small{fill:var(--muted);font:12px var(--f-body)}
+.tickt{fill:var(--muted);font:500 11px var(--f-mono)}
+.tickt.big{fill:var(--stack);font:600 13px var(--f-mono)}
+.seg1{fill:var(--cut-soft)} .seg2{fill:var(--cut-mid)}
+.rem{fill:var(--bad-soft)} .remt{fill:var(--bad);font:600 12px var(--f-mono)}
+.outline{fill:none;stroke:var(--ink);stroke-width:1.5}
+.cutline{stroke:var(--cut);stroke-width:2}
+.remline{stroke:var(--bad);stroke-width:2}
+.axis{stroke:var(--ink);stroke-width:1.5}
+.arcA{fill:none;stroke:var(--muted);stroke-width:1.6}
+.arcB{fill:none;stroke:var(--stack);stroke-width:2.2}
+.dotA{fill:var(--muted)} .dotB{fill:var(--stack)} .dotX{fill:var(--bad)}
+.meet{fill:none;stroke:var(--stack);stroke-width:3}
+.sq1{fill:var(--cut-soft);stroke:var(--cut);stroke-width:1.2} .sq2{fill:var(--cut-mid);stroke:var(--cut);stroke-width:1.2}
+.rc1{fill:var(--stack-soft);stroke:var(--stack);stroke-width:1.2} .rc2{fill:var(--stack-mid);stroke:var(--stack);stroke-width:1.2}
+.gridl.c{stroke:var(--cut);stroke-width:.8} .gridl.s{stroke:var(--stack);stroke-width:.8}
+.fillc{fill:var(--cut-soft)} .fills{fill:var(--stack-soft)}
+.pop{animation:pop .32s both;transform-box:fill-box;transform-origin:center}
+@keyframes pop{from{opacity:0;transform:scale(.5)}}
+.vc{fill:none;stroke:var(--ink);stroke-width:1.5}
+.lens{fill:var(--cut-mid)} .uni{fill:var(--stack-soft)}
+.chipc{fill:var(--card);stroke:var(--muted);stroke-width:1.2}
+.chipc.onc{stroke:var(--cut);stroke-width:2.6} .chipc.ons{stroke:var(--stack);stroke-width:2.6}
+.chipt{fill:var(--ink);font:600 14px var(--f-mono)}
+.faded{opacity:.28}
+.vlabel{fill:var(--ink);font:600 16px var(--f-mono)}
+.vcap{fill:var(--muted);font:12px var(--f-body)}
+
+/* ladder */
+.ladwrap{display:flex;justify-content:center;overflow-x:auto}
+table.ladder{border-collapse:collapse;font:600 1.25rem var(--f-mono);font-variant-numeric:tabular-nums}
+.ladder td{padding:4px 14px;text-align:right}
+.ladder td.dv{padding-right:10px;border-radius:6px 0 0 6px}
+.ladder tr:not(.last) td.n{border-bottom:2px solid var(--ink)}
+.ladder tr:not(.last) td.n1{border-left:2px solid var(--ink)}
+.cut .ladder td.dv{background:var(--cut-mid);color:var(--ink)}
+.stack .ladder td.dv,.stack .ladder tr.last td.n{background:var(--stack-mid)}
+
+/* quiz */
+.quiz{display:grid;gap:12px;counter-reset:q}
+.q{border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;gap:10px}
+.q .qt{counter-increment:q}
+.q .qt::before{content:counter(q) ". ";font-family:var(--f-mono);font-weight:600;color:var(--muted)}
+.q .trap{font-size:.75rem;font-weight:700;color:var(--bad);border:1px solid var(--bad);border-radius:4px;padding:0 6px;margin-left:6px;white-space:nowrap}
+.picks{display:flex;flex-wrap:wrap;gap:8px}
+.pick{font:600 .95rem var(--f-body);padding:6px 14px;border-radius:6px;border:1.5px solid;background:var(--card);cursor:pointer}
+.pick.c{color:var(--cut);border-color:var(--cut)} .pick.s{color:var(--stack);border-color:var(--stack)}
+.pick.chosen.c{background:var(--cut);color:var(--card)} .pick.chosen.s{background:var(--stack);color:var(--card)}
+.fb{font-size:.94rem;border-left:3px solid var(--line);padding-left:12px;display:grid;gap:4px}
+.fb .v{font-weight:700}
+.fb .v.right{color:var(--good)} .fb .v.wrong{color:var(--bad)}
+
+/* summary */
+.tblwrap{overflow-x:auto}
+table.sum{width:100%;border-collapse:collapse;min-width:520px;font-size:.95rem}
+.sum th,.sum td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.sum thead th{font-family:var(--f-display);font-size:1.12rem}
+.sum thead th.c{color:var(--cut)} .sum thead th.s{color:var(--stack)}
+.sum tbody th{color:var(--muted);font-weight:500;white-space:nowrap;font-size:.88rem}
+.sum td.c{background:color-mix(in srgb,var(--cut-soft) 55%,transparent)}
+.sum td.s{background:color-mix(in srgb,var(--stack-soft) 55%,transparent)}
+.sum tr.both td{text-align:center;background:transparent}
+@media (prefers-reduced-motion:reduce){.pop{animation:none}}
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+
+<main>
+<header>
+  <div class="eyebrow">數學・因數與倍數</div>
+  <h1>公因數往下<span class="c">拆</span>，公倍數往上<span class="s">疊</span></h1>
+  <p class="lede">兩個數，一個往小的方向切開，一個往大的方向累加。整頁左欄都是<b class="c">拆（最大公因數）</b>，右欄都是<b class="s">疊（最小公倍數）</b>，換兩個數字，所有圖會一起變。記號：<span id="notation"></span>。</p>
+  <div class="controls">
+    <label for="numA">第一個數 <input id="numA" type="number" min="2" max="60" value="12" inputmode="numeric"></label>
+    <label for="numB">第二個數 <input id="numB" type="number" min="2" max="60" value="18" inputmode="numeric"></label>
+    <div class="presets" aria-label="範例">
+      <button type="button" data-a="12" data-b="18">12、18</button>
+      <button type="button" data-a="8" data-b="12">8、12</button>
+      <button type="button" data-a="12" data-b="36">12、36（倍數關係）</button>
+      <button type="button" data-a="8" data-b="15">8、15（互質）</button>
+    </div>
+    <span class="warn" id="warn" hidden>請輸入 2 到 60 的整數</span>
+  </div>
+  <div class="chain">
+    <div class="node cut"><span class="tag">最大公因數</span><span class="m" id="chainG"></span><span class="note">不會超過小的數</span></div>
+    <div class="arrow cut"><span class="wide">⟵ 拆</span><span class="narrow">↑ 拆</span></div>
+    <div class="node given"><span class="tag" style="color:var(--muted)">題目給的數</span><span class="m" id="chainAB"></span></div>
+    <div class="arrow stack"><span class="wide">疊 ⟶</span><span class="narrow">疊 ↓</span></div>
+    <div class="node stack"><span class="tag">最小公倍數</span><span class="m" id="chainL"></span><span class="note">不會小於大的數</span></div>
+  </div>
+  <p class="rule">判斷口訣：答案會比題目的數<b class="c">小</b> → 拆（公因數）；答案會比題目的數<b class="s">大</b> → 疊（公倍數）。</p>
+</header>
+
+<section class="card">
+  <div class="shead"><span class="eyebrow">看法一・試出來</span><h2>一個往下試，一個往上試</h2>
+  <p>最大公因數：拿<b>小的數的因數</b>，從大往下試，第一個也能整除大數的就是答案。最小公倍數：拿<b>大的數的倍數</b>，從小往上試，第一個也是小數倍數的就是答案。</p></div>
+  <div class="duo">
+    <div class="side cut">
+      <div class="side-h"><span class="badge">拆｜剪緞帶</span><button class="play" type="button" id="playCut">開始剪</button></div>
+      <p class="hint">兩條緞帶剪成一樣長的小段，都不能有剩。每段最長多長？</p>
+      <svg id="ribSvg" viewBox="0 0 460 140" role="img" aria-label="兩條緞帶裁切示意"></svg>
+      <div class="log" id="cutLog"></div>
+      <p class="status" id="cutStatus"></p>
+      <div class="result mrow" id="cutRes"></div>
+    </div>
+    <div class="side stack">
+      <div class="side-h"><span class="badge">疊｜青蛙跳</span><button class="play" type="button" id="playStack">開始跳</button></div>
+      <p class="hint">兩隻青蛙從 0 出發，各自每次跳固定距離。第一次踩到同一點在哪？</p>
+      <div class="legend"><span><i style="background:var(--muted)"></i>小步 <b class="mono" id="lgA"></b></span><span><i style="background:var(--stack)"></i>大步 <b class="mono" id="lgB"></b></span></div>
+      <svg id="frogSvg" viewBox="0 0 460 150" role="img" aria-label="數線上兩種跳法"></svg>
+      <div class="log" id="stackLog"></div>
+      <p class="status" id="stackStatus"></p>
+      <div class="result mrow" id="stackRes"></div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="shead"><span class="eyebrow">看法二・拼出來</span><h2>正方形磁磚：一個往裡切，一個往外拼</h2>
+  <p>同一個長方形，往裡切出「最大的正方形磁磚」是公因數；拿它當磚往外拼出「最小的正方形」是公倍數。</p></div>
+  <div class="duo">
+    <div class="side cut">
+      <div class="side-h"><span class="badge">拆｜長方形裡切正方形</span><button class="play" type="button" id="playTile">再拼一次</button></div>
+      <svg id="tileG" viewBox="0 0 440 250" role="img" aria-label="長方形切成正方形"></svg>
+      <p class="status" id="tileGtxt"></p>
+    </div>
+    <div class="side stack">
+      <div class="side-h"><span class="badge">疊｜長方形拼成正方形</span></div>
+      <svg id="tileL" viewBox="0 0 440 250" role="img" aria-label="長方形拼成正方形"></svg>
+      <p class="status" id="tileLtxt"></p>
+    </div>
+  </div>
+  <div class="full"><b>兩邊用的塊數一定一樣多</b><span class="mrow" id="tileSame"></span></div>
+</section>
+
+<section class="card">
+  <div class="shead"><span class="eyebrow">看法三・拆成質數</span><h2>質因數圈圈：只拿中間 vs 全部拿</h2>
+  <p>把兩個數拆成質數放進圈圈，兩邊都有的放中間。</p></div>
+  <div class="duo">
+    <div class="side cut">
+      <span class="badge">拆｜只拿中間（兩邊都有的）</span>
+      <svg id="vennG" viewBox="0 0 460 240" role="img" aria-label="質因數文氏圖，強調交集"></svg>
+      <div class="result mrow" id="vennGres"></div>
+      <p class="hint">指數取<b class="c">小</b>的：</p>
+      <div class="mrow" id="expG"></div>
+    </div>
+    <div class="side stack">
+      <span class="badge">疊｜全部拿，中間只拿一次</span>
+      <svg id="vennL" viewBox="0 0 460 240" role="img" aria-label="質因數文氏圖，強調聯集"></svg>
+      <div class="result mrow" id="vennLres"></div>
+      <p class="hint">指數取<b class="s">大</b>的：</p>
+      <div class="mrow" id="expL"></div>
+    </div>
+  </div>
+  <div class="full"><b>兩數相乘 = 公因數 × 公倍數</b>
+    <span class="hint">兩數相乘就是兩個圈圈整個拿來乘，中間那份被算了兩次；拿一次中間（公因數）再拿一次全部（公倍數），剛好一樣。</span>
+    <span class="mrow" id="prodId"></span></div>
+</section>
+
+<section class="card">
+  <div class="shead"><span class="eyebrow">看法四・短除法</span><h2>左邊一直排 vs 一個 L 形</h2>
+  <p>用兩數的公因數一直往下除，除到沒有公因數為止。</p></div>
+  <div class="duo">
+    <div class="side cut">
+      <span class="badge">拆｜左邊直排相乘</span>
+      <div class="ladwrap" id="ladG"></div>
+      <div class="result mrow" id="ladGres"></div>
+    </div>
+    <div class="side stack">
+      <span class="badge">疊｜L 形相乘</span>
+      <div class="ladwrap" id="ladL"></div>
+      <div class="result mrow" id="ladLres"></div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="shead"><span class="eyebrow">練習・這題是拆還是疊？</span><h2>看動作，不看「最多、最少」</h2>
+  <p>先問自己：答案會比題目的數小還是大？東西被剪開、分掉 → 拆；東西一直累加、拼大、等到再相遇 → 疊。</p></div>
+  <div class="quiz" id="quiz"></div>
+</section>
+
+<section class="card">
+  <div class="shead"><span class="eyebrow">總整理</span><h2>拆與疊對照表</h2></div>
+  <div class="tblwrap"><table class="sum">
+    <thead><tr><th></th><th class="c">拆・最大公因數</th><th class="s">疊・最小公倍數</th></tr></thead>
+    <tbody>
+      <tr><th>動作</th><td class="c">把數切開、平分</td><td class="s">把數往上累加、拼大</td></tr>
+      <tr><th>大小</th><td class="c">不會超過小的數</td><td class="s">不會小於大的數</td></tr>
+      <tr><th>怎麼試</th><td class="c">小數的因數，從大往下試</td><td class="s">大數的倍數，從小往上試</td></tr>
+      <tr><th>圖像</th><td class="c">長方形裡切出最大正方形磁磚</td><td class="s">用長方形磚拼出最小正方形</td></tr>
+      <tr><th>質因數圈圈</th><td class="c">只拿中間</td><td class="s">全部拿，中間只拿一次</td></tr>
+      <tr><th>指數</th><td class="c">取小的</td><td class="s">取大的</td></tr>
+      <tr><th>短除法</th><td class="c">左邊直排相乘</td><td class="s">L 形相乘</td></tr>
+      <tr><th>應用題的動作</th><td class="c">剪、切、平分、分組、裝袋</td><td class="s">同時、再相遇、拼成、排成正方形</td></tr>
+      <tr class="both"><th>關係</th><td colspan="2" id="sumRel"></td></tr>
+    </tbody>
+  </table></div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const NS='http://www.w3.org/2000/svg';
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+const gcd2=(x,y)=>y?gcd2(y,x%y):x;
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function T(target,tex,display){const node=typeof target==='string'?$(target):target;
+  if(window.katex){try{katex.render(tex,node,{output:'mathml',throwOnError:false,displayMode:!!display});return;}catch(e){}}
+  node.textContent=tex;}
+function factor(n){const f=new Map();for(let p=2;n>1;p++){while(n%p===0){f.set(p,(f.get(p)||0)+1);n/=p;}}return f;}
+const run={cut:0,stack:0,tile:0};
+let A=12,B=18,G,L,MN,MX;
+
+/* ---------- header ---------- */
+function renderChain(){
+  T('#chainG',`(${A},${B})=${G}`);
+  T('#chainL',`[${A},${B}]=${L}`);
+  $('#chainAB').textContent=`${A}、${B}`;
+}
+
+/* ---------- 看法一：緞帶 ---------- */
+function cutTrials(){const r=[];for(let d=MN;d>=1;d--){if(MN%d)continue;r.push(d);if(MX%d===0)break;}return r;}
+function drawRibbons(d){
+  const svg=$('#ribSvg');svg.innerHTML='';const x0=56,s=380/MX;
+  [[MN,24],[MX,84]].forEach(([len,y])=>{
+    el('text',{x:x0-10,y:y+18,'text-anchor':'end',class:'num'},svg).textContent=len;
+    const n=Math.floor(len/d),rem=len-n*d;
+    for(let k=0;k<n;k++)el('rect',{x:x0+k*d*s,y,width:d*s,height:26,class:k%2?'seg2':'seg1'},svg);
+    if(rem>0){el('rect',{x:x0+n*d*s,y,width:rem*s,height:26,class:'rem'},svg);
+      el('text',{x:x0+(n*d+rem/2)*s,y:y-6,'text-anchor':'middle',class:'remt'},svg).textContent='剩 '+rem;}
+    el('rect',{x:x0,y,width:len*s,height:26,class:'outline'},svg);
+    for(let k=1;k<=n;k++){if(k*d>=len)break;const x=x0+k*d*s;el('line',{x1:x,x2:x,y1:y-4,y2:y+30,class:k*d===n*d&&rem>0?'remline':'cutline'},svg);}
+  });
+  el('text',{x:x0,y:134,class:'small'},svg).textContent=`每段長 ${d}`;
+}
+function chip(log,txt,ok,kind){const c=document.createElement('span');c.className='chip '+(ok?'ok '+kind:'no');c.textContent=txt+(ok?' ✓':' ✗');log.appendChild(c);}
+function cutStatus(d){return MX%d===0?`每段 ${d}：兩條都剛好剪完，這是最長的。`:`每段 ${d}：${MX} 剪完會剩 ${MX%d}，不行。`;}
+function renderCutStatic(){run.cut++;const tr=cutTrials(),log=$('#cutLog');log.innerHTML='';
+  tr.forEach(d=>chip(log,d,MX%d===0,'c'));drawRibbons(G);$('#cutStatus').textContent=cutStatus(G);T('#cutRes',`(${A},${B})=${G}`);}
+async function playCut(){const id=++run.cut,log=$('#cutLog');log.innerHTML='';$('#cutRes').innerHTML='';
+  for(const d of cutTrials()){if(id!==run.cut)return;drawRibbons(d);const ok=MX%d===0;chip(log,d,ok,'c');$('#cutStatus').textContent=cutStatus(d);
+    if(ok){T('#cutRes',`(${A},${B})=${G}`);return;}await sleep(1100);}}
+
+/* ---------- 看法一：青蛙 ---------- */
+const AY=74,FX0=30,FW=400;
+const fx=v=>FX0+v/L*FW;
+function stackTrials(){const r=[];for(let k=1;;k++){const t=k*MX;r.push(t);if(t%MN===0)break;}return r;}
+function frogBase(){const svg=$('#frogSvg');svg.innerHTML='';
+  el('line',{x1:FX0-6,x2:FX0+FW+14,y1:AY,y2:AY,class:'axis'},svg);
+  el('text',{x:fx(0),y:144,'text-anchor':'middle',class:'tickt'},svg).textContent='0';
+  const gapB=FW*MX/L,gapA=FW*MN/L;
+  for(let v=MX;v<L;v+=MX)if(gapB>=26)el('text',{x:fx(v),y:144,'text-anchor':'middle',class:'tickt'},svg).textContent=v;
+  for(let v=MN;v<L;v+=MN)if(gapA>=26)el('text',{x:fx(v),y:13,'text-anchor':'middle',class:'tickt'},svg).textContent=v;
+  el('text',{x:fx(L),y:144,'text-anchor':'middle',class:'tickt big'},svg).textContent=L;
+  el('circle',{cx:fx(0),cy:AY,r:4,class:'dotA'},svg);return svg;}
+function arcPath(f,t,side){const x1=fx(f),x2=fx(t),w=x2-x1,h=Math.min(42,w*.45+5);const cy=side==='A'?AY-2*h:AY+2*h;return `M${x1} ${AY} Q${(x1+x2)/2} ${cy} ${x2} ${AY}`;}
+function jumpDur(){return Math.max(70,Math.min(360,5200/(L/MN+L/MX)));}
+function arc(svg,f,t,side,anim){const p=el('path',{d:arcPath(f,t,side),class:side==='A'?'arcA':'arcB'},svg);
+  if(!anim||reduce)return Promise.resolve();const len=p.getTotalLength();p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
+  return p.animate([{strokeDashoffset:len},{strokeDashoffset:0}],{duration:jumpDur(),easing:'ease-out',fill:'forwards'}).finished.catch(()=>{});}
+function dot(svg,v,cls,r){el('circle',{cx:fx(v),cy:AY,r:r||3.5,class:cls},svg);}
+function stackStatus(t,aPos){return t%MN===0?`${t}：兩隻青蛙都踩到，這是第一次相遇。`:`${t}：小步跳到 ${aPos}，再跳一次就超過 ${t}，踩不到。`;}
+function renderStackStatic(){run.stack++;const svg=frogBase(),log=$('#stackLog');log.innerHTML='';
+  for(let v=0;v<L;v+=MN)arc(svg,v,v+MN,'A',false);
+  for(let v=0;v<L;v+=MX)arc(svg,v,v+MX,'B',false);
+  for(let v=MN;v<=L;v+=MN)dot(svg,v,'dotA');
+  stackTrials().forEach(t=>{const ok=t%MN===0;dot(svg,t,ok?'dotB':'dotX',4.5);chip(log,t,ok,'s');});
+  el('circle',{cx:fx(L),cy:AY,r:10,class:'meet'},svg);
+  $('#stackStatus').textContent=stackStatus(L,L);T('#stackRes',`[${A},${B}]=${L}`);}
+async function playStack(){const id=++run.stack,svg=frogBase(),log=$('#stackLog');log.innerHTML='';$('#stackRes').innerHTML='';let a=0,b=0;
+  for(const t of stackTrials()){if(id!==run.stack)return;
+    await arc(svg,b,t,'B',true);if(id!==run.stack)return;b=t;
+    while(a+MN<=t){await arc(svg,a,a+MN,'A',true);if(id!==run.stack)return;a+=MN;dot(svg,a,'dotA');}
+    const ok=t%MN===0;dot(svg,t,ok?'dotB':'dotX',4.5);chip(log,t,ok,'s');$('#stackStatus').textContent=stackStatus(t,a);
+    if(ok){el('circle',{cx:fx(L),cy:AY,r:10,class:'meet pop'},svg);T('#stackRes',`[${A},${B}]=${L}`);return;}
+    await sleep(800);}}
+
+/* ---------- 看法二：磁磚 ---------- */
+function tileGrid(svg,x,y,w,h,cols,rows,cls,anim,gridCls,fillCls){
+  const n=cols*rows;
+  if(n<=225){const cw=w/cols,ch=h/rows,step=Math.min(70,1800/n);
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const i=r*cols+c;
+      const e=el('rect',{x:x+c*cw,y:y+r*ch,width:cw,height:ch,class:cls[(r+c)%2]+(anim?' pop':'')},svg);
+      if(anim)e.style.animationDelay=(i*step)+'ms';}}
+  else{el('rect',{x,y,width:w,height:h,class:fillCls},svg);
+    for(let c=1;c<cols;c++)el('line',{x1:x+c*w/cols,x2:x+c*w/cols,y1:y,y2:y+h,class:'gridl '+gridCls},svg);
+    for(let r=1;r<rows;r++)el('line',{x1:x,x2:x+w,y1:y+r*h/rows,y2:y+r*h/rows,class:'gridl '+gridCls},svg);}
+  el('rect',{x,y,width:w,height:h,class:'outline'},svg);}
+function renderTiles(anim){
+  const g=$('#tileG');g.innerHTML='';
+  let s=Math.min(330/MX,190/MN);let w=MX*s,h=MN*s,x=(440-w)/2+10,y=(220-h)/2+8;
+  tileGrid(g,x,y,w,h,MX/G,MN/G,['sq1','sq2'],anim,'c','fillc');
+  el('text',{x:x+w/2,y:y+h+20,'text-anchor':'middle',class:'num'},g).textContent=MX;
+  el('text',{x:x-8,y:y+h/2+5,'text-anchor':'end',class:'num'},g).textContent=MN;
+  const c1=MX/G,r1=MN/G;
+  $('#tileGtxt').textContent=`${MX} × ${MN} 的長方形，切成一樣大的正方形不能有剩：最大邊長 ${G}，共 ${c1} × ${r1} = ${c1*r1} 塊。`;
+  const l=$('#tileL');l.innerHTML='';
+  s=200/L;w=L*s;x=(440-w)/2+10;y=8;
+  tileGrid(l,x,y,w,w,L/MX,L/MN,['rc1','rc2'],anim,'s','fills');
+  el('text',{x:x+w/2,y:y+w+20,'text-anchor':'middle',class:'num'},l).textContent=L;
+  el('text',{x:x-8,y:y+w/2+5,'text-anchor':'end',class:'num'},l).textContent=L;
+  const c2=L/MX,r2=L/MN;
+  $('#tileLtxt').textContent=`用 ${MX} × ${MN} 的磚同方向拼成正方形：最小邊長 ${L}，共 ${c2} × ${r2} = ${c2*r2} 塊。`;
+  T('#tileSame',`\\dfrac{${L}}{${MX}}=\\dfrac{${MN}}{${G}}=${L/MX},\\qquad \\dfrac{${L}}{${MN}}=\\dfrac{${MX}}{${G}}=${L/MN}`);
+}
+
+/* ---------- 看法三：質因數圈圈 ---------- */
+function vennData(){const fa=factor(A),fb=factor(B);const ps=[...new Set([...fa.keys(),...fb.keys()])].sort((x,y)=>x-y);
+  const left=[],mid=[],right=[];
+  ps.forEach(p=>{const ea=fa.get(p)||0,eb=fb.get(p)||0,m=Math.min(ea,eb);
+    for(let i=0;i<m;i++)mid.push(p);for(let i=0;i<ea-m;i++)left.push(p);for(let i=0;i<eb-m;i++)right.push(p);});
+  return {fa,fb,ps,left,mid,right};}
+function drawVenn(svg,mode,d){svg.innerHTML='';const cy=124,r=100,cxA=170,cxB=290,id='clip'+mode;
+  const defs=el('defs',{},svg);const cp=el('clipPath',{id},defs);el('circle',{cx:cxA,cy,r},cp);
+  if(mode==='G')el('circle',{cx:cxB,cy,r,class:'lens','clip-path':`url(#${id})`},svg);
+  else{el('circle',{cx:cxA,cy,r,class:'uni'},svg);el('circle',{cx:cxB,cy,r,class:'uni'},svg);}
+  el('circle',{cx:cxA,cy,r,class:'vc'},svg);el('circle',{cx:cxB,cy,r,class:'vc'},svg);
+  el('text',{x:60,y:34,'text-anchor':'end',class:'vlabel'},svg).textContent=A;
+  el('text',{x:400,y:34,class:'vlabel'},svg).textContent=B;
+  const col=(list,x,on)=>{list.forEach((p,i)=>{const y=cy+(i-(list.length-1)/2)*31;
+    const g=el('g',{class:on?'':'faded'},svg);
+    el('circle',{cx:x,cy:y,r:14,class:'chipc'+(on?(mode==='G'?' onc':' ons'):'')},g);
+    el('text',{x,y:y+5,'text-anchor':'middle',class:'chipt'},g).textContent=p;});};
+  col(d.left,112,mode==='L');col(d.mid,230,true);col(d.right,348,mode==='L');
+  if(!d.mid.length)el('text',{x:230,y:cy+4,'text-anchor':'middle',class:'vcap'},svg).textContent='空的';
+}
+const prodTex=list=>list.length?list.join('\\times '):'1';
+function expTex(f,ps){return ps.map(p=>`${p}^{${f.get(p)||0}}`).join('\\times ');}
+function renderVenn(){const d=vennData();
+  drawVenn($('#vennG'),'G',d);drawVenn($('#vennL'),'L',d);
+  T('#vennGres',`(${A},${B})=${prodTex(d.mid)}=${G}`);
+  T('#vennLres',`[${A},${B}]=${prodTex([...d.left,...d.mid,...d.right].sort((x,y)=>x-y))}=${L}`);
+  const ea=p=>d.fa.get(p)||0,eb=p=>d.fb.get(p)||0;
+  const eqs=(box,rows)=>{box.innerHTML='';const g=document.createElement('div');g.className='eqs';
+    rows.forEach(([l,r])=>{const a=document.createElement('span'),b=document.createElement('span');a.className='lhs';T(a,l);T(b,'='+r);g.append(a,b);});box.appendChild(g);};
+  const base=[[`${A}`,expTex(d.fa,d.ps)],[`${B}`,expTex(d.fb,d.ps)]];
+  eqs($('#expG'),[...base,[`(${A},${B})`,`${d.ps.map(p=>`${p}^{\\min(${ea(p)},${eb(p)})}`).join('\\times ')}=${d.ps.map(p=>`${p}^{${Math.min(ea(p),eb(p))}}`).join('\\times ')}=${G}`]]);
+  eqs($('#expL'),[...base,[`[${A},${B}]`,`${d.ps.map(p=>`${p}^{\\max(${ea(p)},${eb(p)})}`).join('\\times ')}=${d.ps.map(p=>`${p}^{${Math.max(ea(p),eb(p))}}`).join('\\times ')}=${L}`]]);
+  T('#prodId',`${A}\\times ${B}=${A*B}=${G}\\times ${L}=(${A},${B})\\times[${A},${B}]`);
+  T('#sumRel',`a\\times b=(a,b)\\times[a,b]`);
+}
+
+/* ---------- 看法四：短除法 ---------- */
+function ladderRows(){let x=A,y=B;const rows=[];
+  for(;;){let p=0;for(let q=2;q<=Math.min(x,y);q++)if(x%q===0&&y%q===0){p=q;break;}
+    if(!p)break;rows.push([p,x,y]);x/=p;y/=p;}
+  return {rows,last:[x,y]};}
+function ladderHTML(lr){let h='<table class="ladder">';
+  lr.rows.forEach(([p,x,y])=>{h+=`<tr><td class="dv">${p}</td><td class="n n1">${x}</td><td class="n">${y}</td></tr>`;});
+  h+=`<tr class="last"><td></td><td class="n">${lr.last[0]}</td><td class="n">${lr.last[1]}</td></tr></table>`;return h;}
+function renderLadder(){const lr=ladderRows();const ps=lr.rows.map(r=>r[0]);
+  $('#ladG').innerHTML=ladderHTML(lr);$('#ladL').innerHTML=ladderHTML(lr);
+  if(!ps.length){T('#ladGres',`(${A},${B})=1`);T('#ladLres',`[${A},${B}]=${A}\\times ${B}=${L}`);return;}
+  T('#ladGres',`(${A},${B})=${ps.join('\\times ')}=${G}`);
+  T('#ladLres',`[${A},${B}]=${[...ps,...lr.last].join('\\times ')}=${L}`);}
+
+/* ---------- 練習 ---------- */
+const QUIZ=[
+ {q:'長 84 cm、寬 60 cm 的紙，要剪成大小相同的正方形且沒有剩，正方形邊長最大是多少？',a:'c',e:'正方形要從紙上「剪」下來，邊長一定比 60 小 → 拆。邊長 12 cm。',t:'(84,60)=12'},
+ {q:'甲每 6 天值日一次、乙每 8 天值日一次，今天兩人同時值日，至少再過幾天會再同時值日？',a:'s',e:'日子一天天往後「疊」，答案一定比 8 大 → 疊。24 天後。',t:'[6,8]=24'},
+ {q:'用長 12 cm、寬 8 cm 的長方形磁磚，同方向排列拼成一個正方形，正方形邊長最小是多少？',a:'s',e:'小磚「拼」成大正方形，邊長一定比 12 大 → 疊。邊長 24 cm。',t:'[12,8]=24'},
+ {q:'48 顆糖和 36 塊餅乾要平分給一些同學，兩種都剛好分完，最多可以分給幾位？',a:'c',e:'把東西「分」開，人數一定不超過 36 → 拆。最多 12 位。',t:'(48,36)=12'},
+ {q:'兩個嚙合的齒輪分別有 24 齒和 36 齒，從某一對齒接觸開始，至少要轉過多少齒，這對齒才會再次接觸？',a:'s',e:'齒一個接一個往前「疊」，答案一定不小於 36 → 疊。72 齒，大齒輪轉 2 圈、小齒輪轉 3 圈。',t:'[24,36]=72'},
+ {q:'三條繩子長 45、60、75 cm，要剪成一樣長的小段且都不剩，每段最長幾 cm？',a:'c',e:'繩子被「剪」開，每段一定不超過 45 → 拆。每段 15 cm。',t:'(45,60,75)=15'},
+ {q:'同第 1 題那張 84 cm × 60 cm 的紙，剪成大小相同的正方形且沒有剩，最少可以剪成幾個？',a:'c',trap:true,e:'題目寫「最少」，但動作還是「剪」→ 拆。正方形越大、個數越少，所以先求最大邊長 12，再算 7 × 5 = 35 個。',t:'(84,60)=12,\\quad \\dfrac{84}{12}\\times\\dfrac{60}{12}=7\\times5=35'}
+];
+function renderQuiz(){const box=$('#quiz');box.innerHTML='';
+  QUIZ.forEach((it,i)=>{const d=document.createElement('div');d.className='q';
+    d.innerHTML=`<p class="qt">${it.q}${it.trap?'<span class="trap">陷阱題</span>':''}</p>
+      <div class="picks"><button type="button" class="pick c" id="q${i}c">拆（公因數）</button><button type="button" class="pick s" id="q${i}s">疊（公倍數）</button></div>
+      <div class="fb" hidden><span class="v"></span><span></span><span class="mrow"></span></div>`;
+    const fb=d.querySelector('.fb');
+    d.querySelectorAll('.pick').forEach(b=>b.addEventListener('click',()=>{
+      const pick=b.classList.contains('c')?'c':'s';d.querySelectorAll('.pick').forEach(x=>x.classList.remove('chosen'));b.classList.add('chosen');
+      fb.hidden=false;const v=fb.children[0];const right=pick===it.a;
+      v.className='v '+(right?'right':'wrong');v.textContent=right?'答對了':'再想想：答案會比題目的數小還是大？';
+      fb.children[1].textContent=it.e;T(fb.children[2],it.t);}));
+    box.appendChild(d);});}
+
+/* ---------- 更新 ---------- */
+function update(){G=gcd2(A,B);L=A/G*B;MN=Math.min(A,B);MX=Math.max(A,B);
+  $('#lgA').textContent=MN;$('#lgB').textContent=MX;
+  renderChain();renderCutStatic();renderStackStatic();run.tile++;renderTiles(false);renderVenn();renderLadder();}
+function readInputs(){const a=+$('#numA').value,b=+$('#numB').value;
+  const ok=[a,b].every(v=>Number.isInteger(v)&&v>=2&&v<=60);$('#warn').hidden=ok;
+  if(ok&&(a!==A||b!==B)){A=a;B=b;update();}}
+$('#numA').addEventListener('input',readInputs);$('#numB').addEventListener('input',readInputs);
+document.querySelectorAll('.presets button').forEach(b=>b.addEventListener('click',()=>{$('#numA').value=b.dataset.a;$('#numB').value=b.dataset.b;readInputs();}));
+$('#playCut').addEventListener('click',playCut);
+$('#playStack').addEventListener('click',playStack);
+$('#playTile').addEventListener('click',()=>renderTiles(true));
+T('#notation','(a,b)\\ \\text{為最大公因數},\\ [a,b]\\ \\text{為最小公倍數}');
+renderQuiz();update();
+</script>
+</body>
+</html>

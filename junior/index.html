@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>數學・物理 互動教材</title>
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f6f5f2;
+    --card: #ffffff;
+    --border: #e3e1db;
+    --text: #1f1f1d;
+    --muted: #6f6d66;
+    --math: #1d7a5c;
+    --math-tint: #e3f3ec;
+    --phy: #2c6cb0;
+    --phy-tint: #e5eff9;
+    --byline: #7b3fbf;
+    --eng: #c0562b;
+    --eng-tint: #fbebe3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121314;
+      --card: #1b1d1f;
+      --border: #2e3033;
+      --text: #ecebe6;
+      --muted: #9a9890;
+      --math: #4cc79a;
+      --math-tint: #16302a;
+      --phy: #6aa8eb;
+      --phy-tint: #172738;
+      --byline: #b993ef;
+      --eng: #f0946a;
+      --eng-tint: #3a2219;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    line-height: 1.6;
+    padding: 40px 20px 60px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+
+  header { margin-bottom: 36px; }
+  h1 { font-size: 28px; font-weight: 600; letter-spacing: 0.02em; }
+  .byline { font-size: 0.8em; color: var(--byline); margin-left: 0.4em; white-space: nowrap; }
+  .lead { color: var(--muted); font-size: 15px; margin-top: 4px; }
+
+  section { margin-bottom: 40px; }
+  h2 {
+    font-size: 19px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  h2::before {
+    content: ""; width: 4px; height: 20px; border-radius: 2px;
+    background: var(--accent);
+  }
+  .math { --accent: var(--math); --tint: var(--math-tint); }
+  .phy  { --accent: var(--phy);  --tint: var(--phy-tint); }
+  .eng  { --accent: var(--eng);  --tint: var(--eng-tint); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  a.card {
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    color: inherit; text-decoration: none;
+    transition: border-color .15s, transform .15s;
+  }
+  a.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  a.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .tag {
+    align-self: flex-start;
+    font-size: 12px; font-weight: 600;
+    color: var(--accent); background: var(--tint);
+    padding: 2px 9px; border-radius: 999px;
+  }
+  .card-title { font-size: 17px; font-weight: 600; }
+  .card-desc  { font-size: 14px; color: var(--muted); }
+
+  .empty {
+    color: var(--muted); font-size: 14px;
+    border: 1px dashed var(--border); border-radius: 12px;
+    padding: 18px; text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) { a.card { transition: none; } a.card:hover { transform: none; } }
+  .nav { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600;
+         color: var(--byline); text-decoration: none; border: 1px solid var(--border);
+         border-radius: 999px; padding: 4px 14px; background: var(--card); }
+  .nav:hover { border-color: var(--byline); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>數學・物理 互動教材<span class="byline">Scott老師編輯修訂</span></h1>
+    <p class="lead">點選卡片開啟教材</p>
+    <a class="nav" href="junior/">國中公式整理 →</a>
+  </header>
+
+  <!-- ===================== 數學 ===================== -->
+  <section class="math">
+    <h2>數學</h2>
+    <div class="grid">
+
+      <!-- 新增教材：複製下面一整個 <a class="card"> … </a>，改 href、標籤、標題、說明 -->
+      <a class="card" href="math/polar-coordinate-system.html">
+        <span class="tag">三角函數</span>
+        <span class="card-title">極座標互動學習</span>
+        <span class="card-desc">拖動圓點觀察角度、象限與直角座標的對應，可切換度與弳度</span>
+      </a>
+
+      <a class="card" href="math/graphs-and-properties-of-trigonometric-functions.html">
+        <span class="tag">三角函數</span>
+        <span class="card-title">三角函數圖形與性質</span>
+        <span class="card-desc">sin、cos、tan 圖形與性質，平移伸縮、正餘弦疊合</span>
+      </a>
+
+      <a class="card" href="math/trig_max_value.html">
+        <span class="tag">三角函數</span>
+        <span class="card-title">三角函數疊合：x有限定範圍(而非一般的<span style="white-space:nowrap">0≦x≦2π</span>)求最大值/最小值</span>
+        <span class="card-desc">疊合後換範圍，以關鍵點表與單位圓判斷極值落在波峰或端點</span>
+      </a>
+
+      <a class="card" href="math/point-symmetry.html">
+        <span class="tag">函數</span>
+        <span class="card-title">點對稱（Point symmetry）</span>
+        <span class="card-desc">輸入任意函數，拖動點檢驗圖形是否對原點對稱</span>
+      </a>
+
+      <a class="card" href="math/log-swing.html">
+        <span class="tag">指數與對數</span>
+        <span class="card-title">對數式 ⇄ 指數式 轉換動畫</span>
+        <span class="card-desc">log 化成木棒把底數打過等號，動畫演示兩式互換；可自訂底數與指數</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ===================== 物理 ===================== -->
+  <section class="phy">
+    <h2>物理</h2>
+    <div class="grid">
+
+      <!-- 新增教材：複製下面一整個 <a class="card"> … </a>，改 href、標籤、標題、說明 -->
+      <a class="card" href="physics/10th-grade-physics-history.html">
+        <span class="tag">物理史</span>
+        <span class="card-title">物理學發展史</span>
+        <span class="card-desc">古代至馬克士威，各科學家的主要貢獻與今日是否仍成立</span>
+      </a>
+
+      <a class="card" href="physics/physics_energy_table.html">
+        <span class="tag">能量</span>
+        <span class="card-title">作功與力學能的種類（5-1）</span>
+        <span class="card-desc">功、功率、動能、位能、力學能總表，保守力與功能定理拆解圖</span>
+      </a>
+
+      <a class="card" href="physics/combined_potential_energy.html">
+        <span class="tag">能量</span>
+        <span class="card-title">位能與作功 互動示範</span>
+        <span class="card-desc">拖動滑桿觀察重力位能、彈力位能與作功的消長</span>
+      </a>
+
+      <a class="card" href="physics/thermal_concepts.html">
+        <span class="tag">熱學</span>
+        <span class="card-title">熱學五大概念關係圖</span>
+        <span class="card-desc">熱能、熱量、溫度、內能、熱平衡的關係與熱力學第一定律</span>
+      </a>
+
+      <a class="card" href="physics/wave-variables-table.html">
+        <span class="tag">波動</span>
+        <span class="card-title">波動現象變因總表</span>
+        <span class="card-desc">反射、折射、干涉、繞射、都卜勒效應中 v、f、λ 的變化</span>
+      </a>
+
+      <a class="card" href="physics/sound_wave_matrix.html">
+        <span class="tag">波動</span>
+        <span class="card-title">聲波比較矩陣</span>
+        <span class="card-desc">低頻與高頻聲波比較；聲波與光波在不同介質中的比較</span>
+      </a>
+
+      <a class="card" href="physics/physics_matrix.html">
+        <span class="tag">波動</span>
+        <span class="card-title">水、空氣、電磁現象的本質比較</span>
+        <span class="card-desc">水波、聲波、電流、電場等現象的本質與常見誤解</span>
+      </a>
+
+      <a class="card" href="physics/buoyancy_lab.html">
+        <span class="tag">浮力</span>
+        <span class="card-title">浮力實驗室</span>
+        <span class="card-desc">調整物體、液體與容器，觀察浮力、排開液體、彈簧秤與臺秤讀數的關係</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ===================== 英文（國中） ===================== -->
+  <section class="eng">
+    <h2>英文（國中）</h2>
+    <div class="grid">
+
+      <!-- 新增教材：複製下面一整個 <a class="card"> … </a>，改 href、標籤、標題、說明 -->
+      <a class="card" href="english/vocab_g7_u1-6.html">
+        <span class="tag">國一上單字</span>
+        <span class="card-title">單字卡 Unit 1–6</span>
+        <span class="card-desc">翰林版國一上共 268 題（196 個課本單字＋補充單字、比較題），發音、例句、間隔重複複習與學習統計（建議用 iPhone 加入主畫面）</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ===================== 英文（高中） ===================== -->
+  <section class="eng">
+    <h2>英文（高中）</h2>
+    <div class="grid">
+
+      <!-- 新增教材：複製下面一整個 <a class="card"> … </a>，改 href、標籤、標題、說明 -->
+      <a class="card" href="english/vocab_hs_u4.html">
+        <span class="tag">高中單字</span>
+        <span class="card-title">單字卡 Unit 4</span>
+        <span class="card-desc">30 個單字與片語，發音、例句、間隔重複複習與學習統計（建議用 iPhone 加入主畫面）</span>
+      </a>
+
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
