@@ -11,7 +11,7 @@
   .page { width: 163mm; margin: 0 auto; }
   @media screen { .page { padding: 8mm 0; } }
   .head { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
-  .rule { font-size: 14px; font-weight: 700; line-height: 1.9; margin: 0 0 4px; }
+  .rule { font-size: 13.5px; white-space: nowrap; font-weight: 700; line-height: 1.9; margin: 0 0 4px; }
   .rule p { margin: 0; }
   .ar { width: 40px; height: 24px; vertical-align: -5px; margin: 0 2px; }
   .note { font-size: 13px; line-height: 1.7; margin: 0 0 10px; }
@@ -55,8 +55,8 @@
 <div class="sec">
   <div class="head ttl">《 怎麼判別？作用力/反作用力 》<span class="law"><span class="vec">F</span><sub>A→B</sub> = <span style="color:#D93025;font-weight:700">−</span><span class="vec">F</span><sub>B→A</sub></span></div>
   <div class="rule">
-    <p>「A給B、B給A」的同一種力 <svg class="ar" viewBox="0 0 40 24" aria-label="成立"><path d="M14 6.5 L18.5 11 L26 2.5" fill="none" stroke="#2E9E3E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 18 H37 M31 13.5 L37 18 L31 22.5" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 大小相等、方向相反、共線，作用在不同物體上</p>
-    <p>大小相等、方向相反、共線，作用在不同物體上 <svg class="ar" viewBox="0 0 40 24" aria-label="不成立"><path d="M15.5 2.5 L24.5 11 M24.5 2.5 L15.5 11" fill="none" stroke="#D93025" stroke-width="2.4" stroke-linecap="round"/><path d="M2 18 H37 M31 13.5 L37 18 L31 22.5" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 不一定是「A給B、B給A」的同一種力</p>
+    <p>「A給B、B給A」的同一個交互作用 <svg class="ar" viewBox="0 0 40 24" aria-label="成立"><path d="M14 6.5 L18.5 11 L26 2.5" fill="none" stroke="#2E9E3E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 18 H37 M31 13.5 L37 18 L31 22.5" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 大小相等、方向相反、共線，作用在不同物體上</p>
+    <p>大小相等、方向相反、共線，作用在不同物體上 <svg class="ar" viewBox="0 0 40 24" aria-label="不成立"><path d="M15.5 2.5 L24.5 11 M24.5 2.5 L15.5 11" fill="none" stroke="#D93025" stroke-width="2.4" stroke-linecap="round"/><path d="M2 18 H37 M31 13.5 L37 18 L31 22.5" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 不一定是「A給B、B給A」的同一個交互作用</p>
   </div>
   <div class="note">
     <p>※ 判斷方法：找出施力者與受力者，「A給B」的反作用力就是「B給A」</p>
@@ -134,7 +134,9 @@
   function fit(){ t.style.zoom=1; var k=w.clientWidth/t.scrollWidth; if(k<1) t.style.zoom=k;
     var p=document.getElementById('l1'), f=13; p.style.fontSize=f+'px';
     while(p.scrollWidth>p.clientWidth && f>9){ f-=0.25; p.style.fontSize=f+'px'; }
-    document.getElementById('l2').style.fontSize=f+'px'; }
+    document.getElementById('l2').style.fontSize=f+'px';
+    var rp=document.querySelectorAll('.rule p'), rf=13.5, ok=false;
+    while(!ok && rf>10){ ok=true; rp.forEach(function(e){ e.style.fontSize=rf+'px'; if(e.scrollWidth>e.clientWidth) ok=false; }); if(!ok) rf-=0.25; } }
   function fitPage(){ var pg=document.querySelector('.page'); pg.style.zoom=1;
     var cs=getComputedStyle(pg), pad=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
     var h=pg.scrollHeight-pad, avail=242*96/25.4-12;
