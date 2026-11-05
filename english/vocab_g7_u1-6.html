@@ -230,7 +230,7 @@ textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--li
   <div id="acctList"></div>
   <button class="btn ghost acct-new" id="acctNew">＋ 新建帳號</button>
   <p class="note">第一次在新的手機或新的主畫面圖示使用時，選自己的帳號就會從老師的後台還原學習進度。</p>
-  <p class="note" style="color:var(--ink3);font-size:11px">App 版本 2026-11-05a</p>
+  <p class="note" style="color:var(--ink3);font-size:11px">App 版本 2026-11-05b</p>
 </div>
 
 <!-- ===== 首頁 ===== -->
@@ -584,7 +584,7 @@ function backfill(){
   S.backfilling = false; S.backfilled2 = 1; save();
 }
 let flushing = false;
-function payload(evs){ const st = S.student; return JSON.stringify({app:CONFIG.APP_ID, sid:st.id, cls:st.cls, seat:st.seat, name:st.name, ua:navigator.userAgent.slice(0,120), events:evs}); }
+function payload(evs, st){ st = st || S.student; return JSON.stringify({app:CONFIG.APP_ID, sid:st.id, cls:st.cls, seat:st.seat, name:st.name, ua:navigator.userAgent.slice(0,120), events:evs}); }
 async function flush(){
   if(!CONFIG.SYNC_URL || flushing || !S || !S.chosen || !S.pending.length || !navigator.onLine) return;
   flushing = true;
@@ -963,10 +963,13 @@ function askProfile(){
 /* ===== 帳號：每次開啟先選帳號 ===== */
 const WBY = {}; WORDS.forEach(w => { const k = w.u + '|' + w.w; if(!WBY[k]) WBY[k] = w.id; });
 let ACC = {list:[], ok:false, loading:false};
-async function fetchJSON(q){
-  const r = await fetch(CONFIG.SYNC_URL + q, {method:'GET', cache:'no-store'});
-  if(!r.ok) throw new Error('HTTP ' + r.status);
-  return r.json();
+async function fetchJSON(q, ms){
+  const ac = window.AbortController ? new AbortController() : null, tm = ac ? setTimeout(() => ac.abort(), ms || 20000) : 0;
+  try{
+    const r = await fetch(CONFIG.SYNC_URL + q, {method:'GET', cache:'no-store', signal: ac ? ac.signal : undefined});
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  }finally{ clearTimeout(tm); }
 }
 async function loadAccounts(){
   ACC.loading = true; ACC.oldBackend = false; renderAccounts();
@@ -1033,8 +1036,14 @@ function rebuildFromServer(student, data){ // 依後台紀錄重建學習進度
 }
 async function chooseAccount(sid){
   if(S && S.chosen && S.student.id !== sid){ beaconFlush(); save(); }
+  if(S && S.chosen && S.student.id === sid) save();
   const a = ACC.list.find(x => x.sid === sid);
   let s = loadProfile(sid);
+  if(s && CONFIG.SYNC_URL && navigator.onLine !== false){ // 同一帳號可能在別的裝置（或 Safari／主畫面圖示）練過：每次選帳號都和後台同步
+    openModal('<h3>正在同步學習紀錄…</h3><p class="note">和老師的後台核對進度，請稍等。</p>');
+    s = await syncProfile(s, '?a=state&id=' + encodeURIComponent(sid));
+    closeModal();
+  }
   if(!s){
     if(!CONFIG.SYNC_URL) return toast('找不到這個帳號的紀錄');
     openModal('<h3>正在載入學習紀錄…</h3><p class="note">第一次在這台裝置使用這個帳號，正在從老師的後台還原你的進度。</p>');
@@ -1046,6 +1055,34 @@ async function chooseAccount(sid){
     }catch(e){ closeModal(); return toast('無法載入，請確認網路後再試一次'); }
   }
   enterAccount(s);
+}
+async function syncProfile(s, q){ // 先上傳本機未送出的紀錄，再以後台的完整紀錄重建進度
+  try{
+    while(s.pending.length){
+      const batch = s.pending.slice(0, 200);
+      await fetch(CONFIG.SYNC_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:payload(batch, s.student)});
+      const ids = new Set(batch.map(e => e.id)); s.pending = s.pending.filter(e => !ids.has(e.id));
+    }
+    s.lastSync = Date.now();
+  }catch(e){ /* 上傳失敗：未送出的紀錄留著，下面一併併入 */ }
+  try{
+    const j = await fetchJSON(q, 12000);
+    if(!j || !j.ok || !Array.isArray(j.reviews)) return s;
+    const localSeen = Object.values(s.cards).reduce((a, c) => a + (c.seen || 0), 0);
+    if(!j.reviews.length && localSeen) return s; // 後台沒有任何作答紀錄時，保留本機進度
+    const rows = j.reviews.slice(), have = new Set(rows.map(r => r[4] + '|' + r[2]));
+    for(const e of s.pending){ // 還沒上傳成功的作答也算進去
+      if(e.type !== 'review') continue;
+      const t = Date.parse(e.t), k = t + '|' + e.word;
+      if(!have.has(k)) rows.push([e.w, e.u, e.word, e.r, t, e.mode, (e.rt || 0) / 1000, e.ivl, e.ease]);
+    }
+    const ops = (j.opens || []).concat(s.opens || []).filter(Boolean).sort((a, b) => a - b), opens = [];
+    for(const t of ops) if(!opens.length || t - opens[opens.length - 1] > 1500) opens.push(t); // 去掉同一次開啟的重複
+    const n = rebuildFromServer(s.student, {reviews:rows, opens});
+    for(const k of ['settings', 'pending', 'created', 'askedProfile', 'lastSync']) if(s[k] !== undefined) n[k] = s[k];
+    delete n.restored; n.synced = Date.now();
+    return n;
+  }catch(e){ return s; }
 }
 function enterAccount(s){
   S = s; S.chosen = 1; S.askedProfile = true; save();
