@@ -1,0 +1,2046 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch2 指數對數 詳解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#fbfaf7; --card:#ffffff; --ink:#1d1f24; --mute:#5c6270; --line:#dcd8cf;
+  --blue:#1f5fbf; --blue-bg:#e8f0fc; --green:#1f8a4c; --green-bg:#e5f5ea;
+  --orange:#b9650c; --orange-bg:#fdf0e1; --red:#c0392b; --red-bg:#fbe7e5;
+  --chip:#efece5; --ans:#fff7d6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC",system-ui,sans-serif;font-size:15px;line-height:1.75}
+.wrap{max-width:880px;margin:0 auto;padding:24px 16px 80px}
+h1{font-family:"Noto Serif TC",serif;font-size:26px;margin:4px 0 2px}
+.sub{color:var(--mute);margin:0 0 18px}
+h2{font-family:"Noto Serif TC",serif;font-size:22px;margin:40px 0 10px;padding:6px 12px;border-left:6px solid var(--blue);background:#eef2f8}
+h3{font-size:16px;margin:26px 0 8px;color:var(--mute);font-weight:700;border-bottom:1px dashed var(--line);padding-bottom:3px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px 12px;margin:12px 0;break-inside:avoid}
+.q.pr{margin-left:22px;border-style:dashed;background:#fdfdfb}
+.qh{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px}
+.pg{font-size:12px;color:#fff;background:#4a5466;border-radius:4px;padding:0 7px}
+.no{font-weight:700;font-size:15px}
+.ty{font-size:12px;background:var(--chip);border-radius:20px;padding:0 9px;color:#4a4a4a}
+.stem{color:#3a3f4a;background:#f6f5f1;border-radius:6px;padding:6px 10px;margin-bottom:8px;font-size:14.5px}
+.sol p{margin:6px 0}
+.ans{display:inline-block;background:var(--ans);border:1px solid #ecd98a;border-radius:6px;padding:2px 10px;margin-top:6px;font-weight:700}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;border-radius:4px;padding:0 6px;margin-right:4px;white-space:nowrap}
+.th{color:var(--blue);background:var(--blue-bg)}
+.tk{color:var(--green);background:var(--green-bg)}
+.nt{color:var(--orange);background:var(--orange-bg)}
+.fx{color:var(--red);background:var(--red-bg)}
+.box{border-radius:6px;padding:6px 10px;margin:8px 0;font-size:14px}
+.box.th{background:var(--blue-bg);color:var(--ink)}
+.box.tk{background:var(--green-bg);color:var(--ink)}
+.box.nt{background:var(--orange-bg);color:var(--ink)}
+.box.fx{background:var(--red-bg);color:var(--ink)}
+.row{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.row>.txt{flex:1 1 360px;min-width:0}
+.fig{flex:0 0 auto;text-align:center;font-size:12px;color:var(--mute)}
+.fig svg{display:block;max-width:100%;height:auto;background:#fff;border:1px solid #eee;border-radius:6px}
+table{border-collapse:collapse;margin:8px 0;font-size:14px;max-width:100%}
+th,td{border:1px solid var(--line);padding:3px 9px;text-align:center;vertical-align:middle}
+th{background:#f0eee8;font-weight:700}
+td.l{text-align:left}
+.ok{color:var(--green);font-weight:700}
+.ng{color:var(--red);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.toc a{color:var(--blue);text-decoration:none;margin-right:12px}
+.katex{font-size:1.06em}
+.katex-display{margin:.4em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.nw{white-space:nowrap}
+@media print{
+  body{background:#fff;font-size:10pt;line-height:1.55}
+  .wrap{max-width:none;padding:0}
+  h1{font-size:18pt}
+  h2{break-before:page;font-size:15pt;margin:0 0 6px}
+  h2.first{break-before:auto;margin-top:14px}
+  h3{margin:12px 0 4px;break-after:avoid}
+  /* 卡片允許跨頁，避免整題被推到下一頁留下大片空白 */
+  .q{break-inside:auto;border-color:#bbb;padding:6px 10px;margin:6px 0}
+  .q.pr{margin-left:12px}
+  .qh{margin-bottom:3px;break-after:avoid}
+  .stem{padding:3px 8px;margin-bottom:4px;break-after:avoid;font-size:9.5pt}
+  .sol p{margin:3px 0}
+  .box{padding:3px 8px;margin:4px 0}
+  .ans{margin-top:3px}
+  .fig,table,.katex-display,.ans,.box,.sol p{break-inside:avoid}
+  /* 圖固定在右側、縮成約 38% 寬，不再被擠到文字下方 */
+  .row{flex-wrap:nowrap;gap:10px}
+  .row>.txt{flex:1 1 auto;min-width:0}
+  .fig{flex:0 0 38%;font-size:8pt}
+  .fig svg{width:100%;height:auto}
+  table{font-size:9pt;margin:4px 0}
+  th,td{padding:1px 6px}
+  .katex-display{margin:.2em 0}
+  @page{size:A4;margin:12mm}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>高二上 數學A　第二章 指數、對數函數　講義詳解</h1>
+<p class="sub">依講義頁碼／題號／題型逐題整理；需要時附圖與表格。常用對數值取 \(\log2\approx0.3010,\ \log3\approx0.4771,\ \log5\approx0.6990,\ \log7\approx0.8451\)。</p>
+<div class="legend">
+  <span class="tag th">定理</span><span>用到的定理／公式</span>
+  <span class="tag tk">技巧</span><span>特殊步驟、解題手法</span>
+  <span class="tag nt">注意</span><span>易錯、驗根、定義域</span>
+  <span class="tag fx">更正</span><span>講義印刷或手寫筆記的錯誤</span>
+</div>
+<div class="toc"><a href="#s21">2-1 指數函數</a><a href="#s22">2-2 對數與對數律</a><a href="#s23">2-3 對數函數</a><a href="#fix">更正總表</a></div>
+
+<h3 id="fix">講義／筆記更正總表</h3>
+<table>
+<tr><th>位置</th><th>原內容</th><th>更正</th></tr>
+<tr><td>p.2-1-2 4.(1)</td><td class="l">「往右移 \(k\)，則 \(y\) 用 \(y+k\) 代入」</td><td class="l">應為「往<b>下</b>移 \(k\)」</td></tr>
+<tr><td>p.2-1-5 練習</td><td class="l">手寫 \(c>d>b>a\)</td><td class="l">\(c>d>a>b\)（講義答案正確）</td></tr>
+<tr><td>p.2-1-6 例1(1)</td><td class="l">手寫 \(27\sqrt3=3^{\frac32}\)</td><td class="l">\(27\sqrt3=3^{\frac72}\)，故 \(x=2\)</td></tr>
+<tr><td>p.2-1-9 例6(1)</td><td class="l">手寫 \(\tfrac12\le 2x\le4\Rightarrow\tfrac14\le x\le2\)</td><td class="l">\(\tfrac12\le 2^x\le4\Rightarrow -1\le x\le2\)</td></tr>
+<tr><td>p.2-2-1 練習</td><td class="l">小題編號 (1)(4)(2)(4)</td><td class="l">應為 (1)(2)(3)(4)</td></tr>
+<tr><td>p.2-2-4 例4</td><td class="l">手寫只解「真數 &gt; 0」</td><td class="l">還要「底數 &gt; 0 且 ≠ 1」：\(1\lt x\lt3,\ x\ne2\)</td></tr>
+<tr><td>p.2-2-4 例5(4)</td><td class="l">手寫停在 \(9^{\log_9 36}\)</td><td class="l">\(=36\)</td></tr>
+<tr><td>p.2-2-5 例6(2)</td><td class="l">空格填 4</td><td class="l">計算結果 \(\log_4 64=3\)</td></tr>
+<tr><td>p.2-2-6 例10 練習</td><td class="l">印刷答案分母 \(1+ab+b\)</td><td class="l">分母應為 \(1+a+ab\)</td></tr>
+<tr><td>p.2-3-10 習題3(2)</td><td class="l">第四個數又叫 \(b\)</td><td class="l">應為 \(d=\log_{\frac12}\sqrt3\)</td></tr>
+</table>
+
+<h2 id="s21" class="first">2-1　指數函數及其圖形</h2>
+
+<h3>重點 1　指數函數圖形與特徵（p.2-1-4 ～ 2-1-6）</h3>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-4</span><span class="no">例1</span><span class="ty">函數代值</span></div>
+<div class="stem">設 \(f(x)=10^x\)，求 (1) \(f(0)\)　(2) \(f(-1)\)　(3) \(f(t+3)\)　(4) \(f(\tfrac t2)\)</div>
+<div class="sol">
+<p><span class="tag th">定理</span>零指數 \(a^0=1\)；負指數 \(a^{-n}=\dfrac1{a^n}\)；指數律 \(a^{m+n}=a^m\cdot a^n\)；有理指數 \(a^{\frac mn}=\sqrt[n]{a^m}\)</p>
+<p>把 \(x\) 換成括號內的式子，再用指數律整理：</p>
+\[\begin{aligned}
+(1)\ f(0)&=10^0=1 \why{零指數}\\
+(2)\ f(-1)&=10^{-1}=\frac1{10^1}=\frac1{10} \why{負指數}\\
+(3)\ f(t+3)&=10^{t+3}=10^t\cdot10^3=1000\cdot10^t \why{$a^{m+n}=a^m a^n$}\\
+(4)\ f\!\left(\tfrac t2\right)&=10^{\frac t2}=\left(10^t\right)^{\frac12}=\sqrt{10^t} \why{$a^{mn}=(a^m)^n$}
+\end{aligned}\]
+<div class="ans">(1) 1　(2) \(\tfrac1{10}\)　(3) \(1000\cdot10^t\)　(4) \(\sqrt{10^t}\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-4</span><span class="no">練習</span><span class="ty">函數代值</span></div>
+<div class="stem">設 \(f(x)=3^x\)，求 \(f(0),\ f(-4),\ f(x+1),\ f(x-2)\)</div>
+<div class="sol">
+\[\begin{aligned}
+f(0)&=3^0=1\\
+f(-4)&=3^{-4}=\frac1{3^4}=\frac1{81}\\
+f(x+1)&=3^{x+1}=3^x\cdot3^1=3\cdot3^x\\
+f(x-2)&=3^{x-2}=3^x\cdot3^{-2}=\frac{3^x}{9}
+\end{aligned}\]
+<div class="ans">1；\(\tfrac1{81}\)；\(3\cdot3^x\)；\(\tfrac{3^x}9\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-4</span><span class="no">例2</span><span class="ty">圖形性質（多選）</span></div>
+<div class="stem">\(a>0,\ a\ne1\)，關於 \(y=a^x\) 的圖形何者為真？(A) 向右上升 (B) \(0\lt a\lt1\) 時 \(x\) 愈大 \(y\) 愈接近 \(x\) 軸 (C) 恆過 \((1,0)\) (D) 與 \(y=a^{-x}\) 對稱於 \(x\) 軸 (E) 與 \(y=-a^{-x}\) 對稱於原點</div>
+<div class="row"><div class="txt sol">
+<p><span class="tag th">定理</span>對稱變換：\((x,y)\to(-x,y)\) 對稱 \(y\) 軸；\((x,y)\to(x,-y)\) 對稱 \(x\) 軸；\((x,y)\to(-x,-y)\) 對稱原點。</p>
+<p><b>(A)</b> 取 \(a=\tfrac12\)：\(x=0\) 時 \(y=1\)，\(x=1\) 時 \(y=\tfrac12\)，\(x\) 變大 \(y\) 反而變小 → 只有 \(a>1\) 才向右上升。✗</p>
+<p><b>(B)</b> \(0\lt a\lt1\) 時，\(a^{10},a^{100},\dots\) 愈乘愈小（例 \((\tfrac12)^{10}\approx0.001\)），但永遠 \(>0\)，所以圖形愈來愈貼近 \(x\) 軸。✓</p>
+<p><b>(C)</b> 代 \(x=1\)：\(y=a^1=a\ne0\)；代 \(x=0\)：\(y=a^0=1\)。恆過的是 \((0,1)\)。✗</p>
+<p><b>(D)</b> 在 \(y=a^x\) 上取點 \((x_0,\ a^{x_0})\)，它對 \(y\) 軸的對稱點 \((-x_0,\ a^{x_0})\)：代入 \(y=a^{-x}\) 得 \(a^{-(-x_0)}=a^{x_0}\) ✓ 在圖上。所以兩圖對稱於 <b>\(y\) 軸</b>，不是 \(x\) 軸。✗</p>
+<p><b>(E)</b> 點 \((x_0,\ a^{x_0})\) 對原點的對稱點 \((-x_0,\ -a^{x_0})\)：代入 \(y=-a^{-x}\) 得 \(-a^{-(-x_0)}=-a^{x_0}\) ✓ 在圖上。✓</p>
+<div class="ans">(B)(E)</div>
+</div>
+<div class="fig"><div id="f21_e2"></div>以 \(a=2\) 為例</div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-4</span><span class="no">練習</span><span class="ty">圖形判讀</span></div>
+<div class="stem">圖為 \(y=a^x\) 部分圖形（遞減，與 \(y\) 軸交於 \(P\)）。(1) \(\overline{OP}=1\) (2) \(0\lt a\lt1\) (3) 與每一條水平線均相交 (4) 若 \((100,k)\) 在圖形上則 \(k>0\)</div>
+<div class="sol">
+<p>(1) \(P\) 在 \(y\) 軸上 → \(x=0\)，\(y=a^0=1\)，\(P(0,1)\)，\(\overline{OP}=1\)。✓</p>
+<p>(2) 圖形往右下降（遞減）→ \(0\lt a\lt1\)。✓</p>
+<p>(3) 對所有實數 \(x\)，\(a^x>0\)；水平線 \(y=-1\)（或 \(y=0\)）在 \(x\) 軸以下（上），與圖形不相交。✗</p>
+<p>(4) \((100,k)\) 在圖上 → \(k=a^{100}\)；正數的任何次方都 \(>0\)，所以 \(k>0\)。✓</p>
+<div class="ans">(1)(2)(4)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-5</span><span class="no">例3</span><span class="ty">圖形判讀・比較底數</span></div>
+<div class="stem">圖為 \(y=a^x,\ y=b^x,\ y=c^x\)（\(a^x\) 遞減；\(b^x\) 比 \(c^x\) 陡）。(1) \(a>1\) (2) \(b>1\) (3) \(c>1\) (4) \(a>b\) (5) \(b>c\)</div>
+<div class="row"><div class="txt sol">
+<div class="box tk"><span class="tag tk">技巧</span><b>畫鉛直線 \(x=1\)</b>：代 \(x=1\) 進 \(y=a^x\) 得 \(y=a^1=a\)，所以交點是 \((1,a)\)，<b>交點高度就是底數</b>。高度愈高，底數愈大。</div>
+<p><b>步驟 1</b>　判斷遞增或遞減：</p>
+<table>
+<tr><th>曲線</th><th>走勢</th><th>底數範圍</th></tr>
+<tr><td>\(y=a^x\)</td><td>往右下降</td><td>\(0\lt a\lt1\)</td></tr>
+<tr><td>\(y=b^x\)</td><td>往右上升</td><td>\(b>1\)</td></tr>
+<tr><td>\(y=c^x\)</td><td>往右上升</td><td>\(c>1\)</td></tr>
+</table>
+<p><b>步驟 2</b>　比較 \(b,c\)：在 \(x=1\) 處，\(b^x\) 的交點 \((1,b)\) 比 \(c^x\) 的交點 \((1,c)\) 高，所以 \(b>c\)。</p>
+<p><b>步驟 3</b>　合併：\(b>c>1>a>0\)。</p>
+<p>(1) ✗　(2) ✓　(3) ✓　(4) \(a\lt1\lt b\) ✗　(5) ✓</p>
+<div class="ans">(2)(3)(5)</div>
+</div>
+<div class="fig"><div id="f21_e3"></div>示意：\(a=\tfrac12,\ b=4,\ c=2\)</div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-5</span><span class="no">練習</span><span class="ty">比較底數</span></div>
+<div class="stem">圖為 \(y=a^x,b^x,c^x,d^x\)（\(a^x,b^x\) 遞減且 \(b^x\) 較陡；\(c^x,d^x\) 遞增且 \(c^x\) 較陡），比較 \(a,b,c,d\)。</div>
+<div class="sol">
+<p><b>遞增的兩條</b>（\(c,d>1\)）：看 \(x=1\)，交點高度分別是 \(c,d\)；\(c^x\) 較陡、在 \(x=1\) 處較高 \(\Rightarrow c>d\)。</p>
+<p><b>遞減的兩條</b>（\(0\lt a,b\lt1\)）：看 \(x=-1\)，代入得 \(y=a^{-1}=\tfrac1a\)、\(y=b^{-1}=\tfrac1b\)。\(b^x\) 在左側較陡、較高：</p>
+\[\frac1b>\frac1a\ \Rightarrow\ b\lt a \why{正數取倒數，大小顛倒}\]
+<p><b>合併</b>：\(c>d>1>a>b>0\)。</p>
+<p><span class="tag nt">注意</span>遞減的曲線愈陡，底數愈<b>小</b>（愈接近 0）。</p>
+<p><span class="tag fx">更正</span>手寫答案 \(c>d>b>a\) 把 \(a,b\) 寫反了。</p>
+<div class="ans">\(c>d>a>b\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-5</span><span class="no">例4</span><span class="ty">圖形判讀・選底數</span></div>
+<div class="stem">\(y=a^x\) 與 \(y=2^x\) 的圖如右，\(a\) 可能是 (A) 3 (B) \(\tfrac32\) (C) \(\tfrac23\) (D) \(\tfrac13\) (E) \(\tfrac12\)</div>
+<div class="row"><div class="txt sol">
+<p><b>步驟 1</b>　\(y=a^x\) 往右下降 \(\Rightarrow0\lt a\lt1\)，刪去 (A) 3、(B) \(\tfrac32\)。剩 \(\tfrac23,\tfrac13,\tfrac12\)。</p>
+<p><b>步驟 2</b>　<span class="tag th">定理</span>\(y=a^x\) 與 \(y=(\tfrac1a)^x\) 對稱於 \(y\) 軸。把 \(y=2^x\) 對 \(y\) 軸翻過去得 \(y=(\tfrac12)^x\)（圖中虛線）。</p>
+<p><b>步驟 3</b>　題圖中 \(y=a^x\) 在 \(y\) 軸左側比 \(y=(\tfrac12)^x\) 更陡、更高。取 \(x=-1\) 比較高度：</p>
+\[a^{-1}>\left(\tfrac12\right)^{-1}\ \Rightarrow\ \frac1a>2\ \Rightarrow\ a\lt\frac12\]
+<p><b>步驟 4</b>　剩下的選項中只有 \(\tfrac13\lt\tfrac12\)（\(\tfrac23>\tfrac12\)，\(\tfrac12\) 本身會跟虛線重合）。</p>
+<p><b>讀格子驗證</b>：圖中 \(x=-1\) 時 \(y=3\)，\(\tfrac1a=3\Rightarrow a=\tfrac13\)。</p>
+<div class="ans">(D)</div>
+</div>
+<div class="fig"><div id="f21_e4"></div>實線 \(y=(\tfrac13)^x\)、\(y=2^x\)；虛線 \(y=(\tfrac12)^x\)</div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-6</span><span class="no">練習</span><span class="ty">圖形辨識（單選）</span></div>
+<div class="stem">下列何者為 \(y=1+(\tfrac35)^x\) 的部分圖形？</div>
+<div class="row"><div class="txt sol">
+<p><span class="tag tk">技巧</span>\(y=1+a^x\) 就是 \(y=a^x\) 向上平移 1，三個特徵逐一檢查：</p>
+<table>
+<tr><th>特徵</th><th>計算</th><th>結論</th></tr>
+<tr><td>走勢</td><td>底數 \(\tfrac35\)，\(0\lt\tfrac35\lt1\)</td><td>遞減 → 刪 (A)(C)(E)</td></tr>
+<tr><td>漸近線</td><td>\((\tfrac35)^x>0\Rightarrow y>1\)；\(x\to\infty\) 時 \((\tfrac35)^x\to0\)</td><td>\(y=1\) → 刪 (B)</td></tr>
+<tr><td>\(y\) 截距</td><td>\(x=0\)：\(y=1+(\tfrac35)^0=1+1=2\)</td><td>過 \((0,2)\)</td></tr>
+</table>
+<div class="ans">(D)</div>
+</div>
+<div class="fig"><div id="f21_p6"></div></div></div>
+</div>
+
+<h3>重點 2　指數方程式與不等式（p.2-1-6 ～ 2-1-10）</h3>
+<div class="box th"><span class="tag th">定理</span>\(a>0,a\ne1\)：\(a^\alpha=a^\beta\Leftrightarrow\alpha=\beta\)（一對一）。不等式：\(a>1\) 時 \(a^{x_1}\lt a^{x_2}\Leftrightarrow x_1\lt x_2\)；\(0\lt a\lt1\) 時<b>不等號變向</b>。　<span class="tag tk">技巧</span>化同底，冪乾淨。</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-6</span><span class="no">例1</span><span class="ty">指數方程式</span></div>
+<div class="stem">(1) \((\sqrt3)^{3x+1}=27\sqrt3\)　(2) \(9^x+3^{x+1}-18=0\)　(3) \(6^x-4\cdot3^x-3\cdot2^x+12=0\)</div>
+<div class="sol">
+<p><b>(1)</b> <span class="tag tk">技巧</span>兩邊都化成「3 的幾次方」。</p>
+\[\begin{aligned}
+\text{左邊}&=(\sqrt3)^{3x+1}=\left(3^{\frac12}\right)^{3x+1}=3^{\frac{3x+1}2} \why{$(a^m)^n=a^{mn}$}\\
+\text{右邊}&=27\sqrt3=3^3\cdot3^{\frac12}=3^{3+\frac12}=3^{\frac72} \why{$a^m a^n=a^{m+n}$}\\
+3^{\frac{3x+1}2}&=3^{\frac72}\ \Rightarrow\ \frac{3x+1}2=\frac72 \why{一對一，指數相等}\\
+3x+1&=7\ \Rightarrow\ 3x=6\ \Rightarrow\ x=2
+\end{aligned}\]
+<p>驗算：\((\sqrt3)^7=(\sqrt3)^6\cdot\sqrt3=27\sqrt3\) ✓</p>
+<p><span class="tag fx">更正</span>手寫把 \(27\sqrt3\) 寫成 \(3^{\frac32}\)，應是 \(3^3\cdot3^{\frac12}=3^{\frac72}\)。</p>
+
+<p><b>(2)</b> <span class="tag tk">技巧</span>換元：\(9^x=(3^2)^x=(3^x)^2\)，\(3^{x+1}=3^x\cdot3\)。令 \(t=3^x\)（\(t>0\)）：</p>
+\[\begin{aligned}
+t^2+3t-18&=0\\
+(t+6)(t-3)&=0 \why{$-18=6\times(-3)$，$6+(-3)=3$}\\
+t=-6\ \text{（不合，}t&>0\text{）}\quad\text{或}\quad t=3\\
+3^x=3=3^1\ &\Rightarrow\ x=1
+\end{aligned}\]
+<p>驗算：\(9+3^2-18=9+9-18=0\) ✓</p>
+<p><span class="tag nt">注意</span>\(t=3^x\) 一定是正數，負根要捨去。</p>
+
+<p><b>(3)</b> <span class="tag tk">技巧</span>\(6^x=(2\cdot3)^x=2^x\cdot3^x\)，四項兩兩分組提公因式：</p>
+\[\begin{aligned}
+&2^x\cdot3^x-4\cdot3^x-3\cdot2^x+12\\
+=\ &3^x\,(2^x-4)\ -\ 3\,(2^x-4) \why{前兩項提 $3^x$，後兩項提 $-3$}\\
+=\ &(2^x-4)(3^x-3)=0
+\end{aligned}\]
+<p>\(2^x-4=0\Rightarrow2^x=2^2\Rightarrow x=2\)；\(3^x-3=0\Rightarrow3^x=3^1\Rightarrow x=1\)</p>
+<p>驗算 \(x=1\)：\(6-12-6+12=0\) ✓；\(x=2\)：\(36-36-12+12=0\) ✓</p>
+<div class="ans">(1) \(x=2\)　(2) \(x=1\)　(3) \(x=1\) 或 \(2\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-6</span><span class="no">練習</span><span class="ty">指數方程式</span></div>
+<div class="stem">(1) \(4^{3x^2}=2^{10x+4}\)　(2) \(4^{x+1}=9\cdot2^x-2\)　(3) \(10^x-4\cdot5^x+2^x-4=0\)</div>
+<div class="sol">
+<p><b>(1)</b></p>
+\[\begin{aligned}
+4^{3x^2}&=(2^2)^{3x^2}=2^{6x^2}\\
+2^{6x^2}&=2^{10x+4}\ \Rightarrow\ 6x^2=10x+4\\
+6x^2-10x-4&=0\ \Rightarrow\ 3x^2-5x-2=0 \why{同除 2}\\
+(3x+1)(x-2)&=0 \why{十字交乘：$3\cdot(-2)+1\cdot1=-5$}\\
+x&=-\tfrac13\ \text{或}\ x=2
+\end{aligned}\]
+<p><b>(2)</b> \(4^{x+1}=4\cdot4^x=4(2^x)^2\)。令 \(t=2^x>0\)：</p>
+\[\begin{aligned}
+4t^2&=9t-2\ \Rightarrow\ 4t^2-9t+2=0\\
+(4t-1)(t-2)&=0 \why{$4\cdot(-2)+(-1)\cdot1=-9$}\\
+t=\tfrac14=2^{-2}\ &\Rightarrow\ x=-2\qquad t=2=2^1\ \Rightarrow\ x=1
+\end{aligned}\]
+<p><b>(3)</b> \(10^x=2^x\cdot5^x\)，分組：</p>
+\[\begin{aligned}
+&5^x\cdot2^x-4\cdot5^x+2^x-4\\
+=\ &5^x(2^x-4)+1\cdot(2^x-4)=(2^x-4)(5^x+1)=0
+\end{aligned}\]
+<p>\(5^x+1>1\) 不可能為 0，所以 \(2^x=4\Rightarrow x=2\)</p>
+<div class="ans">(1) \(-\tfrac13\) 或 \(2\)　(2) \(1\) 或 \(-2\)　(3) \(2\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-7</span><span class="no">例2</span><span class="ty">交點・實根個數</span></div>
+<div class="stem">(1) \(y=9^x\) 與 \(y=3^{3x+2}\) 的交點　(2) \(2^x+x=0\) 有幾個實數解？</div>
+<div class="row"><div class="txt sol">
+<p><b>(1)</b> 交點 → 兩式的 \(y\) 相等：</p>
+\[\begin{aligned}
+9^x&=3^{3x+2}\\
+(3^2)^x=3^{2x}&=3^{3x+2}\ \Rightarrow\ 2x=3x+2\ \Rightarrow\ x=-2\\
+y&=9^{-2}=\frac1{81}
+\end{aligned}\]
+<p><b>(2)</b> <span class="tag tk">技巧</span>代數解不出來時，<b>方程式的實根個數＝兩圖形交點個數</b>。移項 \(2^x=-x\)，畫 \(y=2^x\) 與 \(y=-x\)。</p>
+<p>① \(y=2^x\) 遞增、\(y=-x\) 遞減 → 兩圖至多相交一次。</p>
+<p>② 用表格找交點位置：</p>
+<table>
+<tr><th>\(x\)</th><th>\(-2\)</th><th>\(-1\)</th><th>\(0\)</th><th>\(1\)</th></tr>
+<tr><th>\(2^x\)</th><td>0.25</td><td>0.5</td><td>1</td><td>2</td></tr>
+<tr><th>\(-x\)</th><td>2</td><td>1</td><td>0</td><td>\(-1\)</td></tr>
+<tr><th>大小</th><td>\(2^x\lt-x\)</td><td>\(2^x\lt-x\)</td><td>\(2^x>-x\)</td><td>\(2^x>-x\)</td></tr>
+</table>
+<p>大小關係在 \(x=-1\) 與 \(x=0\) 之間反轉 → 恰有一個交點（約 \(x\approx-0.64\)）。</p>
+<div class="ans">(1) \((-2,\tfrac1{81})\)　(2) 1 個</div>
+</div>
+<div class="fig"><div id="f21_e2b"></div>\(y=2^x\) 與 \(y=-x\)</div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-7</span><span class="no">練習</span><span class="ty">交點・實根個數</span></div>
+<div class="stem">(1) \(y=4^x\) 與 \(y=2^{3x+2}\) 的交點　(2) 何者恰有一實數解？(A) \(x=2^x\) (B) \(x^2=2^x\) (C) \(x+3=2^{-x}\) (D) \(x-3=2^{-x}\) (E) \(2^{x+3}=x-2\)</div>
+<div class="row"><div class="txt sol">
+<p><b>(1)</b> \(2^{2x}=2^{3x+2}\Rightarrow2x=3x+2\Rightarrow x=-2\)，\(y=4^{-2}=\tfrac1{16}\)</p>
+<p><b>(2)</b> 每個選項都看成兩圖形的交點數：</p>
+<p>(A) \(y=2^x\) 與 \(y=x\)：\(x\le0\) 時 \(2^x>0\ge x\)；\(x>0\) 時 \(2^x\) 恆大於 \(x\)（\(x=1:2>1\)，\(x=2:4>2\)，之後 \(2^x\) 長得更快）→ 0 解 ✗</p>
+<p>(B) \(y=x^2\) 與 \(y=2^x\)：</p>
+<table>
+<tr><th>\(x\)</th><th>\(-1\)</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+<tr><th>\(x^2\)</th><td>1</td><td>0</td><td>1</td><td>4</td><td>9</td><td>16</td><td>25</td></tr>
+<tr><th>\(2^x\)</th><td>0.5</td><td>1</td><td>2</td><td>4</td><td>8</td><td>16</td><td>32</td></tr>
+</table>
+<p>\(x=2,4\) 為解；\(x=-1\) 到 \(0\) 之間大小反轉，再多一個負根 → 3 解 ✗</p>
+<p>(C) \(y=x+3\) 遞增、\(y=2^{-x}\) 遞減 → 至多 1 個；代 \(x=-1\)：左 \(=2\)，右 \(=2^1=2\) ✓ → 恰 1 解 ✓</p>
+<p>(D) \(y=x-3\) 遞增、\(y=2^{-x}\) 遞減 → 至多 1 個；\(x=3\)：\(0\lt\tfrac18\)，\(x=4\)：\(1>\tfrac1{16}\)，在 \((3,4)\) 間反轉 → 恰 1 解 ✓</p>
+<p>(E) 令 \(u=x+3\)，左邊 \(2^u\)，右邊 \(x-2=u-5\)。由 (A) 知 \(2^u>u>u-5\) 恆成立 → 0 解 ✗</p>
+<div class="ans">(1) \((-2,\tfrac1{16})\)　(2) (C)(D)</div>
+</div>
+<div class="fig"><div id="f21_p7"></div>(B) \(y=x^2\) 與 \(y=2^x\)：3 個交點</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-7</span><span class="no">例3</span><span class="ty">圖形・距離</span></div>
+<div class="stem">\(P,Q\) 分別為直線 \(y=3,\ y=6\) 與 \(y=2^x\) 的交點，求 \(\overline{PQ}\)。</div>
+<div class="row"><div class="txt sol">
+<p><b>步驟 1</b>　設 \(P(p,3)\)、\(Q(q,6)\)。因為兩點都在 \(y=2^x\) 上：\(2^p=3,\ 2^q=6\)。</p>
+<p><b>步驟 2</b>　<span class="tag tk">技巧</span>不必求出 \(p,q\) 本身，只要水平距離 \(q-p\)。兩式相除：</p>
+\[\frac{2^q}{2^p}=\frac63\ \Rightarrow\ 2^{q-p}=2=2^1\ \Rightarrow\ q-p=1 \why{$\frac{a^m}{a^n}=a^{m-n}$}\]
+<p><b>步驟 3</b>　距離公式：水平差 \(q-p=1\)，鉛直差 \(6-3=3\)</p>
+\[\overline{PQ}=\sqrt{(q-p)^2+(6-3)^2}=\sqrt{1^2+3^2}=\sqrt{1+9}=\sqrt{10}\]
+<div class="ans">\(\sqrt{10}\)</div>
+</div>
+<div class="fig"><div id="f21_e3b"></div></div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-7</span><span class="no">練習</span><span class="ty">圖形・距離</span></div>
+<div class="stem">\(P,Q\) 分別為 \(y=2,\ y=6\) 與 \(y=3^x\) 的交點，求 \(\overline{PQ}\)。</div>
+<div class="sol">
+\[\begin{aligned}
+&P(p,2),\ Q(q,6):\quad 3^p=2,\ 3^q=6\\
+&\frac{3^q}{3^p}=\frac62=3\ \Rightarrow\ 3^{q-p}=3^1\ \Rightarrow\ q-p=1\\
+&\overline{PQ}=\sqrt{1^2+(6-2)^2}=\sqrt{1+16}=\sqrt{17}
+\end{aligned}\]
+<div class="ans">\(\sqrt{17}\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-8</span><span class="no">例4</span><span class="ty">大小比較</span></div>
+<div class="stem">(1) 比較 \(a=\sqrt{0.3},\ b=(0.09)^{0.3},\ c=(\tfrac{10}3)^{-0.4}\)　(2) 比較 \(a=(\tfrac12)^{\frac12},\ b=(\tfrac13)^{\frac13},\ c=(\tfrac14)^{\frac14}\)</div>
+<div class="sol">
+<p><b>(1)</b> <span class="tag tk">技巧</span>三個都化成底數 \(0.3\)：</p>
+\[\begin{aligned}
+a&=\sqrt{0.3}=0.3^{\frac12}=0.3^{0.5}\\
+b&=(0.09)^{0.3}=(0.3^2)^{0.3}=0.3^{2\times0.3}=0.3^{0.6}\\
+c&=\left(\tfrac{10}3\right)^{-0.4}=\left(\tfrac3{10}\right)^{0.4}=0.3^{0.4} \why{$(\frac ba)^{-n}=(\frac ab)^n$}
+\end{aligned}\]
+<p>底數 \(0.3\lt1\) → 函數 \(y=0.3^x\) 遞減，<b>指數愈大、值愈小</b>：</p>
+\[0.4\lt0.5\lt0.6\ \Rightarrow\ 0.3^{0.4}>0.3^{0.5}>0.3^{0.6}\ \Rightarrow\ c>a>b\]
+<p><b>(2)</b> <span class="tag tk">技巧</span>底數、指數都不同 → 同取 12 次方（12 是分母 2、3、4 的最小公倍數），把指數變成整數：</p>
+\[\begin{aligned}
+a^{12}&=\left[(\tfrac12)^{\frac12}\right]^{12}=(\tfrac12)^{6}=\tfrac1{64}\\
+b^{12}&=\left[(\tfrac13)^{\frac13}\right]^{12}=(\tfrac13)^{4}=\tfrac1{81}\\
+c^{12}&=\left[(\tfrac14)^{\frac14}\right]^{12}=(\tfrac14)^{3}=\tfrac1{64}
+\end{aligned}\]
+<p>\(\tfrac1{64}=\tfrac1{64}>\tfrac1{81}\)，而 \(a,b,c>0\) 時「取 12 次方」不改變大小順序 \(\Rightarrow a=c>b\)。</p>
+<p>（直接驗證：\(c=(\tfrac14)^{\frac14}=\left[(\tfrac12)^2\right]^{\frac14}=(\tfrac12)^{\frac12}=a\)）</p>
+<div class="ans">(1) \(c>a>b\)　(2) \(a=c>b\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-8</span><span class="no">練習</span><span class="ty">大小比較</span></div>
+<div class="stem">(1) \(a=\tfrac1{\sqrt2},\ b=\sqrt[3]4,\ c=1\)　(2) \(a=2^{\frac12},\ b=3^{\frac13},\ c=10^{\frac16}\)</div>
+<div class="sol">
+<p><b>(1)</b> 化成底數 2：</p>
+\[a=\frac1{2^{\frac12}}=2^{-\frac12},\quad b=\sqrt[3]{2^2}=2^{\frac23},\quad c=1=2^0\]
+<p>底數 \(2>1\) 遞增，指數 \(\tfrac23>0>-\tfrac12\Rightarrow b>c>a\)</p>
+<p><b>(2)</b> 同取 6 次方（2、3、6 的最小公倍數）：</p>
+\[a^6=2^{\frac12\times6}=2^3=8,\quad b^6=3^{\frac13\times6}=3^2=9,\quad c^6=10^{\frac16\times6}=10\]
+<p>\(8\lt9\lt10\Rightarrow a\lt b\lt c\)</p>
+<div class="ans">(1) \(b>c>a\)　(2) \(a\lt b\lt c\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-8</span><span class="no">例5</span><span class="ty">指數不等式</span></div>
+<div class="stem">(1) \((0.7)^{x^2}>(0.49)^x\)　(2) \(\tfrac12\lt2^{2x+1}\lt8\)</div>
+<div class="sol">
+<p><b>(1)</b></p>
+\[\begin{aligned}
+(0.49)^x&=(0.7^2)^x=0.7^{2x}\\
+0.7^{x^2}&>0.7^{2x}\\
+x^2&\lt2x \why{底數 $0.7\lt1$，去底數時不等號變向}\\
+x^2-2x&\lt0\ \Rightarrow\ x(x-2)\lt0\ \Rightarrow\ 0\lt x\lt2
+\end{aligned}\]
+<p><span class="tag nt">注意</span>底數小於 1 的指數不等式，去掉底數時不等號要反向。</p>
+<p><b>(2)</b> 三邊都化成底數 2：\(\tfrac12=2^{-1},\ 8=2^3\)</p>
+\[\begin{aligned}
+2^{-1}\lt2^{2x+1}&\lt2^3\\
+-1\lt2x+1&\lt3 \why{底數 $2>1$，不等號不變}\\
+-2\lt2x&\lt2 \why{三邊同減 1}\\
+-1\lt x&\lt1 \why{三邊同除以 2}
+\end{aligned}\]
+<div class="ans">(1) \(0\lt x\lt2\)　(2) \(-1\lt x\lt1\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-8</span><span class="no">練習</span><span class="ty">指數不等式</span></div>
+<div class="stem">(1) \((0.2)^{x^2-x}\le(0.04)^{2x+3}\)　(2) \(\tfrac15\lt5^{3x-2}\lt25\)</div>
+<div class="sol">
+<p><b>(1)</b></p>
+\[\begin{aligned}
+(0.04)^{2x+3}&=(0.2^2)^{2x+3}=0.2^{4x+6}\\
+0.2^{x^2-x}&\le0.2^{4x+6}\\
+x^2-x&\ge4x+6 \why{底數 $0.2\lt1$，變向}\\
+x^2-5x-6&\ge0\ \Rightarrow\ (x-6)(x+1)\ge0\\
+x&\ge6\ \text{或}\ x\le-1
+\end{aligned}\]
+<p><b>(2)</b></p>
+\[\begin{aligned}
+5^{-1}\lt5^{3x-2}&\lt5^2\\
+-1\lt3x-2&\lt2\\
+1\lt3x&\lt4\ \Rightarrow\ \tfrac13\lt x\lt\tfrac43
+\end{aligned}\]
+<div class="ans">(1) \(x\ge6\) 或 \(x\le-1\)　(2) \(\tfrac13\lt x\lt\tfrac43\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-9</span><span class="no">例6</span><span class="ty">指數不等式（換元）</span></div>
+<div class="stem">(1) \(2\cdot2^{2x}-9\cdot2^x+4\le0\)　(2) \((\tfrac14)^x+2(\tfrac12)^x-8\ge0\)</div>
+<div class="sol">
+<p><b>(1)</b> <span class="tag tk">技巧</span>\(2^{2x}=(2^x)^2\)，令 \(t=2^x\)（\(t>0\)）：</p>
+\[\begin{aligned}
+2t^2-9t+4&\le0\\
+(2t-1)(t-4)&\le0 \why{十字交乘：$2\cdot(-4)+(-1)\cdot1=-9$}\\
+\tfrac12\le t&\le4\\
+2^{-1}\le2^x&\le2^2 \why{換回 $t=2^x$}\\
+-1\le x&\le2 \why{底數 $2>1$，不變向}
+\end{aligned}\]
+<p><span class="tag fx">更正</span>手寫最後兩行寫成「\(\tfrac12\le2x\le4\Rightarrow\tfrac14\le x\le2\)」是錯的——\(t=2^x\) 不是 \(2x\)。</p>
+<p><b>(2)</b> \((\tfrac14)^x=\left[(\tfrac12)^2\right]^x=\left[(\tfrac12)^x\right]^2\)。令 \(t=(\tfrac12)^x\)（\(t>0\)）：</p>
+\[\begin{aligned}
+t^2+2t-8&\ge0\\
+(t+4)(t-2)&\ge0\ \Rightarrow\ t\ge2\ \text{或}\ t\le-4\ (\text{不合，}t>0)\\
+\left(\tfrac12\right)^x&\ge2=\left(\tfrac12\right)^{-1}\\
+x&\le-1 \why{底數 $\frac12\lt1$，變向}
+\end{aligned}\]
+<div class="ans">(1) \(-1\le x\le2\)　(2) \(x\le-1\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-9</span><span class="no">練習</span><span class="ty">指數不等式（換元）</span></div>
+<div class="stem">\(4^x-2^{x+1}-8>0\)</div>
+<div class="sol">
+<p>\(4^x=(2^x)^2\)，\(2^{x+1}=2\cdot2^x\)。令 \(t=2^x>0\)：</p>
+\[\begin{aligned}
+t^2-2t-8&>0\\
+(t-4)(t+2)&>0\ \Rightarrow\ t>4\ \text{或}\ t\lt-2\ (\text{不合})\\
+2^x>4=2^2\ &\Rightarrow\ x>2
+\end{aligned}\]
+<div class="ans">\(x>2\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-9</span><span class="no">例7</span><span class="ty">最大最小值（換元＋配方）</span></div>
+<div class="stem">\(f(x)=9^x-3^{x+1}+5,\ -2\le x\le2\)，求最大、最小值。</div>
+<div class="row"><div class="txt sol">
+<p><b>步驟 1　換元</b>：\(9^x=(3^x)^2\)，\(3^{x+1}=3\cdot3^x\)。令 \(t=3^x\)。</p>
+<p><b>步驟 2　求 \(t\) 的範圍</b>（<span class="tag nt">注意</span>這步最常漏）：</p>
+\[-2\le x\le2\ \Rightarrow\ 3^{-2}\le3^x\le3^2\ \Rightarrow\ \tfrac19\le t\le9\]
+<p><b>步驟 3　配方</b>：</p>
+\[\begin{aligned}
+f&=t^2-3t+5\\
+&=\left(t^2-3t+\tfrac94\right)-\tfrac94+5 \why{加減 $(\frac32)^2$}\\
+&=\left(t-\tfrac32\right)^2+\tfrac{11}4
+\end{aligned}\]
+<p><b>步驟 4</b>　<span class="tag th">定理</span>開口向上的拋物線在閉區間：頂點在區間內 → 頂點為最小；最大值在離頂點較遠的端點。</p>
+<p>頂點 \(t=\tfrac32\in[\tfrac19,9]\)；\(9-\tfrac32=7.5\) 比 \(\tfrac32-\tfrac19\approx1.39\) 遠 → 最大在 \(t=9\)。</p>
+<table>
+<tr><th>\(t\)</th><th>\(\tfrac19\)</th><th>\(\tfrac32\)（頂點）</th><th>\(9\)</th></tr>
+<tr><th>\(x\)</th><td>\(-2\)</td><td>\(\log_3\tfrac32\)</td><td>\(2\)</td></tr>
+<tr><th>\(f\)</th><td>\(\tfrac1{81}-\tfrac13+5=\tfrac{379}{81}\)</td><td>\(\tfrac{11}4\)</td><td>\(81-27+5=59\)</td></tr>
+</table>
+<div class="ans">最大值 59（\(x=2\)）；最小值 \(\tfrac{11}4\)（\(3^x=\tfrac32\)）</div>
+</div>
+<div class="fig"><div id="f21_e7"></div>\(f=t^2-3t+5,\ \tfrac19\le t\le9\)</div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-9</span><span class="no">練習</span><span class="ty">最大最小值</span></div>
+<div class="stem">\(0\le x\le2,\ f(x)=4^{x+1}-2^{x+1}\)，求最大、最小值及當時的 \(x\)。</div>
+<div class="sol">
+<p>\(4^{x+1}=(2^{x+1})^2\)。令 \(t=2^{x+1}\)：</p>
+\[0\le x\le2\ \Rightarrow\ 1\le x+1\le3\ \Rightarrow\ 2^1\le t\le2^3\ \Rightarrow\ 2\le t\le8\]
+\[f=t^2-t=\left(t-\tfrac12\right)^2-\tfrac14\]
+<p>頂點 \(t=\tfrac12\) 不在 \([2,8]\) 內；區間在頂點右側 → \(f\) 在 \([2,8]\) 上遞增。</p>
+<table>
+<tr><th>\(t\)</th><th>2</th><th>8</th></tr>
+<tr><th>\(x\)</th><td>0</td><td>2</td></tr>
+<tr><th>\(f\)</th><td>\(4-2=2\)（最小）</td><td>\(64-8=56\)（最大）</td></tr>
+</table>
+<div class="ans">(1) \(x=2\)，最大 56　(2) \(x=0\)，最小 2</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-10</span><span class="no">例8</span><span class="ty">應用（藥物濃度）</span></div>
+<div class="stem">\(f(x)=k\cdot a^x\) 過 \((2,200),(4,100)\)。(1) 求 \(k,a\)　(2) 濃度低於 25 就須再服藥，應每隔幾小時服藥一次？</div>
+<div class="row"><div class="txt sol">
+<p><b>(1)</b> 兩點代入：</p>
+\[\begin{cases}f(2)=k\cdot a^2=200 & \cdots(1)\\ f(4)=k\cdot a^4=100 & \cdots(2)\end{cases}\]
+<p><span class="tag tk">技巧</span>(2)÷(1) 消去 \(k\)：</p>
+\[\begin{aligned}
+\frac{k a^4}{k a^2}&=\frac{100}{200}\ \Rightarrow\ a^2=\frac12\\
+a&=\left(\tfrac12\right)^{\frac12}=2^{-\frac12}=\frac1{\sqrt2} \why{$a>0$，取正}\\
+k&=\frac{200}{a^2}=\frac{200}{\frac12}=400 \why{代回 (1)}
+\end{aligned}\]
+<p>所以 \(f(x)=400\cdot\left(2^{-\frac12}\right)^x=400\cdot2^{-\frac x2}\)（每 2 小時減半）。</p>
+<p><b>(2)</b></p>
+\[\begin{aligned}
+400\cdot2^{-\frac x2}&=25\\
+2^{-\frac x2}&=\frac{25}{400}=\frac1{16}=2^{-4}\\
+-\frac x2&=-4\ \Rightarrow\ x=8
+\end{aligned}\]
+<div class="ans">(1) \(k=400,\ a=\tfrac1{\sqrt2}\)　(2) 每 8 小時</div>
+</div>
+<div class="fig"><div id="f21_e8"></div></div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-1-10</span><span class="no">練習</span><span class="ty">應用（能力分數）</span></div>
+<div class="stem">\(f(x)=100(1-a^x)\) 過 \((16,50)\)，分數 75 需訓練幾小時？</div>
+<div class="sol">
+\[\begin{aligned}
+100(1-a^{16})&=50\ \Rightarrow\ 1-a^{16}=\tfrac12\ \Rightarrow\ a^{16}=\tfrac12\\
+100(1-a^x)&=75\ \Rightarrow\ 1-a^x=\tfrac34\ \Rightarrow\ a^x=\tfrac14\\
+a^x=\tfrac14&=\left(\tfrac12\right)^2=\left(a^{16}\right)^2=a^{32} \why{把 $\frac12$ 換成 $a^{16}$}\\
+x&=32
+\end{aligned}\]
+<div class="ans">32 小時</div>
+</div></div>
+
+<h3>習題 2-1（p.2-1-11 ～ 2-1-14）</h3>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-11</span><span class="no">1.</span><span class="ty">函數性質（多選）</span></div>
+<div class="stem">設 \(a>0\)，哪些是 \(f(x)=a^x\) 的特性？(A) 過 \((0,-1)\) (B) 嚴格遞增 (C) \(x\) 愈大愈接近 \(x\) 軸 (D) 與任一水平線 \(y=k\) 恰一交點 (E) 與任一鉛直線 \(x=h\) 恰一交點</div>
+<div class="sol">
+<p><span class="tag nt">注意</span>題目只寫 \(a>0\)，所以 \(a>1\)、\(0\lt a\lt1\)、\(a=1\) 三種情況都要成立才算「特性」。</p>
+<table>
+<tr><th>選項</th><th>\(a>1\)</th><th>\(0\lt a\lt1\)</th><th>\(a=1\)（\(y=1\)）</th><th>判斷</th></tr>
+<tr><td>(A) 過 \((0,-1)\)</td><td>過 \((0,1)\)</td><td>過 \((0,1)\)</td><td>過 \((0,1)\)</td><td class="ng">✗</td></tr>
+<tr><td>(B) 遞增</td><td>✓</td><td>遞減</td><td>常數</td><td class="ng">✗</td></tr>
+<tr><td>(C) 接近 \(x\) 軸</td><td>愈來愈大</td><td>✓</td><td>恆為 1</td><td class="ng">✗</td></tr>
+<tr><td>(D) 水平線恰一交點</td><td colspan="3">\(y=-1\) 時 \(a^x=-1\) 無解</td><td class="ng">✗</td></tr>
+<tr><td>(E) 鉛直線恰一交點</td><td colspan="3">定義域為全體實數，每個 \(x=h\) 恰得一個 \(y=a^h\)</td><td class="ok">✓</td></tr>
+</table>
+<div class="ans">(E)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-11</span><span class="no">2.</span><span class="ty">函數性質（多選）</span></div>
+<div class="stem">同第 1 題選項，但 \(0\lt a\lt1\)。</div>
+<div class="sol">
+<p>(A) \(a^0=1\)，過 \((0,1)\) ✗　(B) 底數 \(\lt1\) → 遞減 ✗　(C) \(x\to\infty\) 時 \(a^x\to0\)，貼近 \(x\) 軸 ✓</p>
+<p>(D) \(a^x>0\)，水平線 \(y=k\) 在 \(k\le0\) 時不相交 ✗　(E) 定義域 \(\mathbb R\) ✓</p>
+<div class="ans">(C)(E)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-11</span><span class="no">3.</span><span class="ty">圖形平移</span></div>
+<div class="stem">\(y=2^x\) 向左平移 2、再向上平移 1，求新函數。</div>
+<div class="row"><div class="txt sol">
+<p><span class="tag tk">技巧</span>平移「唱反調」：左移 \(h\) → \(x\) 用 \(x+h\) 代；上移 \(k\) → \(y\) 用 \(y-k\) 代。</p>
+\[\begin{aligned}
+y&=2^x\\
+\xrightarrow{\text{左移 2}}\quad y&=2^{x+2} \why{$x\to x+2$}\\
+\xrightarrow{\text{上移 1}}\quad y-1&=2^{x+2}\ \Rightarrow\ y=2^{x+2}+1 \why{$y\to y-1$}
+\end{aligned}\]
+<table>
+<tr><th>特徵</th><th>\(y=2^x\)</th><th>\(y=2^{x+2}+1\)</th></tr>
+<tr><td>漸近線</td><td>\(y=0\)</td><td>\(y=1\)</td></tr>
+<tr><td>特殊點</td><td>\((0,1)\)</td><td>\((0-2,\ 1+1)=(-2,2)\)</td></tr>
+<tr><td>\(y\) 截距</td><td>1</td><td>\(2^{0+2}+1=5\)</td></tr>
+</table>
+<div class="ans">\(y=2^{x+2}+1\)</div>
+</div>
+<div class="fig"><div id="f21_h3"></div>虛線 \(y=2^x\)，實線 \(y=2^{x+2}+1\)</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-12</span><span class="no">4.</span><span class="ty">指數方程式</span></div>
+<div class="stem">(1) \(3^{x-2}=\tfrac1{81}\)　(2) \(5\cdot2^{x+1}=40\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \ 3^{x-2}&=\frac1{81}=\frac1{3^4}=3^{-4}\ \Rightarrow\ x-2=-4\ \Rightarrow\ x=-2\\
+(2)\ \ 5\cdot2^{x+1}&=40\ \Rightarrow\ 2^{x+1}=8=2^3\ \Rightarrow\ x+1=3\ \Rightarrow\ x=2
+\end{aligned}\]
+<div class="ans">(1) \(-2\)　(2) \(2\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-12</span><span class="no">5.</span><span class="ty">指數不等式</span></div>
+<div class="stem">(1) \(7^{-x+3}\lt\tfrac1{49}\)　(2) \(0.5\lt2^{3x+1}\lt8\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \ 7^{-x+3}&\lt7^{-2}\\
+-x+3&\lt-2 \why{底數 $7>1$，不變向}\\
+-x&\lt-5\ \Rightarrow\ x>5 \why{同乘 $-1$，變向}\\[4pt]
+(2)\ \ 2^{-1}\lt2^{3x+1}&\lt2^3\\
+-1\lt3x+1&\lt3\\
+-2\lt3x&\lt2\ \Rightarrow\ -\tfrac23\lt x\lt\tfrac23
+\end{aligned}\]
+<div class="ans">(1) \(x>5\)　(2) \(-\tfrac23\lt x\lt\tfrac23\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-12</span><span class="no">6.</span><span class="ty">應用（單利／複利）</span></div>
+<div class="stem">10000 元、年利率 2%、每年計息 1 次、存 6 年。(1) 單利本利和 (2) 複利本利和（四捨五入到整數）</div>
+<div class="sol">
+<p><span class="tag th">定理</span>單利：利息只按本金算，本利和 \(P(1+nr)\)（等差成長）；複利：利息也會再生息，本利和 \(P(1+r)^n\)（等比成長＝指數函數）。</p>
+<p><b>(1)</b> 每年利息 \(10000\times0.02=200\)，6 年共 \(1200\)：</p>
+\[10000(1+6\times0.02)=10000\times1.12=11200\]
+<p><b>(2)</b> 先算 \(1.02^6\)：</p>
+\[\begin{aligned}
+1.02^2&=1.0404\\
+1.02^3&=1.0404\times1.02=1.061208\\
+1.02^6&=(1.02^3)^2=1.061208^2\approx1.126162
+\end{aligned}\]
+\[10000\times1.126162\approx11261.62\approx11262\]
+<table>
+<tr><th>年</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr>
+<tr><th>單利</th><td>10000</td><td>10200</td><td>10400</td><td>10600</td><td>10800</td><td>11000</td><td>11200</td></tr>
+<tr><th>複利</th><td>10000</td><td>10200</td><td>10404</td><td>10612.08</td><td>10824.32</td><td>11040.81</td><td>11261.62</td></tr>
+</table>
+<div class="ans">(1) 11200 元　(2) 11262 元</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-12</span><span class="no">7.</span><span class="ty">圖形平移（作圖）</span></div>
+<div class="stem">利用 \(y=3^x\) 畫 (1) \(y=3^{x-2}\)　(2) \(y=9\cdot3^x+1\)</div>
+<div class="row"><div class="txt sol">
+<p><b>(1)</b> \(y=3^x\) 中的 \(x\) 被 \(x-2\) 取代 → 唱反調 → 向<b>右</b>平移 <b>2</b> 單位。點 \((0,1)\to(2,1)\)，\((1,3)\to(3,3)\)。</p>
+<p><b>(2)</b> <span class="tag tk">技巧</span>先把係數 9 吸進指數：</p>
+\[9\cdot3^x=3^2\cdot3^x=3^{x+2}\]
+\[y=3^x\ \xrightarrow{\ x\to x+2\ :\ \text{左移 2}\ }\ y=3^{x+2}\ \xrightarrow{\ y\to y-1\ :\ \text{上移 1}\ }\ y=3^{x+2}+1=9\cdot3^x+1\]
+<p>點 \((0,1)\to(-2,1)\to(-2,2)\)；\((1,3)\to(-1,3)\to(-1,4)\)；\(y\) 截距 \(9\cdot1+1=10\)。</p>
+<table>
+<tr><th>函數</th><th>過點</th><th>漸近線</th></tr>
+<tr><td>\(3^x\)</td><td>\((0,1),(1,3)\)</td><td>\(y=0\)</td></tr>
+<tr><td>\(3^{x-2}\)</td><td>\((2,1),(3,3)\)</td><td>\(y=0\)</td></tr>
+<tr><td>\(9\cdot3^x+1\)</td><td>\((-2,2),(-1,4),(0,10)\)</td><td>\(y=1\)</td></tr>
+</table>
+<div class="ans">(1) 向右 2　(2) 向左 2，再向上 1</div>
+</div>
+<div class="fig"><div id="f21_h7"></div>灰虛線 \(3^x\)；藍 \(3^{x-2}\)；紅 \(9\cdot3^x+1\)</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-13</span><span class="no">8.</span><span class="ty">圖形判讀・參數比較</span></div>
+<div class="stem">\(f(x)=a\cdot2^x+b,\ g(x)=c\cdot2^x+d\)，兩圖都過 \((0,2)\)；\(f\) 較陡，\(g\) 以 \(y=1\) 為漸近線。比較 \(a\) 與 \(c\)、\(b\) 與 \(d\)。</div>
+<div class="row"><div class="txt sol">
+<p><span class="tag th">定理</span>\(x\to-\infty\) 時 \(2^x\to0\)，所以 \(y=a\cdot2^x+b\) 的漸近線是 \(y=b\)；代 \(x=0\) 得 \(y\) 截距 \(a+b\)。</p>
+<p><b>讀圖求值</b></p>
+\[\begin{aligned}
+g:\ &\text{漸近線 } y=1\ \Rightarrow\ d=1;\quad g(0)=c+d=2\ \Rightarrow\ c=1\\
+f:\ &f(0)=a+b=2\quad\cdots(1)\qquad f(-1)=\tfrac a2+b=1\quad\cdots(2)\\
+&(1)-(2):\ \tfrac a2=1\ \Rightarrow\ a=2,\quad b=0
+\end{aligned}\]
+<p><b>不讀精確值也能判斷</b>：由 \(a+b=c+d=2\) 得 \(b-d=c-a\)，</p>
+\[\begin{aligned}
+f(x)-g(x)&=(a-c)\,2^x+(b-d)\\
+&=(a-c)\,2^x-(a-c)=(a-c)(2^x-1)
+\end{aligned}\]
+<p>圖中 \(x>0\) 時 \(f\) 在 \(g\) 上方，即 \(f(x)-g(x)>0\)；又 \(x>0\) 時 \(2^x-1>0\)，故 \(a-c>0\Rightarrow a>c\)。再由 \(b-d=c-a\lt0\Rightarrow b\lt d\)。</p>
+<div class="ans">\(a>c,\ b\lt d\)</div>
+</div>
+<div class="fig"><div id="f21_h8"></div>\(f=2\cdot2^x\)（紅），\(g=2^x+1\)（藍）</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-13</span><span class="no">9.</span><span class="ty">方程式／不等式（換元）</span></div>
+<div class="stem">(1) \(6^x-2\cdot3^x-9\cdot2^x+18=0\)　(2) \(4^x-9\cdot2^x+8\lt0\)</div>
+<div class="sol">
+<p><b>(1)</b> <span class="tag tk">技巧</span>\(6^x=2^x\cdot3^x\)，分組提公因式：</p>
+\[\begin{aligned}
+&3^x\cdot2^x-2\cdot3^x-9\cdot2^x+18\\
+=\ &3^x(2^x-2)-9(2^x-2) \why{前兩項提 $3^x$，後兩項提 $-9$}\\
+=\ &(2^x-2)(3^x-9)=0
+\end{aligned}\]
+<p>\(2^x=2\Rightarrow x=1\)；\(3^x=9=3^2\Rightarrow x=2\)</p>
+<p>驗算 \(x=1\)：\(6-6-18+18=0\) ✓；\(x=2\)：\(36-18-36+18=0\) ✓</p>
+<p><b>(2)</b> 令 \(t=2^x>0\)：</p>
+\[\begin{aligned}
+t^2-9t+8&\lt0\ \Rightarrow\ (t-1)(t-8)\lt0\ \Rightarrow\ 1\lt t\lt8\\
+2^0\lt2^x&\lt2^3\ \Rightarrow\ 0\lt x\lt3
+\end{aligned}\]
+<div class="ans">(1) \(x=1\) 或 \(2\)　(2) \(0\lt x\lt3\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-13</span><span class="no">10.</span><span class="ty">大小比較（不用計算機）</span></div>
+<div class="stem">比較 \(1,\ (\tfrac18)^{\frac14},\ (\tfrac17)^{\frac14},\ (\tfrac18)^{\frac13},\ (\tfrac15)^{\frac13}\)</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>三種比法：同指數比底數、同底數比指數、都不同就同取 12 次方。</p>
+<p><b>① 和 1 比</b>：底數都在 \((0,1)\)、指數都 \(>0\) → 值都 \(\lt1\)。1 最大。</p>
+<p><b>② 同指數 \(\tfrac14\)</b>：\(y=x^{\frac14}\) 在 \(x>0\) 遞增，\(\tfrac17>\tfrac18\Rightarrow(\tfrac17)^{\frac14}>(\tfrac18)^{\frac14}\)</p>
+<p><b>③ 同指數 \(\tfrac13\)</b>：\(\tfrac15>\tfrac18\Rightarrow(\tfrac15)^{\frac13}>(\tfrac18)^{\frac13}=\tfrac12\)</p>
+<p><b>④ 跨組：\((\tfrac18)^{\frac14}\) vs \((\tfrac15)^{\frac13}\)</b>，同取 12 次方：</p>
+\[\left[(\tfrac18)^{\frac14}\right]^{12}=(\tfrac18)^3=\frac1{512},\qquad\left[(\tfrac15)^{\frac13}\right]^{12}=(\tfrac15)^4=\frac1{625}\]
+<p>\(\tfrac1{512}>\tfrac1{625}\Rightarrow(\tfrac18)^{\frac14}>(\tfrac15)^{\frac13}\)</p>
+<p>串起來：\(1>(\tfrac17)^{\frac14}>(\tfrac18)^{\frac14}>(\tfrac15)^{\frac13}>(\tfrac18)^{\frac13}\)</p>
+<p>（數值參考：0.615、0.595、0.585、0.5）</p>
+<div class="ans">\(1>(\tfrac17)^{\frac14}>(\tfrac18)^{\frac14}>(\tfrac15)^{\frac13}>(\tfrac18)^{\frac13}\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-14</span><span class="no">11.</span><span class="ty">圖形辨識</span></div>
+<div class="stem">\(y=2^x,\ 10^x,\ (\tfrac1{\sqrt2})^x,\ (\tfrac17)^x\) 分別是 \(\Gamma_1\sim\Gamma_4\) 中的哪一個？（\(\Gamma_1,\Gamma_2\) 遞增，\(\Gamma_2\) 較陡；\(\Gamma_3,\Gamma_4\) 遞減，\(\Gamma_3\) 較陡）</div>
+<div class="row"><div class="txt sol">
+<p><b>步驟 1</b>　依底數分組：\(2,10>1\) 遞增 → \(\Gamma_1,\Gamma_2\)；\(\tfrac1{\sqrt2},\tfrac17\lt1\) 遞減 → \(\Gamma_3,\Gamma_4\)。</p>
+<p><b>步驟 2</b>　<span class="tag tk">技巧</span>遞增看 \(x=1\) 的高度（＝底數），遞減看 \(x=-1\) 的高度（＝底數倒數）：</p>
+<table>
+<tr><th>函數</th><th>\(x=1\) 高度</th><th>\(x=-1\) 高度</th><th>圖形</th></tr>
+<tr><td>\(10^x\)</td><td>10（高、陡）</td><td>0.1</td><td>\(\Gamma_2\)</td></tr>
+<tr><td>\(2^x\)</td><td>2</td><td>0.5</td><td>\(\Gamma_1\)</td></tr>
+<tr><td>\((\tfrac1{\sqrt2})^x\)</td><td>\(\tfrac1{\sqrt2}\approx0.707\)</td><td>\(\sqrt2\approx1.414\)</td><td>\(\Gamma_4\)</td></tr>
+<tr><td>\((\tfrac17)^x\)</td><td>\(\tfrac17\approx0.143\)</td><td>7（高、陡）</td><td>\(\Gamma_3\)</td></tr>
+</table>
+<div class="ans">\(\Gamma_1:2^x,\ \Gamma_2:10^x,\ \Gamma_3:(\tfrac17)^x,\ \Gamma_4:(\tfrac1{\sqrt2})^x\)</div>
+</div>
+<div class="fig"><div id="f21_h11"></div></div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-14</span><span class="no">12.</span><span class="ty">最大最小值</span></div>
+<div class="stem">\(-2\le x\le2\)，求 \(y=4^x-2^{x+1}\) 的最大、最小值及當時的 \(x\)。</div>
+<div class="sol">
+<p><b>換元</b>：\(4^x=(2^x)^2\)，\(2^{x+1}=2\cdot2^x\)。令 \(t=2^x\)：</p>
+\[-2\le x\le2\ \Rightarrow\ 2^{-2}\le t\le2^2\ \Rightarrow\ \tfrac14\le t\le4\]
+<p><b>配方</b>：</p>
+\[y=t^2-2t=(t^2-2t+1)-1=(t-1)^2-1\]
+<p>頂點 \(t=1\in[\tfrac14,4]\) → 最小值 \(-1\)；端點中 \(t=4\) 離頂點較遠（\(3>\tfrac34\)）→ 最大值。</p>
+<table><tr><th>\(t\)</th><th>\(\tfrac14\)</th><th>1（頂點）</th><th>4</th></tr>
+<tr><th>\(x\)</th><td>\(-2\)</td><td>0</td><td>2</td></tr>
+<tr><th>\(y\)</th><td>\(\tfrac1{16}-\tfrac12=-\tfrac7{16}\)</td><td>\(1-2=-1\)</td><td>\(16-8=8\)</td></tr></table>
+<div class="ans">最大 8（\(x=2\)）；最小 \(-1\)（\(x=0\)）</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-1-14</span><span class="no">13.</span><span class="ty">應用（單利 vs 複利）</span></div>
+<div class="stem">貸 500 萬，年利率 2%，3 年後一次還清。原方案複利，優惠方案改單利，少還多少元？</div>
+<div class="sol">
+\[\begin{aligned}
+\text{複利：}&\ 500\times1.02^3=500\times1.061208=530.604\ \text{萬} \why{$1.02^2=1.0404$，$\times1.02=1.061208$}\\
+\text{單利：}&\ 500\times(1+3\times0.02)=500\times1.06=530\ \text{萬}\\
+\text{差：}&\ 530.604-530=0.604\ \text{萬}=6040\ \text{元}
+\end{aligned}\]
+<p>（差額來自「利息再生利息」：第 2 年 \(10\) 萬利息的利息 \(0.2\) 萬，第 3 年累積利息 \(20.2\) 萬的利息 \(0.404\) 萬，共 \(0.604\) 萬）</p>
+<div class="ans">6040 元</div>
+</div></div>
+
+<h2 id="s22">2-2　對數與對數律</h2>
+<div class="box th"><span class="tag th">定理</span>定義 \(a^x=b\Leftrightarrow x=\log_a b\)（\(a>0,a\ne1,b>0\)）。對數律：\(\log_a rs=\log_a r+\log_a s\)；\(\log_a\frac rs=\log_a r-\log_a s\)；\(\log_a r^m=m\log_a r\)；\(\log_{a^n}r^m=\frac mn\log_a r\)；換底 \(\log_a r=\frac{\log_b r}{\log_b a}\)；倒數 \(\log_r s=\frac1{\log_s r}\)；連鎖 \(\log_a r\cdot\log_r s=\log_a s\)；\(a^{\log_a r}=r\)。</div>
+
+<h3>重點 1　常用對數（p.2-2-1 ～ 2-2-2）</h3>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-1</span><span class="no">例1</span><span class="ty">對數求值</span></div>
+<div class="stem">(1) \(\log100\)　(2) \(\log0.01\)　(3) \(\log\sqrt{1000}\)　(4) \(\log\sqrt[3]{10^4}\)</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>把真數寫成 \(10^k\)，答案就是 \(k\)（因為 \(\log10^k=k\log10=k\)）。</p>
+\[\begin{aligned}
+(1)\ \log100&=\log10^2=2\\
+(2)\ \log0.01&=\log\tfrac1{100}=\log10^{-2}=-2\\
+(3)\ \log\sqrt{1000}&=\log\left(10^3\right)^{\frac12}=\log10^{\frac32}=\tfrac32\\
+(4)\ \log\sqrt[3]{10^4}&=\log10^{\frac43}=\tfrac43 \why{$\sqrt[n]{a^m}=a^{\frac mn}$}
+\end{aligned}\]
+<div class="ans">2；\(-2\)；\(\tfrac32\)；\(\tfrac43\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-1</span><span class="no">練習</span><span class="ty">對數求值</span></div>
+<div class="stem">\(\log10000,\ \log0.1,\ \log0.001,\ \log10^{4.3}\)</div>
+<div class="sol">
+\[\log10^4=4,\quad\log10^{-1}=-1,\quad\log10^{-3}=-3,\quad\log10^{4.3}=4.3\]
+<p><span class="tag fx">更正</span>講義小題編號印成 (1)(4)(2)(4)，應為 (1)(2)(3)(4)。</p><div class="ans">4；\(-1\)；\(-3\)；4.3</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-2</span><span class="no">例2</span><span class="ty">對數律化簡</span></div>
+<div class="stem">(1) \(\log8+\log25-\log2\)　(2) \(4\log5+2\log8-2\log2\)　(3) \(\log\tfrac47-\tfrac43\log\sqrt8+\tfrac23\log\sqrt{343}\)</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>係數先搬進真數（\(m\log r=\log r^m\)），再用「加→乘、減→除」合併成一個 log。</p>
+<p><b>(1)</b></p>
+\[\log8+\log25-\log2=\log\frac{8\times25}{2}=\log\frac{200}2=\log100=2\]
+<p><b>(2)</b></p>
+\[\begin{aligned}
+&\log5^4+\log8^2-\log2^2 \why{係數搬進去}\\
+=\ &\log\frac{5^4\cdot(2^3)^2}{2^2}=\log\frac{5^4\cdot2^6}{2^2}=\log(5^4\cdot2^4)\\
+=\ &\log(5\cdot2)^4=\log10^4=4
+\end{aligned}\]
+<p><b>(3)</b> 先把根號化成指數再處理係數：</p>
+\[\begin{aligned}
+\tfrac43\log\sqrt8&=\tfrac43\log2^{\frac32}=\tfrac43\cdot\tfrac32\log2=2\log2=\log4\\
+\tfrac23\log\sqrt{343}&=\tfrac23\log7^{\frac32}=\tfrac23\cdot\tfrac32\log7=\log7 \why{$343=7^3$}\\
+\text{原式}&=\log\tfrac47-\log4+\log7=\log\left(\tfrac47\times\tfrac14\times7\right)=\log1=0
+\end{aligned}\]
+<div class="ans">(1) 2　(2) 4　(3) 0</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-2</span><span class="no">練習</span><span class="ty">對數律化簡</span></div>
+<div class="stem">(1) \(\log6+\log\tfrac54-\log9+\log12\)　(2) \(\log\tfrac7{36}+2\log3-\log\tfrac7{25}+4\log2\)</div>
+<div class="sol">
+<p><b>(1)</b></p>
+\[\log\frac{6\times\frac54\times12}{9}=\log\frac{90}{9}=\log10=1 \why{$6\times\frac54\times12=90$}\]
+<p><b>(2)</b></p>
+\[\begin{aligned}
+&\log\tfrac7{36}+\log3^2-\log\tfrac7{25}+\log2^4\\
+=\ &\log\left(\tfrac7{36}\times9\times\tfrac{25}{7}\times16\right) \why{減 $\log\frac7{25}$ ＝ 乘 $\frac{25}7$}\\
+=\ &\log\frac{9\times25\times16}{36}=\log\frac{3600}{36}=\log100=2
+\end{aligned}\]
+<div class="ans">(1) 1　(2) 2</div>
+</div></div>
+
+<h3>重點 2　一般對數（p.2-2-3 ～ 2-2-7）</h3>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-3</span><span class="no">例1</span><span class="ty">由對數式求 \(x\)</span></div>
+<div class="stem">(1) \(\log_{\frac14}x=-3\)　(2) \(\log_{\frac18}x=-\tfrac53\)　(3) \(\log_x3=2\)　(4) \(\log_{16}(\log_{\frac12}x)=\tfrac12\)</div>
+<div class="sol">
+<p><span class="tag th">定理</span>\(\log_a b=k\Leftrightarrow b=a^k\)（化回指數式）</p>
+<p><b>(1)</b> \(x=\left(\tfrac14\right)^{-3}=4^3=64\)</p>
+<p><b>(2)</b></p>
+\[x=\left(\tfrac18\right)^{-\frac53}=8^{\frac53}=\left(2^3\right)^{\frac53}=2^5=32\]
+<p><b>(3)</b> \(x^2=3\Rightarrow x=\pm\sqrt3\)。<span class="tag nt">注意</span>底數 \(x\) 須 \(>0\) 且 \(\ne1\)，\(x=-\sqrt3\) 不合 → \(x=\sqrt3\)。</p>
+<p><b>(4)</b> <span class="tag tk">技巧</span>由外往內一層一層剝：</p>
+\[\begin{aligned}
+\log_{16}(\log_{\frac12}x)=\tfrac12\ &\Rightarrow\ \log_{\frac12}x=16^{\frac12}=4 \why{外層化回指數}\\
+&\Rightarrow\ x=\left(\tfrac12\right)^4=\tfrac1{16} \why{內層化回指數}
+\end{aligned}\]
+<div class="ans">(1) 64　(2) 32　(3) \(\sqrt3\)　(4) \(\tfrac1{16}\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-3</span><span class="no">練習</span><span class="ty">由對數式求 \(x\)</span></div>
+<div class="stem">(1) \(\log_x8=\tfrac32\)　(2) \(\log_{\frac1{16}}x=-0.75\)　(3) \(\log_9x=\tfrac52\)　(4) \(\log_{\frac12}(\log_{16}x)=2\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ x^{\frac32}&=8\ \Rightarrow\ x=8^{\frac23}=(2^3)^{\frac23}=2^2=4 \why{兩邊同取 $\frac23$ 次方}\\
+(2)\ x&=\left(\tfrac1{16}\right)^{-\frac34}=16^{\frac34}=(2^4)^{\frac34}=2^3=8\\
+(3)\ x&=9^{\frac52}=(3^2)^{\frac52}=3^5=243\\
+(4)\ \log_{16}x&=\left(\tfrac12\right)^2=\tfrac14\ \Rightarrow\ x=16^{\frac14}=2
+\end{aligned}\]
+<div class="ans">(1) 4　(2) 8　(3) 243　(4) 2</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-3</span><span class="no">例2</span><span class="ty">對數求值</span></div>
+<div class="stem">(1) \(\log_{\sqrt3}1\)　(2) \(\log_{81}27\)　(3) \(\log_{\sqrt7}49\)　(4) \(\log_{\frac12}8\)</div>
+<div class="sol">
+<p><span class="tag th">定理</span>\(\log_{a^n}b^m=\frac mn\log_a b\)：底與真數化成同一個質數的次方。</p>
+\[\begin{aligned}
+(1)\ \log_{\sqrt3}1&=0 \why{任何底，$\log_a1=0$}\\
+(2)\ \log_{81}27&=\log_{3^4}3^3=\tfrac34\log_33=\tfrac34\\
+(3)\ \log_{\sqrt7}49&=\log_{7^{\frac12}}7^2=\frac{2}{\frac12}=4\\
+(4)\ \log_{\frac12}8&=\log_{2^{-1}}2^3=\frac{3}{-1}=-3
+\end{aligned}\]
+<p>（亦可設 \(\log_{81}27=x\Rightarrow81^x=27\Rightarrow3^{4x}=3^3\Rightarrow x=\tfrac34\)）</p>
+<div class="ans">(1) 0　(2) \(\tfrac34\)　(3) 4　(4) \(-3\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-3</span><span class="no">練習</span><span class="ty">對數求值</span></div>
+<div class="stem">(1) \(\log_232\)　(2) \(\log_2\tfrac1{16}\)　(3) \(\log_{99}1\)　(4) \(\log_3\tfrac1{3\sqrt3}\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log_22^5&=5 & (2)\ \log_22^{-4}&=-4\\
+(3)\ \log_{99}1&=0 & (4)\ \tfrac1{3\sqrt3}&=\tfrac1{3^1\cdot3^{\frac12}}=3^{-\frac32}\ \Rightarrow\ -\tfrac32
+\end{aligned}\]
+<div class="ans">5；\(-4\)；0；\(-\tfrac32\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-4</span><span class="no">例3</span><span class="ty">指數與對數互換</span></div>
+<div class="stem">\(x=\log_35\)，求 \(3^x+9^{-x}\)。</div>
+<div class="sol">
+<p><span class="tag th">定理</span>\(x=\log_35\Leftrightarrow3^x=5\)（或用 \(a^{\log_a r}=r\)）。</p>
+\[\begin{aligned}
+9^{-x}&=(3^2)^{-x}=(3^x)^{-2}=5^{-2}=\tfrac1{25}\\
+3^x+9^{-x}&=5+\tfrac1{25}=\tfrac{125}{25}+\tfrac1{25}=\tfrac{126}{25}
+\end{aligned}\]
+<div class="ans">\(\tfrac{126}{25}\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-4</span><span class="no">練習</span><span class="ty">指數與對數互換</span></div>
+<div class="stem">\(x=\log_23\)，求 \(4^x+2^{-x}\)。</div>
+<div class="sol">
+\[\begin{aligned}
+x=\log_23\ &\Rightarrow\ 2^x=3\\
+4^x&=(2^2)^x=(2^x)^2=9,\qquad2^{-x}=\frac1{2^x}=\frac13\\
+4^x+2^{-x}&=9+\tfrac13=\tfrac{28}3
+\end{aligned}\]
+<div class="ans">\(\tfrac{28}3\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-4</span><span class="no">例4</span><span class="ty">對數有意義的條件</span></div>
+<div class="stem">\(\log_{x-1}(-3x^2+11x-6)\) 有意義，求 \(x\) 的最大可能範圍。</div>
+<div class="sol">
+<div class="box nt"><span class="tag nt">注意</span>三個條件缺一不可：<b>真數 \(>0\)、底數 \(>0\)、底數 \(\ne1\)</b>。</div>
+<p><b>① 真數 \(>0\)</b></p>
+\[\begin{aligned}
+-3x^2+11x-6&>0\\
+3x^2-11x+6&\lt0 \why{同乘 $-1$，變向}\\
+(3x-2)(x-3)&\lt0 \why{十字交乘：$3\cdot(-3)+(-2)\cdot1=-11$}\\
+\tfrac23\lt x&\lt3
+\end{aligned}\]
+<p><b>② 底數 \(>0\)</b>：\(x-1>0\Rightarrow x>1\)</p>
+<p><b>③ 底數 \(\ne1\)</b>：\(x-1\ne1\Rightarrow x\ne2\)</p>
+<p><b>④ 取交集</b>：\(\tfrac23\lt x\lt3\) 與 \(x>1\) 重疊為 \(1\lt x\lt3\)，再去掉 \(x=2\)。</p>
+<p><span class="tag fx">更正</span>手寫只解了真數條件，答 \(\tfrac23\lt x\lt3\) 不完整。</p>
+<div class="ans">\(1\lt x\lt3\) 且 \(x\ne2\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-4</span><span class="no">練習</span><span class="ty">對數有意義的條件</span></div>
+<div class="stem">\(\log_{x+1}(3x^2+x-10)\) 有意義，求 \(x\) 的範圍。</div>
+<div class="sol">
+<p>① 真數：\(3x^2+x-10>0\Rightarrow(3x-5)(x+2)>0\Rightarrow x>\tfrac53\) 或 \(x\lt-2\)　（驗：\(3\cdot2+(-5)\cdot1=1\)）</p>
+<p>② 底數 \(>0\)：\(x+1>0\Rightarrow x>-1\)</p>
+<p>③ 底數 \(\ne1\)：\(x+1\ne1\Rightarrow x\ne0\)</p>
+<p>④ 交集：\(x\lt-2\) 與 \(x>-1\) 不重疊，捨去；\(x>\tfrac53\) 已滿足 \(x>-1\)、\(x\ne0\)。</p>
+<div class="ans">\(x>\tfrac53\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-4</span><span class="no">例5</span><span class="ty">對數求值</span></div>
+<div class="stem">(1) \(\log_{16}8\)　(2) \(\log_{125}5\)　(3) \(\log_432\sqrt2\)　(4) \(9^{\log_36}\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log_{16}8&=\log_{2^4}2^3=\tfrac34\\
+(2)\ \log_{125}5&=\log_{5^3}5^1=\tfrac13\\
+(3)\ 32\sqrt2&=2^5\cdot2^{\frac12}=2^{\frac{11}2}\ \Rightarrow\ \log_{2^2}2^{\frac{11}2}=\frac{\frac{11}2}{2}=\tfrac{11}4
+\end{aligned}\]
+<p><b>(4)</b> <span class="tag tk">技巧</span>把外層底數改成和 log 同底，再用 \(a^{\log_a r}=r\)：</p>
+\[9^{\log_36}=(3^2)^{\log_36}=\left(3^{\log_36}\right)^2=6^2=36 \why{$(a^m)^n=(a^n)^m$}\]
+<p><span class="tag fx">更正</span>手寫寫到 \(9^{\log_936}\) 就停了，這一步其實也對（\(\log_36=\log_{9}36\)），再用 \(a^{\log_a r}=r\) 直接得 36。</p>
+<div class="ans">(1) \(\tfrac34\)　(2) \(\tfrac13\)　(3) \(\tfrac{11}4\)　(4) 36</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-4</span><span class="no">練習</span><span class="ty">對數求值</span></div>
+<div class="stem">(1) \(\log_{27}3\)　(2) \(\log_2\sqrt[3]{\tfrac1{16}}\)　(3) \(\log_{\frac15}\tfrac1{625}\)　(4) \(3^{\log_90.04}\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log_{3^3}3&=\tfrac13\\
+(2)\ \sqrt[3]{\tfrac1{16}}&=(2^{-4})^{\frac13}=2^{-\frac43}\ \Rightarrow\ -\tfrac43\\
+(3)\ \tfrac1{625}&=\tfrac1{5^4}=\left(\tfrac15\right)^4\ \Rightarrow\ 4\\
+(4)\ \log_90.04&=\log_{3^2}0.2^2=\tfrac22\log_30.2=\log_30.2 \why{$0.04=0.2^2$}\\
+3^{\log_90.04}&=3^{\log_30.2}=0.2
+\end{aligned}\]
+<div class="ans">\(\tfrac13\)；\(-\tfrac43\)；4；0.2</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-5</span><span class="no">例6</span><span class="ty">同底對數化簡</span></div>
+<div class="stem">(1) \(\log_36+\log_354-\log_324-\log_3\tfrac12\)　(2) \(\log_4\tfrac{28}{15}-2\log_4\tfrac3{14}+3\log_4\tfrac67-\log_4\tfrac25\)　(3) \(\dfrac{\log_98}{\log_32}\)</div>
+<div class="sol">
+<p><b>(1)</b></p>
+\[\log_3\frac{6\times54}{24\times\frac12}=\log_3\frac{324}{12}=\log_327=\log_33^3=3\]
+<p><b>(2)</b> 係數搬進真數，減號變除、除以分數變乘倒數：</p>
+\[\begin{aligned}
+&\log_4\tfrac{28}{15}-\log_4\left(\tfrac3{14}\right)^2+\log_4\left(\tfrac67\right)^3-\log_4\tfrac25\\
+=\ &\log_4\left[\frac{28}{15}\times\frac{14^2}{3^2}\times\frac{6^3}{7^3}\times\frac52\right]
+\end{aligned}\]
+<p>中括號內做質因數分解再約分：</p>
+\[\begin{aligned}
+\text{分子}&=(2^2\cdot7)\times(2^2\cdot7^2)\times(2^3\cdot3^3)\times5=2^7\cdot3^3\cdot5\cdot7^3\\
+\text{分母}&=(3\cdot5)\times3^2\times7^3\times2=2\cdot3^3\cdot5\cdot7^3\\
+\text{比值}&=2^{7-1}=2^6=64
+\end{aligned}\]
+\[\log_464=\log_44^3=3\]
+<p><span class="tag fx">更正</span>空格填 4 是錯的，手寫計算過程本身算到 3 才是對的。</p>
+<p><b>(3)</b> <span class="tag th">定理</span>\(\log_{a^n}r^m=\tfrac mn\log_a r\)：</p>
+\[\log_98=\log_{3^2}2^3=\tfrac32\log_32\ \Rightarrow\ \frac{\log_98}{\log_32}=\frac{\tfrac32\log_32}{\log_32}=\tfrac32\]
+<div class="ans">(1) 3　(2) 3　(3) \(\tfrac32\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-5</span><span class="no">練習</span><span class="ty">同底對數化簡</span></div>
+<div class="stem">(1) \(\log_354-2\log_32+\log_36\)　(2) \(3\log_8\tfrac43-2\log_8\tfrac59+2\log_8\tfrac54-\log_86\)</div>
+<div class="sol">
+<p><b>(1)</b></p>
+\[\log_354-\log_32^2+\log_36=\log_3\frac{54\times6}{4}=\log_3\frac{324}4=\log_381=4\]
+<p><b>(2)</b></p>
+\[\begin{aligned}
+&\log_8\left[\left(\tfrac43\right)^3\div\left(\tfrac59\right)^2\times\left(\tfrac54\right)^2\div6\right]\\
+=\ &\log_8\left[\frac{64}{27}\times\frac{81}{25}\times\frac{25}{16}\times\frac16\right]\\
+=\ &\log_8\frac{64\times81}{27\times16\times6}=\log_8\frac{5184}{2592}=\log_82=\log_{2^3}2=\tfrac13
+\end{aligned}\]
+<div class="ans">(1) 4　(2) \(\tfrac13\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-5</span><span class="no">例7</span><span class="ty">換底＋連鎖</span></div>
+<div class="stem">\((\log_23+\log_49)(\log_34+\log_92)\)</div>
+<div class="sol">
+<p><span class="tag th">定理</span>\(\log_{a^n}r^m=\tfrac mn\log_a r\)；倒數關係 \(\log_23\cdot\log_32=1\)</p>
+<p><b>前括號</b>：\(\log_49=\log_{2^2}3^2=\tfrac22\log_23=\log_23\)</p>
+\[\log_23+\log_49=\log_23+\log_23=2\log_23\]
+<p><b>後括號</b>：\(\log_34=\log_32^2=2\log_32\)；\(\log_92=\log_{3^2}2=\tfrac12\log_32\)</p>
+\[\log_34+\log_92=2\log_32+\tfrac12\log_32=\tfrac52\log_32\]
+<p><b>相乘</b>：</p>
+\[2\log_23\times\tfrac52\log_32=5\times(\log_23\cdot\log_32)=5\times1=5\]
+<div class="ans">5</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-5</span><span class="no">練習</span><span class="ty">換底＋連鎖</span></div>
+<div class="stem">\((\log_25+\log_425)(\log_58+\log_{25}16)\)</div>
+<div class="sol">
+\[\begin{aligned}
+\log_425&=\log_{2^2}5^2=\log_25\ \Rightarrow\ \text{前括號}=2\log_25\\
+\log_58&=3\log_52,\ \ \log_{25}16=\log_{5^2}2^4=2\log_52\ \Rightarrow\ \text{後括號}=5\log_52\\
+\text{原式}&=2\log_25\times5\log_52=10\,(\log_25\cdot\log_52)=10
+\end{aligned}\]
+<div class="ans">10</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-6</span><span class="no">例8</span><span class="ty">以已知對數表示</span></div>
+<div class="stem">\(\log3=b\)，表示 (1) \(\log0.03\)　(2) \(\log27\sqrt3\)　(3) \(\log\sqrt[3]{30}\)</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>把真數拆成「3 的次方 × 10 的次方」。</p>
+\[\begin{aligned}
+(1)\ \log0.03&=\log(3\times10^{-2})=\log3+\log10^{-2}=b-2\\
+(2)\ \log27\sqrt3&=\log(3^3\cdot3^{\frac12})=\log3^{\frac72}=\tfrac72\log3=\tfrac72b\\
+(3)\ \log\sqrt[3]{30}&=\tfrac13\log30=\tfrac13(\log3+\log10)=\tfrac13(b+1)
+\end{aligned}\]
+<div class="ans">(1) \(b-2\)　(2) \(\tfrac72b\)　(3) \(\tfrac{1+b}3\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-6</span><span class="no">練習</span><span class="ty">以已知對數表示</span></div>
+<div class="stem">\(\log2=a\)，表示 (1) \(\log2\sqrt2\)　(2) \(\log40\)　(3) \(\log5\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log2\sqrt2&=\log2^{\frac32}=\tfrac32a\\
+(2)\ \log40&=\log(2^2\times10)=2\log2+\log10=2a+1\\
+(3)\ \log5&=\log\tfrac{10}2=\log10-\log2=1-a \why{技巧：$5=\frac{10}{2}$}
+\end{aligned}\]
+<div class="ans">(1) \(\tfrac{3a}2\)　(2) \(2a+1\)　(3) \(1-a\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-6</span><span class="no">例9</span><span class="ty">換底公式</span></div>
+<div class="stem">\(\log2=a,\ \log3=b\)，表示 (1) \(\log_46\)　(2) \(\log_35\)　(3) \(\log_472\)</div>
+<div class="sol">
+<p><span class="tag th">定理</span>換底公式，換成以 10 為底：\(\log_a r=\dfrac{\log r}{\log a}\)</p>
+\[\begin{aligned}
+(1)\ \log_46&=\frac{\log6}{\log4}=\frac{\log(2\times3)}{\log2^2}=\frac{\log2+\log3}{2\log2}=\frac{a+b}{2a}\\
+(2)\ \log_35&=\frac{\log5}{\log3}=\frac{\log10-\log2}{\log3}=\frac{1-a}{b}\\
+(3)\ \log_472&=\frac{\log(2^3\times3^2)}{\log2^2}=\frac{3\log2+2\log3}{2\log2}=\frac{3a+2b}{2a}
+\end{aligned}\]
+<div class="ans">(1) \(\tfrac{a+b}{2a}\)　(2) \(\tfrac{1-a}b\)　(3) \(\tfrac{3a+2b}{2a}\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-6</span><span class="no">練習</span><span class="ty">換底公式</span></div>
+<div class="stem">\(\log2=a,\ \log3=b\)，表示 (1) \(\log_32\)　(2) \(\log_26\)　(3) \(\log_512\)　(4) \(\log_3180\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log_32&=\frac{\log2}{\log3}=\frac ab\\
+(2)\ \log_26&=\frac{\log2+\log3}{\log2}=\frac{a+b}a\\
+(3)\ \log_512&=\frac{\log(2^2\times3)}{\log5}=\frac{2a+b}{1-a} \why{$\log5=1-a$}\\
+(4)\ \log_3180&=\frac{\log(2^2\times3^2\times5)}{\log3}=\frac{2a+2b+(1-a)}{b}=\frac{1+a+2b}{b}
+\end{aligned}\]
+<div class="ans">\(\tfrac ab\)；\(\tfrac{a+b}a\)；\(\tfrac{2a+b}{1-a}\)；\(\tfrac{1+a+2b}b\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-6</span><span class="no">例10</span><span class="ty">連鎖原理＋換底</span></div>
+<div class="stem">\(\log_23=a,\ \log_37=b\)，表示 (1) \(\log_27\)　(2) \(\log_{63}84\)</div>
+<div class="sol">
+<p><b>(1)</b> <span class="tag th">定理</span>連鎖原理 \(\log_a r\cdot\log_r s=\log_a s\)：</p>
+\[\log_27=\log_23\cdot\log_37=ab\]
+<p><b>(2)</b> 換成以 2 為底（因為 \(\log_23,\log_27\) 都已知）。質因數分解：\(84=2^2\cdot3\cdot7\)，\(63=3^2\cdot7\)</p>
+\[\begin{aligned}
+\log_{63}84&=\frac{\log_284}{\log_263}=\frac{\log_22^2+\log_23+\log_27}{\log_23^2+\log_27}\\
+&=\frac{2+a+ab}{2a+ab}
+\end{aligned}\]
+<div class="ans">(1) \(ab\)　(2) \(\tfrac{2+a+ab}{2a+ab}\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-6</span><span class="no">練習</span><span class="ty">連鎖原理＋換底</span></div>
+<div class="stem">\(\log_23=a,\ \log_37=b\)，表示 \(\log_{42}\tfrac{56}9\)。</div>
+<div class="sol">
+<p>先備：\(\log_27=ab\)（連鎖）。質因數分解：\(56=2^3\cdot7,\ 9=3^2,\ 42=2\cdot3\cdot7\)</p>
+\[\begin{aligned}
+\log_2\tfrac{56}9&=\log_22^3+\log_27-\log_23^2=3+ab-2a\\
+\log_242&=\log_22+\log_23+\log_27=1+a+ab\\
+\log_{42}\tfrac{56}9&=\frac{3+ab-2a}{1+a+ab}
+\end{aligned}\]
+<p><span class="tag fx">更正</span>講義印的分母 \(1+ab+b\) 有誤，應為 \(1+a+ab\)。</p>
+<div class="ans">\(\dfrac{3+ab-2a}{1+a+ab}\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-7</span><span class="no">例11</span><span class="ty">位數・首位・個位</span></div>
+<div class="stem">\(3^{100}\) 為幾位數？最高位數字？個位數字？</div>
+<div class="sol">
+<p><span class="tag th">定理</span>若 \(\log N=n+\alpha\)（\(n\) 為整數，\(0\le\alpha\lt1\)），則 \(N=10^\alpha\times10^n\)：<b>首數</b> \(n\ge0\) → \(N\) 是 \(n+1\) 位數；<b>尾數</b> \(\alpha\) 決定最高位數字。</p>
+<p><b>① 位數</b></p>
+\[\log3^{100}=100\log3=100\times0.4771=47.71=47+0.71\]
+<p>首數 47 → \(3^{100}=10^{0.71}\times10^{47}\)，是 \(47+1=48\) 位數。</p>
+<p><b>② 最高位</b>：比較 \(10^{0.71}\) 介於哪兩個整數之間</p>
+\[\log5=0.6990\lt0.71\lt0.7782=\log6\ \Rightarrow\ 5\lt10^{0.71}\lt6\]
+<p>所以 \(3^{100}=5.\square\square\cdots\times10^{47}\)，最高位是 5。</p>
+<p><b>③ 個位</b> <span class="tag tk">技巧</span>個位只跟個位相乘有關，找循環：</p>
+<table><tr><th>\(n\)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>…</td></tr>
+<tr><th>\(3^n\)</th><td>3</td><td>9</td><td>27</td><td>81</td><td>243</td><td>729</td><td></td></tr>
+<tr><th>個位</th><td>3</td><td>9</td><td>7</td><td>1</td><td>3</td><td>9</td><td>週期 4</td></tr></table>
+<p>\(100=4\times25\)，餘 0 → 和 \(n=4\) 相同，個位 1。</p>
+<div class="ans">48 位數；最高位 5；個位 1</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-7</span><span class="no">練習</span><span class="ty">純小數的首位</span></div>
+<div class="stem">\((\tfrac67)^{60}\) 在小數點後第幾位開始出現非零數字？該數字是？</div>
+<div class="sol">
+\[\begin{aligned}
+\log\left(\tfrac67\right)^{60}&=60(\log6-\log7)=60(\log2+\log3-\log7)\\
+&=60(0.3010+0.4771-0.8451)=60\times(-0.0670)=-4.02
+\end{aligned}\]
+<p><span class="tag tk">技巧</span>負數要寫成「整數＋正尾數」，尾數必須在 \([0,1)\)：</p>
+\[-4.02=-5+0.98\ \Rightarrow\ \left(\tfrac67\right)^{60}=10^{0.98}\times10^{-5}\]
+<p>首數 \(-5\)：\(10^{-5}=0.00001\)，所以第一個非零數字在小數點後第 5 位。</p>
+<p>尾數：\(\log9=0.9542\lt0.98\lt1=\log10\Rightarrow9\lt10^{0.98}\lt10\) → 該數字為 9。</p>
+<p>（即 \((\tfrac67)^{60}\approx0.0000962\)）</p>
+<div class="ans">第 5 位；9</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-7</span><span class="no">例12</span><span class="ty">應用（分貝）</span></div>
+<div class="stem">\(s=10\log w\)。(1) 120 分貝是 60 分貝強度的幾倍？(2) 100 人同時以此音量發聲約為多少分貝？（\(n\) 人強度為 1 人的 \(n\) 倍）</div>
+<div class="sol">
+<p><b>(1)</b></p>
+\[\begin{aligned}
+60&=10\log w_1\ \Rightarrow\ \log w_1=6\ \Rightarrow\ w_1=10^6\\
+120&=10\log w_2\ \Rightarrow\ \log w_2=12\ \Rightarrow\ w_2=10^{12}\\
+\frac{w_2}{w_1}&=\frac{10^{12}}{10^6}=10^6
+\end{aligned}\]
+<p><b>(2)</b> 一人強度 \(w\)、分貝 \(s=10\log w\)；100 人強度 \(100w\)：</p>
+\[s'=10\log(100w)=10(\log100+\log w)=10\times2+10\log w=s+20\]
+<p>以一般交談 \(s=60\) 計：\(s'=80\) 分貝。</p>
+<p><span class="tag nt">注意</span>強度乘 100 只加 20 分貝；若「此音量」指演唱會的 120 分貝，則為 140 分貝。</p>
+<div class="ans">(1) \(10^6\) 倍　(2) 約 80 分貝（每乘 100 倍加 20 分貝）</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-2-7</span><span class="no">練習</span><span class="ty">應用（芮氏規模）</span></div>
+<div class="stem">\(\log E(r)=11.8+1.5r\)。(1) 求 \(E(4)\)　(2) 規模 6 是規模 4 能量的幾倍？</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log E(4)&=11.8+1.5\times4=11.8+6=17.8\ \Rightarrow\ E(4)=10^{17.8}\\
+(2)\ \log E(6)&=11.8+9=20.8\ \Rightarrow\ \frac{E(6)}{E(4)}=\frac{10^{20.8}}{10^{17.8}}=10^{3}=1000
+\end{aligned}\]
+<div class="ans">(1) \(10^{17.8}\) 爾格　(2) 1000 倍</div></div></div>
+
+<h3>習題 2-2（p.2-2-8 ～ 2-2-10）</h3>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-8</span><span class="no">1.</span><span class="ty">對數求值</span></div>
+<div class="stem">(1) \(\log_749\)　(2) \(\log_3\tfrac1{81}\)　(3) \(\log_5\sqrt5\)　(4) \(2^{\log_23}\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log_77^2&=2 & (2)\ \log_33^{-4}&=-4\\
+(3)\ \log_55^{\frac12}&=\tfrac12 & (4)\ 2^{\log_23}&=3 \why{$a^{\log_a r}=r$}
+\end{aligned}\]
+<div class="ans">2；\(-4\)；\(\tfrac12\)；3</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-8</span><span class="no">2.</span><span class="ty">求 \(x\)</span></div>
+<div class="stem">(1) \(\log_2x=2\)　(2) \(\log_3x=-2\)　(3) \(3^x=2\)</div>
+<div class="sol">
+\[(1)\ x=2^2=4\qquad(2)\ x=3^{-2}=\tfrac19\qquad(3)\ x=\log_32 \why{指數式化為對數式}\]
+<div class="ans">4；\(\tfrac19\)；\(\log_32\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-8</span><span class="no">3.</span><span class="ty">對數律化簡</span></div>
+<div class="stem">(1) \(\log(1+\tfrac11)+\log(1+\tfrac12)+\cdots+\log(1+\tfrac1{999})\)　(2) \(\log\tfrac47-\tfrac43\log\sqrt8+\tfrac23\log\sqrt{343}\)　(3) \(\log_2144-\log_827+\log_{\frac14}9\)</div>
+<div class="sol">
+<p><b>(1)</b> <span class="tag tk">技巧</span>望遠鏡（連乘相消）：每項 \(1+\tfrac1k=\tfrac{k+1}k\)</p>
+\[\begin{aligned}
+&\log\frac21+\log\frac32+\log\frac43+\cdots+\log\frac{1000}{999}\\
+=\ &\log\left(\frac{2}{1}\cdot\frac{3}{2}\cdot\frac{4}{3}\cdots\frac{1000}{999}\right) \why{中間分子分母兩兩消去}\\
+=\ &\log\frac{1000}{1}=\log10^3=3
+\end{aligned}\]
+<p><b>(2)</b> 同 p.2-2-2 例2(3)：</p>
+\[\log\tfrac47-\log4+\log7=\log\left(\tfrac47\times\tfrac14\times7\right)=\log1=0\]
+<p><b>(3)</b> 全部換成以 2 為底的 \(\log_23\)：</p>
+\[\begin{aligned}
+\log_2144&=\log_2(2^4\cdot3^2)=4+2\log_23\\
+\log_827&=\log_{2^3}3^3=\tfrac33\log_23=\log_23\\
+\log_{\frac14}9&=\log_{2^{-2}}3^2=\tfrac2{-2}\log_23=-\log_23\\
+\text{原式}&=(4+2\log_23)-\log_23+(-\log_23)=4
+\end{aligned}\]
+<div class="ans">(1) 3　(2) 0　(3) 4</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-9</span><span class="no">4.</span><span class="ty">表示／求值</span></div>
+<div class="stem">(1) \(a=\log2,\ b=\log6\)，表示 \(\log\tfrac13\)　(2) \(\log_{0.25}x=-1.5\)，求 \(x\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log\tfrac13&=-\log3=-\log\tfrac62=-(\log6-\log2)=-(b-a)=a-b\\
+(2)\ x&=0.25^{-1.5}=\left(\tfrac14\right)^{-\frac32}=4^{\frac32}=(2^2)^{\frac32}=2^3=8
+\end{aligned}\]
+<div class="ans">(1) \(a-b\)　(2) 8</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-9</span><span class="no">5.</span><span class="ty">對數性質（多選）</span></div>
+<div class="sol">
+<p><b>(A)</b> \(\log_{(-2)}(-8)\)：定義要求底數 \(>0\) 且 \(\ne1\)、真數 \(>0\)，雖然 \((-2)^3=-8\)，但此對數無定義。✗</p>
+<p><b>(B)</b> 換底：\(\log_38\cdot\log_83=\dfrac{\log8}{\log3}\cdot\dfrac{\log3}{\log8}=1\)。✓</p>
+<p><b>(C)</b> 左邊 \(\log11-\log7=\log\tfrac{11}7\approx0.196\)；右邊 \(\dfrac{\log11}{\log7}=\log_711\approx1.232\)。不相等。✗</p>
+<p><b>(D)</b> \(\log700-\log600=\log\tfrac{700}{600}=\log\tfrac76\)；同理另外兩個也都 \(=\log\tfrac76\)，三者相等，不是遞減。✗</p>
+<p><b>(E)</b> \(\dfrac{\log32}{\log16}=\dfrac{5\log2}{4\log2}=\dfrac54\)；\(\dfrac{\log16}{\log8}=\dfrac{4\log2}{3\log2}=\dfrac43\)。\(\tfrac54\ne\tfrac43\)。✗</p>
+<div class="ans">(B)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-9</span><span class="no">6.</span><span class="ty">整數討論</span></div>
+<div class="stem">若 \(\log_a729\) 為正整數，正整數 \(a\) 共有幾個？</div>
+<div class="sol">
+<p>設 \(\log_a729=n\)（\(n\) 為正整數），化成指數式：</p>
+\[a^n=729=3^6\ \Rightarrow\ a=3^{\frac6n}\]
+<p>\(a\) 要是正整數 → \(\tfrac6n\) 必須是正整數 → \(n\) 是 6 的正因數：\(n=1,2,3,6\)。</p>
+<table><tr><th>\(n\)</th><td>1</td><td>2</td><td>3</td><td>6</td></tr>
+<tr><th>\(a=3^{6/n}\)</th><td>\(3^6=729\)</td><td>\(3^3=27\)</td><td>\(3^2=9\)</td><td>\(3^1=3\)</td></tr>
+<tr><th>驗算</th><td>\(729^1\)</td><td>\(27^2\)</td><td>\(9^3\)</td><td>\(3^6\)</td></tr></table>
+<div class="ans">4 個</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-9</span><span class="no">7.</span><span class="ty">換底公式</span></div>
+<div class="stem">\(a=\log2,\ b=\log3\)，表示 \(\log_272\)。</div>
+<div class="sol">
+\[\log_272=\frac{\log72}{\log2}=\frac{\log(2^3\cdot3^2)}{\log2}=\frac{3\log2+2\log3}{\log2}=\frac{3a+2b}a\]
+<div class="ans">\(\tfrac{3a+2b}a\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-10</span><span class="no">8.</span><span class="ty">換底公式</span></div>
+<div class="stem">將 \(\log_23x\) 表示成 \(a\log x+b\)，求 \(a,b\)。</div>
+<div class="sol">
+\[\begin{aligned}
+\log_23x&=\frac{\log3x}{\log2} \why{換成以 10 為底}\\
+&=\frac{\log3+\log x}{\log2}=\frac1{\log2}\cdot\log x+\frac{\log3}{\log2}
+\end{aligned}\]
+<p>對照 \(a\log x+b\)：</p>
+<div class="ans">\(a=\dfrac1{\log2}\ (=\log_210),\ b=\dfrac{\log3}{\log2}\ (=\log_23)\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-10</span><span class="no">9.</span><span class="ty">應用（質數定理）</span></div>
+<div class="stem">\(\pi(n)\approx\dfrac n{\ln n}\approx n\times\dfrac{0.4343}{\log n}\)，估計 \(\pi(100000)\)。</div>
+<div class="sol">
+<p><span class="tag th">定理</span>換底：\(\ln n=\log_en=\dfrac{\log n}{\log e}\)，而 \(\log e\approx0.4343\)，所以 \(\dfrac1{\ln n}=\dfrac{\log e}{\log n}=\dfrac{0.4343}{\log n}\)。</p>
+\[\begin{aligned}
+n&=100000=10^5\ \Rightarrow\ \log n=5\\
+\pi(10^5)&\approx10^5\times\frac{0.4343}{5}=10^5\times0.08686=8686
+\end{aligned}\]
+<p>（實際不超過 100000 的質數有 9592 個，此式為低估的近似）</p>
+<div class="ans">約 8686 個</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-10</span><span class="no">10.</span><span class="ty">指數與對數互換</span></div>
+<div class="stem">\(x\log5=1\)，求 \(5^x+5^{-x}\)。</div>
+<div class="sol">
+\[\begin{aligned}
+x&=\frac1{\log5}=\frac{\log10}{\log5}=\log_510 \why{換底}\\
+5^x&=5^{\log_510}=10,\qquad5^{-x}=\frac1{5^x}=\frac1{10}\\
+5^x+5^{-x}&=10+0.1=10.1
+\end{aligned}\]
+<div class="ans">\(10.1\)（\(=\tfrac{101}{10}\)）</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-10</span><span class="no">11.</span><span class="ty">以已知對數表示</span></div>
+<div class="stem">\(a=\log2,\ b=\log3\)，表示 \(\log15^{0.75}\)。</div>
+<div class="sol">
+\[\begin{aligned}
+\log15^{0.75}&=0.75\log15=\tfrac34\log(3\times5)=\tfrac34(\log3+\log5)\\
+&=\tfrac34\left(b+(1-a)\right)=\tfrac34(1-a+b) \why{$\log5=1-\log2$}
+\end{aligned}\]
+<div class="ans">\(\tfrac34(1-a+b)\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-2-10</span><span class="no">12.</span><span class="ty">應用（雙對數圖）</span></div>
+<div class="stem">以 \(\log a\) 為 \(x\)、\(\log b\) 為 \(y\)，得過原點與 \((2,1)\) 的直線。(1) 直線方程式　(2) \(a,b\) 關係式</div>
+<div class="row"><div class="txt sol">
+<p><b>(1)</b> 過 \((0,0)\) 與 \((2,1)\)，斜率 \(m=\dfrac{1-0}{2-0}=\tfrac12\)，方程式 \(y=\tfrac12x\)。</p>
+<p><b>(2)</b> 把 \(x=\log a,\ y=\log b\) 代回：</p>
+\[\begin{aligned}
+\log b&=\tfrac12\log a=\log a^{\frac12}\\
+b&=a^{\frac12}=\sqrt a \why{log 一對一，真數相等}
+\end{aligned}\]
+<p><span class="tag tk">技巧</span>雙對數圖上的直線 \(\Leftrightarrow\) 冪次關係 \(b=ka^m\)，斜率就是次方 \(m\)。</p>
+<div class="ans">(1) \(y=\tfrac12x\)　(2) \(b=\sqrt a\)</div>
+</div>
+<div class="fig"><div id="f22_h12"></div></div></div>
+</div>
+
+<h2 id="s23">2-3　對數函數及其圖形</h2>
+<div class="box th"><span class="tag th">定理</span>\(y=\log_a x\) 與 \(y=a^x\) 互為反函數，圖形對稱於 \(y=x\)；恆過 \((1,0)\)、以 \(y\) 軸為漸近線；\(a>1\) 遞增、凹口向下，\(0\lt a\lt1\) 遞減、凹口向上；\(y=\log_a x\) 與 \(y=\log_{\frac1a}x\) 對稱於 \(x\) 軸。</div>
+
+<h3>重點 1　對數函數圖形與特徵（p.2-3-3 ～ 2-3-5）</h3>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-3</span><span class="no">例1</span><span class="ty">圖形過點求參數</span></div>
+<div class="stem">\(y=\log_a(x-2)\) 過 \((4,1),(b,0),(10,c)\)，求 \(a+b+c\)。</div>
+<div class="sol">
+<p>三點逐一代入：</p>
+\[\begin{aligned}
+(4,1):\ &1=\log_a(4-2)=\log_a2\ \Rightarrow\ a^1=2\ \Rightarrow\ a=2\\
+(b,0):\ &0=\log_2(b-2)\ \Rightarrow\ b-2=2^0=1\ \Rightarrow\ b=3\\
+(10,c):\ &c=\log_2(10-2)=\log_28=\log_22^3=3\\
+&a+b+c=2+3+3=8
+\end{aligned}\]
+<div class="ans">\(a+b+c=8\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-3</span><span class="no">練習</span><span class="ty">圖形過點求參數</span></div>
+<div class="stem">\(y=\log_ax\) 過 \((\tfrac13,1),(b,0),(9,c)\)，求 \((a,b,c)\)。</div>
+<div class="sol">
+\[\begin{aligned}
+(\tfrac13,1):\ &\log_a\tfrac13=1\ \Rightarrow\ a^1=\tfrac13\ \Rightarrow\ a=\tfrac13\\
+(b,0):\ &\log_{\frac13}b=0\ \Rightarrow\ b=\left(\tfrac13\right)^0=1\\
+(9,c):\ &c=\log_{\frac13}9=\log_{3^{-1}}3^2=\tfrac2{-1}=-2
+\end{aligned}\]
+<div class="ans">\((\tfrac13,1,-2)\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-4</span><span class="no">例2</span><span class="ty">圖形判讀・比較底數</span></div>
+<div class="stem">圖為 \(y=\log_ax,\ \log_bx,\ \log_cx\)（\(\log_a x,\log_b x\) 遞增，\(x>1\) 時 \(\log_a x\) 在上；\(\log_c x\) 遞減）。(1) \(a>1\) (2) \(b>1\) (3) \(c>1\) (4) \(a>b\) (5) \(b>c\)</div>
+<div class="row"><div class="txt sol">
+<div class="box tk"><span class="tag tk">技巧</span><b>畫水平線 \(y=1\)</b>：\(\log_a x=1\Rightarrow x=a\)，交點是 \((a,1)\)，<b>交點的 \(x\) 座標就是底數</b>。</div>
+<p><b>步驟 1</b>　走勢：\(\log_c x\) 遞減 \(\Rightarrow0\lt c\lt1\)；\(\log_a x,\log_b x\) 遞增 \(\Rightarrow a,b>1\)。</p>
+<p><b>步驟 2</b>　畫 \(y=1\)：由左往右，先碰到位置較高的 \(\log_ax\)（交於 \(x=a\)），之後才碰到 \(\log_bx\)（交於 \(x=b\)）→ \(a\lt b\)。</p>
+<p><b>步驟 3</b>　合併：\(b>a>1>c>0\)。</p>
+<p>(1) ✓　(2) ✓　(3) ✗　(4) ✗　(5) ✓</p>
+<p><span class="tag nt">注意</span>對數函數「底數愈大、曲線愈平」，與指數函數相反。</p>
+<div class="ans">(1)(2)(5)</div>
+</div>
+<div class="fig"><div id="f23_e2"></div>示意：\(a=2,\ b=4,\ c=\tfrac12\)</div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-4</span><span class="no">練習</span><span class="ty">圖形判讀</span></div>
+<div class="stem">圖為 \(y=\log_ax\) 部分圖形（遞減，過 \(P\) 於 \(x\) 軸）。(1) \(\overline{OP}=1\) (2) \(0\lt a\lt1\) (3) 與每一條水平線均相交 (4) \(\alpha\lt\beta\Rightarrow\log_a\alpha\lt\log_a\beta\)</div>
+<div class="sol">
+<p>(1) \(P\) 在 \(x\) 軸上 → \(y=0\)，\(\log_ax=0\Rightarrow x=1\)，\(P(1,0)\)，\(\overline{OP}=1\)。✓</p>
+<p>(2) 圖形往右下降 → \(0\lt a\lt1\)。✓</p>
+<p>(3) 任一水平線 \(y=k\)：\(\log_ax=k\Rightarrow x=a^k>0\)，一定有解。✓</p>
+<p>(4) 遞減函數：\(\alpha\lt\beta\Rightarrow\log_a\alpha>\log_a\beta\)，不等號方向寫反。✗</p>
+<div class="ans">(1)(2)(3)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-4</span><span class="no">例3</span><span class="ty">函數性質（多選）</span></div>
+<div class="stem">\(a>1,\ f(x)=\log_ax\)。(A) \(f(2)>0\) (B) 圖形在 \(x\) 軸上方 (C) \(f(x)=f(2)\Rightarrow x=2\) (D) 凹口向上 (E) \(\alpha\lt\beta\Rightarrow\log_a\frac{\alpha+\beta}2\lt\frac{\log_a\alpha+\log_a\beta}2\)</div>
+<div class="sol">
+<p>(A) \(a>1\) 遞增，\(2>1\Rightarrow f(2)>f(1)=0\)。✓</p>
+<p>(B) 取 \(x=\tfrac12\)：\(f(\tfrac12)\lt f(1)=0\)，在 \(x\) 軸下方。（圖形是在 \(y\) 軸右方）✗</p>
+<p>(C) 對數函數是一對一函數：\(\log_ax=\log_a2\Rightarrow x=2\)。✓</p>
+<p>(D) \(a>1\) 時凹口向下。✗</p>
+<p>(E) <span class="tag th">定理</span>凹口向下 → 弦在曲線下方 → 中點的函數值 \(>\) 兩端函數值的平均，應為 \(\log_a\frac{\alpha+\beta}2>\frac{\log_a\alpha+\log_a\beta}2\)。✗</p>
+<div class="ans">(A)(C)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-4</span><span class="no">練習</span><span class="ty">函數性質（多選）</span></div>
+<div class="stem">\(a>0,a\ne1\)，\(y=\log_ax\) 的特性：(A) 過 \((1,0)\) (B) 遞增 (C) 與 \(y=\log_{\frac1a}x\) 對稱 \(x\) 軸 (D) 與任一水平線恰一交點 (E) 與任一鉛直線恰一交點</div>
+<div class="sol">
+<p>(A) \(\log_a1=0\)。✓　(B) \(0\lt a\lt1\) 時遞減。✗</p>
+<p>(C) \(\log_{\frac1a}x=\log_{a^{-1}}x=\tfrac1{-1}\log_ax=-\log_ax\)，即 \(y\to-y\)，對稱 \(x\) 軸。✓</p>
+<p>(D) \(\log_ax=k\Rightarrow x=a^k\)，恰一解。✓　(E) \(x=-1\) 不在定義域，無交點。✗</p>
+<div class="ans">(A)(C)(D)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-5</span><span class="no">例4</span><span class="ty">對稱判斷（多選）</span></div>
+<div class="stem">哪些組的兩圖形對稱於 \(y\) 軸？</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>看第二個函數是第一個做了什麼替換：\(x\to-x\)（\(y\) 軸）、\(y\to-y\)（\(x\) 軸）、\(x\leftrightarrow y\)（\(y=x\)）。</p>
+<table>
+<tr><th>選項</th><th>改寫第二式</th><th>替換</th><th>對稱於</th><th>\(y\) 軸？</th></tr>
+<tr><td>(A)</td><td>\((\frac12)^x=2^{-x}\)</td><td>\(x\to-x\)</td><td>\(y\) 軸</td><td class="ok">✓</td></tr>
+<tr><td>(B)</td><td>\(\log_{\frac12}x=-\log_2x\)</td><td>\(y\to-y\)</td><td>\(x\) 軸</td><td class="ng">✗</td></tr>
+<tr><td>(C)</td><td>\(y=\log_2x\Leftrightarrow x=2^y\)</td><td>\(x\leftrightarrow y\)</td><td>\(y=x\)</td><td class="ng">✗</td></tr>
+<tr><td>(D)</td><td>\(y=-2^x\)</td><td>\(y\to-y\)</td><td>\(x\) 軸</td><td class="ng">✗</td></tr>
+<tr><td>(E)</td><td>\(\log_2(-x)\)</td><td>\(x\to-x\)</td><td>\(y\) 軸</td><td class="ok">✓</td></tr>
+</table>
+<div class="ans">(A)(E)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-5</span><span class="no">練習</span><span class="ty">對稱判斷（多選）</span></div>
+<div class="stem">(A) \(3^x\) 與 \(3^{-x}\) 對稱 \(y\) 軸 (B) \(\log_3x\) 與 \(\log_{\frac13}x\) 對稱 \(x\) 軸 (C) \(3^x\) 與 \(\log_3x\) 對稱 \(y\) 軸 (D) \(3^{-x}\) 與 \(\log_{\frac13}x\) 對稱 \(x-y=0\) (E) \(3^x\) 與 \(\log_3x\) 交於一點</div>
+<div class="sol">
+<p>(A) \(x\to-x\)。✓　(B) \(\log_{\frac13}x=-\log_3x\)，\(y\to-y\)。✓　(C) 互為反函數，對稱 \(y=x\)。✗</p>
+<p>(D) \(3^{-x}=(\tfrac13)^x\)，它與 \(\log_{\frac13}x\) 互為反函數，對稱於 \(y=x\)（即 \(x-y=0\)）。✓</p>
+<p>(E) 對所有 \(x\)：\(3^x>x\)（指數長得比直線快），而 \(\log_3x\lt x\)（\(x>0\)），所以 \(3^x>x>\log_3x\)，兩圖無交點。✗</p>
+<div class="ans">(A)(B)(D)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-5</span><span class="no">例5</span><span class="ty">圖形平移</span></div>
+<div class="stem">\(\log_2x\) 右移 12、上移 2，得 \(\log_2(ax+b)\)，求 \(a,b\)。</div>
+<div class="sol">
+\[\begin{aligned}
+y&=\log_2x\\
+\xrightarrow{\text{右移 12}}\quad y&=\log_2(x-12) \why{$x\to x-12$}\\
+\xrightarrow{\text{上移 2}}\quad y&=\log_2(x-12)+2 \why{$y\to y-2$}
+\end{aligned}\]
+<p><span class="tag tk">技巧</span>把常數 2 寫成 \(\log_24\)，用 \(\log r+\log s=\log rs\) 併入：</p>
+\[y=\log_2(x-12)+\log_24=\log_2[4(x-12)]=\log_2(4x-48)\]
+<div class="ans">\(a=4,\ b=-48\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-5</span><span class="no">練習</span><span class="ty">圖形平移</span></div>
+<div class="stem">\(y=\log_2x\) 右移 3、上移 2，得 \(y=\log_2(ax+b)\)。</div>
+<div class="sol">
+\[y=\log_2(x-3)+2=\log_2(x-3)+\log_24=\log_2[4(x-3)]=\log_2(4x-12)\]
+<div class="ans">\((4,-12)\)</div></div></div>
+
+<h3>重點 2　對數方程式與不等式（p.2-3-6 ～ 2-3-9）</h3>
+<div class="box nt"><span class="tag nt">注意</span>解題要領：① 化同底　② <b>真數 \(>0\)、底數 \(>0\)、底數 \(\ne1\)</b>，解完一定要驗根／取交集。　<span class="tag th">定理</span>\(0\lt a\lt1\) 時 \(\log_a\) 遞減，不等號變向。</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-6</span><span class="no">例1</span><span class="ty">對數方程式</span></div>
+<div class="stem">(1) \(\log_6x+\log_6(x-5)=1\)　(2) \(1+\log_4(x-1)=\log_2(x-9)\)　(3) \(\log_{10}x-6\log_x10+1=0\)</div>
+<div class="sol">
+<p><b>(1)</b> 先寫條件：\(x>0\) 且 \(x-5>0\Rightarrow x>5\)</p>
+\[\begin{aligned}
+\log_6[x(x-5)]&=1=\log_66 \why{$\log r+\log s=\log rs$}\\
+x(x-5)&=6\ \Rightarrow\ x^2-5x-6=0\\
+(x-6)(x+1)&=0\ \Rightarrow\ x=6\ \text{或}\ x=-1\ (\text{不合，}x>5)
+\end{aligned}\]
+<p>驗算：\(\log_66+\log_61=1+0=1\) ✓</p>
+<p><b>(2)</b> 條件：\(x-1>0\) 且 \(x-9>0\Rightarrow x>9\)</p>
+<p><span class="tag tk">技巧</span>化同底 2：\(\log_4(x-1)=\log_{2^2}(x-1)=\tfrac12\log_2(x-1)\)，\(1=\log_22\)</p>
+\[\begin{aligned}
+1+\tfrac12\log_2(x-1)&=\log_2(x-9)\\
+2+\log_2(x-1)&=2\log_2(x-9) \why{兩邊乘 2}\\
+\log_24+\log_2(x-1)&=\log_2(x-9)^2\\
+4(x-1)&=(x-9)^2 \why{log 一對一}\\
+4x-4&=x^2-18x+81\\
+x^2-22x+85&=0\ \Rightarrow\ (x-5)(x-17)=0
+\end{aligned}\]
+<p>\(x=5\) 不合（須 \(x>9\)），\(x=17\)。驗算：左 \(1+\log_416=1+2=3\)，右 \(\log_28=3\) ✓</p>
+<p><b>(3)</b> 條件：\(x>0,\ x\ne1\)。<span class="tag th">定理</span>倒數關係 \(\log_x10=\dfrac1{\log_{10}x}\)。令 \(t=\log x\)（\(t\ne0\)）：</p>
+\[\begin{aligned}
+t-\frac6t+1&=0\\
+t^2+t-6&=0 \why{兩邊乘 $t$}\\
+(t+3)(t-2)&=0\ \Rightarrow\ t=2\ \text{或}\ t=-3\\
+\log x=2\Rightarrow x=100;&\quad\log x=-3\Rightarrow x=10^{-3}=\tfrac1{1000}
+\end{aligned}\]
+<div class="ans">(1) 6　(2) 17　(3) 100 或 \(\tfrac1{1000}\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-6</span><span class="no">練習</span><span class="ty">對數方程式</span></div>
+<div class="stem">(1) \(\log x+\log2=2\)　(2) \(\log_2(x+3)-\log_2(x-1)=1\)　(3) \(3\log_x2+\log_2x=4\)</div>
+<div class="sol">
+<p><b>(1)</b> 條件 \(x>0\)：\(\log2x=2\Rightarrow2x=10^2=100\Rightarrow x=50\)</p>
+<p><b>(2)</b> 條件 \(x>1\)（\(x=5\) 符合）：</p>
+\[\log_2\frac{x+3}{x-1}=1\ \Rightarrow\ \frac{x+3}{x-1}=2\ \Rightarrow\ x+3=2x-2\ \Rightarrow\ x=5\]
+<p><b>(3)</b> 條件 \(x>0,x\ne1\)。\(\log_x2=\dfrac1{\log_2x}\)，令 \(t=\log_2x\)（\(t\ne0\)）：</p>
+\[\begin{aligned}
+\frac3t+t&=4\ \Rightarrow\ t^2-4t+3=0\ \Rightarrow\ (t-1)(t-3)=0\\
+t=1\Rightarrow x=2^1&=2;\quad t=3\Rightarrow x=2^3=8
+\end{aligned}\]
+<div class="ans">(1) 50　(2) 5　(3) 2 或 8</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-7</span><span class="no">例2</span><span class="ty">取對數解指數方程式</span></div>
+<div class="stem">\(2^{2x+3}=12^x\)（四捨五入至小數第二位）</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>底數 2 和 12 無法化同 → 兩邊取 \(\log\)，用 \(\log r^m=m\log r\) 把指數拉下來：</p>
+\[\begin{aligned}
+\log2^{2x+3}&=\log12^x\\
+(2x+3)\log2&=x\log12=x(2\log2+\log3) \why{$12=2^2\times3$}\\
+2x\log2+3\log2&=2x\log2+x\log3\\
+3\log2&=x\log3 \why{兩邊的 $2x\log2$ 消掉}\\
+x&=\frac{3\log2}{\log3}=\frac{3\times0.3010}{0.4771}=\frac{0.9030}{0.4771}\approx1.893
+\end{aligned}\]
+<div class="ans">\(x\approx1.89\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-7</span><span class="no">練習</span><span class="ty">取對數解指數方程式</span></div>
+<div class="stem">\(3^{4x+1}=15\)</div>
+<div class="sol">
+\[\begin{aligned}
+(4x+1)\log3&=\log15=\log3+\log5 \why{兩邊取 log}\\
+4x\log3&=\log5\\
+x&=\frac{\log5}{4\log3}=\frac{0.6990}{4\times0.4771}=\frac{0.6990}{1.9084}\approx0.366
+\end{aligned}\]
+<div class="ans">0.37</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-7</span><span class="no">例3</span><span class="ty">對數大小比較</span></div>
+<div class="stem">比較 \(a=\log_27,\ b=\log_425,\ c=\log_{\frac12}3,\ d=2\)</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>全部化成以 2 為底，再用遞增性與整數夾擠。</p>
+\[\begin{aligned}
+b&=\log_425=\log_{2^2}5^2=\tfrac22\log_25=\log_25\\
+c&=\log_{\frac12}3=\log_{2^{-1}}3=-\log_23\\
+d&=2=\log_22^2=\log_24
+\end{aligned}\]
+<p>\(y=\log_2x\) 遞增，比較真數即可：</p>
+\[\log_27>\log_25>\log_24>0>-\log_23\ \Rightarrow\ a>b>d>c\]
+<p>（數值：\(a\approx2.81,\ b\approx2.32,\ d=2,\ c\approx-1.58\)）</p>
+<div class="ans">\(a>b>d>c\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-7</span><span class="no">練習</span><span class="ty">對數大小比較</span></div>
+<div class="stem">\(a=\log_35,\ b=\log_916,\ c=\log_3\tfrac14,\ d=1\)</div>
+<div class="sol">
+\[b=\log_{3^2}4^2=\log_34,\qquad d=1=\log_33,\qquad c=\log_3\tfrac14\]
+<p>底數 \(3>1\) 遞增，真數 \(5>4>3>\tfrac14\Rightarrow a>b>d>c\)</p>
+<div class="ans">\(a>b>d>c\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-7</span><span class="no">例4</span><span class="ty">對數不等式</span></div>
+<div class="stem">(1) \(\log_3(x-1)\lt1\)　(2) \(\log_{0.2}x\ge-1\)　(3) \(\log_2(\log_{\frac13}x)\lt1\)</div>
+<div class="sol">
+<p><b>(1)</b> 條件 \(x-1>0\)。</p>
+\[\log_3(x-1)\lt\log_33\ \Rightarrow\ x-1\lt3 \why{底 $3>1$，不變向}\]
+<p>合併條件：\(0\lt x-1\lt3\Rightarrow1\lt x\lt4\)</p>
+<p><b>(2)</b> 條件 \(x>0\)。把 \(-1\) 寫成同底：\(-1=\log_{0.2}0.2^{-1}=\log_{0.2}5\)</p>
+\[\log_{0.2}x\ge\log_{0.2}5\ \Rightarrow\ x\le5 \why{底 $0.2\lt1$，變向}\]
+<p>合併：\(0\lt x\le5\)</p>
+<p><b>(3)</b> <span class="tag tk">技巧</span>由外往內剝，每一層的真數都要 \(>0\)：</p>
+\[\begin{aligned}
+\log_2(\log_{\frac13}x)&\lt1=\log_22\\
+0\lt\log_{\frac13}x&\lt2 \why{外層：真數 $>0$ 且 $\lt2$}\\
+\log_{\frac13}1\lt\log_{\frac13}x&\lt\log_{\frac13}\tfrac19 \why{$0=\log_{\frac13}1,\ 2=\log_{\frac13}\frac19$}\\
+1>x&>\tfrac19 \why{底 $\frac13\lt1$，變向}
+\end{aligned}\]
+<div class="ans">(1) \(1\lt x\lt4\)　(2) \(0\lt x\le5\)　(3) \(\tfrac19\lt x\lt1\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-7</span><span class="no">練習</span><span class="ty">對數不等式</span></div>
+<div class="stem">(1) \(\log_{\frac32}x>2\)　(2) \(\log_{\frac12}x>3\)</div>
+<div class="sol">
+\[\begin{aligned}
+(1)\ \log_{\frac32}x&>\log_{\frac32}\left(\tfrac32\right)^2\ \Rightarrow\ x>\tfrac94 \why{底 $>1$，不變向}\\
+(2)\ \log_{\frac12}x&>\log_{\frac12}\left(\tfrac12\right)^3\ \Rightarrow\ x\lt\tfrac18 \why{底 $\lt1$，變向}
+\end{aligned}\]
+<p>(2) 還要真數 \(x>0\)，合併得 \(0\lt x\lt\tfrac18\)。</p>
+<div class="ans">(1) \(x>\tfrac94\)　(2) \(0\lt x\lt\tfrac18\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-8</span><span class="no">例5</span><span class="ty">對數不等式</span></div>
+<div class="stem">(1) \(\log_3(x-3)+\log_3(x-5)\lt1\)　(2) \(\log_{\frac12}(x-1)>\log_{\frac14}(2x+1)\)</div>
+<div class="sol">
+<p><b>(1)</b> 條件：\(x-3>0\) 且 \(x-5>0\Rightarrow x>5\)</p>
+\[\begin{aligned}
+\log_3[(x-3)(x-5)]&\lt\log_33\\
+(x-3)(x-5)&\lt3 \why{底 $3>1$}\\
+x^2-8x+15&\lt3\ \Rightarrow\ x^2-8x+12\lt0\\
+(x-2)(x-6)&\lt0\ \Rightarrow\ 2\lt x\lt6
+\end{aligned}\]
+<p>與條件 \(x>5\) 取交集：\(5\lt x\lt6\)</p>
+<p><b>(2)</b> 條件：\(x-1>0\) 且 \(2x+1>0\Rightarrow x>1\)</p>
+<p><span class="tag tk">技巧</span>化同底 \(\tfrac14\)：\(\log_{\frac12}(x-1)=\log_{(\frac12)^2}(x-1)^2=\log_{\frac14}(x-1)^2\)</p>
+\[\begin{aligned}
+\log_{\frac14}(x-1)^2&>\log_{\frac14}(2x+1)\\
+(x-1)^2&\lt2x+1 \why{底 $\frac14\lt1$，變向}\\
+x^2-2x+1&\lt2x+1\ \Rightarrow\ x^2-4x\lt0\\
+x(x-4)&\lt0\ \Rightarrow\ 0\lt x\lt4
+\end{aligned}\]
+<p>與條件 \(x>1\) 取交集：\(1\lt x\lt4\)</p>
+<div class="ans">(1) \(5\lt x\lt6\)　(2) \(1\lt x\lt4\)</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-8</span><span class="no">練習</span><span class="ty">對數不等式</span></div>
+<div class="stem">(1) \(\log_3x+\log_3(x+2)\lt1\)　(2) \(\log_{\frac13}x+\log_{\frac13}(x-2)>-1\)</div>
+<div class="sol">
+<p><b>(1)</b> 條件 \(x>0\)（且 \(x+2>0\)）</p>
+\[x(x+2)\lt3\ \Rightarrow\ x^2+2x-3\lt0\ \Rightarrow\ (x+3)(x-1)\lt0\ \Rightarrow\ -3\lt x\lt1\]
+<p>交集：\(0\lt x\lt1\)</p>
+<p><b>(2)</b> 條件 \(x>2\)；\(-1=\log_{\frac13}3\)</p>
+\[\begin{aligned}
+\log_{\frac13}[x(x-2)]&>\log_{\frac13}3\ \Rightarrow\ x(x-2)\lt3 \why{變向}\\
+x^2-2x-3&\lt0\ \Rightarrow\ (x-3)(x+1)\lt0\ \Rightarrow\ -1\lt x\lt3
+\end{aligned}\]
+<p>交集：\(2\lt x\lt3\)</p>
+<div class="ans">(1) \(0\lt x\lt1\)　(2) \(2\lt x\lt3\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-8</span><span class="no">例6</span><span class="ty">圖形・距離與面積</span></div>
+<div class="stem">\(P,Q\) 分別為 \(x=9,\ y=1\) 與 \(y=\log_3x\) 的交點，\(R(9,1)\)。(1) \(\overline{PQ}\)　(2) \(\triangle PQR\) 面積</div>
+<div class="row"><div class="txt sol">
+<p><b>求座標</b></p>
+\[\begin{aligned}
+P:\ &x=9\ \Rightarrow\ y=\log_39=\log_33^2=2\ \Rightarrow\ P(9,2)\\
+Q:\ &y=1\ \Rightarrow\ \log_3x=1\ \Rightarrow\ x=3\ \Rightarrow\ Q(3,1)
+\end{aligned}\]
+<p><b>(1)</b></p>
+\[\overline{PQ}=\sqrt{(9-3)^2+(2-1)^2}=\sqrt{36+1}=\sqrt{37}\]
+<p><b>(2)</b> \(R(9,1)\) 與 \(Q\) 同高（水平邊）、與 \(P\) 同 \(x\)（鉛直邊），所以 \(\angle R=90^\circ\)：</p>
+\[\overline{QR}=9-3=6,\quad\overline{PR}=2-1=1,\quad\text{面積}=\tfrac12\times6\times1=3\]
+<div class="ans">(1) \(\sqrt{37}\)　(2) 3</div>
+</div>
+<div class="fig"><div id="f23_e6"></div></div></div>
+</div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-8</span><span class="no">練習</span><span class="ty">圖形・距離</span></div>
+<div class="stem">\(P,Q\) 分別為 \(y=3,\ y=2\) 與 \(y=\log_2x\) 的交點，求 \(\overline{PQ}\)。</div>
+<div class="sol">
+\[\begin{aligned}
+P:\ &\log_2x=3\Rightarrow x=8,\ P(8,3)\qquad Q:\ \log_2x=2\Rightarrow x=4,\ Q(4,2)\\
+&\overline{PQ}=\sqrt{(8-4)^2+(3-2)^2}=\sqrt{16+1}=\sqrt{17}
+\end{aligned}\]
+<div class="ans">\(\sqrt{17}\)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-9</span><span class="no">例7</span><span class="ty">應用（星等）</span></div>
+<div class="stem">\(m=-\tfrac52\log\tfrac I{I_0}\)。心宿二 1 等、肉眼極限 6 等。(1) 心宿二亮度是 6 等星的幾倍？(2) 恆星 \(M\) 亮度為心宿二的 \(\tfrac1{1000}\)，求其星等。</div>
+<div class="sol">
+<p><span class="tag tk">技巧</span>兩顆星的式子相減，\(I_0\) 會消掉：</p>
+\[\begin{aligned}
+m_1-m_2&=-\tfrac52\left[\log\tfrac{I_1}{I_0}-\log\tfrac{I_2}{I_0}\right]=-\tfrac52\log\frac{I_1}{I_2}
+\end{aligned}\]
+<p><b>(1)</b> 心宿二 \(m_1=1\)，6 等星 \(m_2=6\)：</p>
+\[1-6=-\tfrac52\log\frac{I_1}{I_2}\ \Rightarrow\ \log\frac{I_1}{I_2}=\frac{-5}{-\frac52}=2\ \Rightarrow\ \frac{I_1}{I_2}=10^2=100\]
+<p><b>(2)</b> \(I_M=\tfrac1{1000}I_1\)：</p>
+\[m_M-1=-\tfrac52\log\frac{I_M}{I_1}=-\tfrac52\log10^{-3}=-\tfrac52\times(-3)=\tfrac{15}2\ \Rightarrow\ m_M=8.5\]
+<div class="ans">(1) 100 倍　(2) 8.5 等</div>
+</div></div>
+
+<div class="q pr">
+<div class="qh"><span class="pg">p.2-3-9</span><span class="no">練習</span><span class="ty">應用（距離模數）</span></div>
+<div class="stem">\(m=M+5\log\dfrac d{32.616}\)。織女星 \(d=25\)、\(M=0.58\)；另一星 \(M=-3.6052\)、視星等比織女星多 1，求其距離。</div>
+<div class="sol">
+<p>設織女星視星等 \(m_0\)：</p>
+\[\begin{aligned}
+\text{織女星：}&\ m_0=0.58+5\log\tfrac{25}{32.616}\quad\cdots(1)\\
+\text{該星：}&\ m_0+1=-3.6052+5\log\tfrac{d}{32.616}\quad\cdots(2)
+\end{aligned}\]
+<p><span class="tag tk">技巧</span>(2)−(1) 消去 \(m_0\) 與 32.616：</p>
+\[\begin{aligned}
+1&=-3.6052-0.58+5\left[\log\tfrac{d}{32.616}-\log\tfrac{25}{32.616}\right]\\
+1&=-4.1852+5\log\frac d{25}\\
+\log\frac d{25}&=\frac{5.1852}5=1.03704\\
+d&=25\times10^{1.03704}=25\times10\times10^{0.03704}\approx250\times1.089\approx272
+\end{aligned}\]
+<div class="ans">約 272 光年</div>
+</div></div>
+
+<h3>習題 2-3（p.2-3-10 ～ 2-3-13）</h3>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-10</span><span class="no">1.</span><span class="ty">圖形性質（多選）</span></div>
+<div class="stem">關於 \(y=\log x\)：(A) 過 \((1,0)\) (B) 與任一鉛垂線交於一點 (C) 與任一水平線交於一點 (D) 與 \(y=\log\frac1x\) 對稱 \(x\) 軸 (E) 與 \(y=10^x\) 對稱 \(y=x\)</div>
+<div class="sol">
+<p>(A) \(\log1=0\)。✓　(B) 定義域 \(x>0\)，鉛垂線 \(x=-1\) 不相交。✗</p>
+<p>(C) \(\log x=k\Rightarrow x=10^k\)，恰一解。✓</p>
+<p>(D) \(\log\tfrac1x=\log x^{-1}=-\log x\)，即 \(y\to-y\)。✓</p>
+<p>(E) \(y=\log x\Leftrightarrow x=10^y\)，與 \(y=10^x\) 互為反函數。✓</p>
+<div class="ans">(A)(C)(D)(E)</div></div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-10</span><span class="no">2.</span><span class="ty">圖形過點求參數</span></div>
+<div class="stem">\(y=a+\log_bx\) 過 \((1,1),(4,3)\)，求 \(a,b\)。</div>
+<div class="row"><div class="txt sol">
+<p><span class="tag tk">技巧</span>先代 \(x=1\)，利用 \(\log_b1=0\) 一次消去 \(b\)。</p>
+\[\begin{aligned}
+(1,1):\ &1=a+\log_b1=a+0\ \Rightarrow\ a=1\\
+(4,3):\ &3=1+\log_b4\ \Rightarrow\ \log_b4=2\ \Rightarrow\ b^2=4\ \Rightarrow\ b=2\ (b>0)
+\end{aligned}\]
+<div class="ans">\(a=1,\ b=2\)</div>
+</div>
+<div class="fig"><div id="f23_h2"></div>\(y=1+\log_2x\)</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-10</span><span class="no">3.</span><span class="ty">對數大小比較</span></div>
+<div class="stem">(1) \(a=\log_{0.5}2,\ b=\log_{0.5}3,\ c=\log_{0.5}5,\ d=\log_{0.5}0.5\)　(2) \(a=1,\ b=\log_2\sqrt3,\ c=\log_{\frac12}\tfrac13,\ d=\log_{\frac12}\sqrt3\)</div>
+<div class="sol">
+<p><b>(1)</b> 同底 \(0.5\lt1\)，\(y=\log_{0.5}x\) 遞減：<b>真數愈大，值愈小</b>。</p>
+\[0.5\lt2\lt3\lt5\ \Rightarrow\ \log_{0.5}0.5>\log_{0.5}2>\log_{0.5}3>\log_{0.5}5\ \Rightarrow\ d>a>b>c\]
+<p>（\(d=1,\ a=-1,\ b\approx-1.58,\ c\approx-2.32\)）</p>
+<p><b>(2)</b> 全化成以 2 為底：</p>
+\[\begin{aligned}
+a&=1=\log_22\\
+b&=\log_23^{\frac12}=\tfrac12\log_23\approx0.79\\
+c&=\log_{2^{-1}}3^{-1}=\tfrac{-1}{-1}\log_23=\log_23\approx1.58\\
+d&=\log_{2^{-1}}3^{\frac12}=\tfrac{1/2}{-1}\log_23=-\tfrac12\log_23\approx-0.79
+\end{aligned}\]
+<p>\(\log_23\) 在 \(\log_22=1\) 與 \(\log_24=2\) 之間 → \(c>1=a\)；\(b=\tfrac12c\lt1\)；\(d\lt0\)。</p>
+<p><span class="tag fx">更正</span>講義第四個數也標成 \(b\)，應為 \(d\)。</p>
+<div class="ans">(1) \(d>a>b>c\)　(2) \(c>a>b>d\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-11</span><span class="no">4.</span><span class="ty">圖形變換（作圖）</span></div>
+<div class="stem">\(f(x)=\log_2x\)：(1) 右移 1　(2) 對 \(x\) 軸對稱　(3) 下移 1 再對 \(x\) 軸對稱。寫出函數並描圖。</div>
+<div class="row"><div class="txt sol">
+<p><b>(1)</b> 右移 1：\(x\to x-1\)，\(y=\log_2(x-1)\)。漸近線 \(x=0\to x=1\)；\((1,0)\to(2,0)\)，\((2,1)\to(3,1)\)。</p>
+<p><b>(2)</b> 對 \(x\) 軸：\(y\to-y\)，\(-y=\log_2x\Rightarrow y=-\log_2x=\log_{\frac12}x\)。\((2,1)\to(2,-1)\)。</p>
+<p><b>(3)</b></p>
+\[\begin{aligned}
+\xrightarrow{\text{下移 1}}\quad y&=\log_2x-1 \why{$y\to y+1$}\\
+\xrightarrow{\text{對 }x\text{ 軸}}\quad -y&=\log_2x-1\ \Rightarrow\ y=1-\log_2x
+\end{aligned}\]
+<p>檢查：\(x=1\)：\(y=1\)；\(x=2\)：\(y=0\)。</p>
+<div class="ans">(1) \(\log_2(x-1)\)　(2) \(-\log_2x\)　(3) \(1-\log_2x\)</div>
+</div>
+<div class="fig"><div id="f23_h4"></div>灰虛線 \(\log_2x\)；藍(1)、綠(2)、紅(3)</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-11</span><span class="no">5.</span><span class="ty">對數方程式／不等式</span></div>
+<div class="stem">(1) \(\log x^2+\log4=2\)　(2) \(\log(x+2)\le\log(2x-1)\)</div>
+<div class="sol">
+<p><b>(1)</b> 條件：\(x^2>0\Rightarrow x\ne0\)</p>
+\[\log4x^2=2\ \Rightarrow\ 4x^2=100\ \Rightarrow\ x^2=25\ \Rightarrow\ x=\pm5\]
+<p>兩根都滿足 \(x\ne0\)，皆合。</p>
+<p><span class="tag nt">注意</span>不要把 \(\log x^2\) 先寫成 \(2\log x\)，那會偷偷加上 \(x>0\) 而漏掉 \(x=-5\)。</p>
+<p><b>(2)</b> 條件：\(x+2>0\) 且 \(2x-1>0\Rightarrow x>\tfrac12\)</p>
+\[x+2\le2x-1\ \Rightarrow\ 3\le x \why{底 $10>1$，不變向}\]
+<p>交集：\(x\ge3\)</p>
+<div class="ans">(1) \(x=\pm5\)　(2) \(x\ge3\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-11</span><span class="no">6.</span><span class="ty">對數方程式／不等式</span></div>
+<div class="stem">(1) \(\log x+\log(x-1)=1\)　(2) \(1+\log_2(x+2)+\log_2(x+6)>0\)</div>
+<div class="sol">
+<p><b>(1)</b> 條件 \(x>1\)</p>
+\[\begin{aligned}
+\log[x(x-1)]&=1\ \Rightarrow\ x^2-x=10\ \Rightarrow\ x^2-x-10=0\\
+x&=\frac{1\pm\sqrt{1+40}}{2}=\frac{1\pm\sqrt{41}}2 \why{公式解}
+\end{aligned}\]
+<p>\(\tfrac{1-\sqrt{41}}2\lt0\) 不合；\(\tfrac{1+\sqrt{41}}2\approx3.70>1\) ✓</p>
+<p><b>(2)</b> 條件：\(x+2>0\) 且 \(x+6>0\Rightarrow x>-2\)。把 1 寫成 \(\log_22\)：</p>
+\[\begin{aligned}
+\log_22+\log_2(x+2)+\log_2(x+6)&>0=\log_21\\
+2(x+2)(x+6)&>1\\
+2(x^2+8x+12)&>1\ \Rightarrow\ 2x^2+16x+23>0
+\end{aligned}\]
+<p>求 \(2x^2+16x+23=0\) 的根：</p>
+\[x=\frac{-16\pm\sqrt{256-184}}{4}=\frac{-16\pm\sqrt{72}}{4}=\frac{-16\pm6\sqrt2}{4}=-4\pm\frac{3\sqrt2}{2}\]
+<p>開口向上，\(>0\) 取兩根外側：\(x\lt-4-\tfrac{3\sqrt2}2\) 或 \(x>-4+\tfrac{3\sqrt2}2\)。</p>
+<p>與條件 \(x>-2\) 取交集：\(-4+\tfrac{3\sqrt2}2\approx-4+2.12=-1.88>-2\)，所以</p>
+<div class="ans">(1) \(\tfrac{1+\sqrt{41}}2\)　(2) \(x>-4+\tfrac{3\sqrt2}2\)</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-12</span><span class="no">7.</span><span class="ty">圖形辨識</span></div>
+<div class="stem">\(\log_4y=\log_2x\)，\(y\) 與 \(x\) 的圖形最接近哪一個？</div>
+<div class="row"><div class="txt sol">
+<p>化同底 2：</p>
+\[\begin{aligned}
+\log_4y&=\log_{2^2}y=\tfrac12\log_2y\\
+\tfrac12\log_2y&=\log_2x\ \Rightarrow\ \log_2y=2\log_2x=\log_2x^2\\
+y&=x^2
+\end{aligned}\]
+<p><span class="tag nt">注意</span>原式要有意義：\(x>0,\ y>0\)。所以是拋物線 \(y=x^2\) 的<b>右半支</b>且不含原點，從原點附近平貼 \(x\) 軸往上彎。</p>
+<div class="ans">(B)</div>
+</div>
+<div class="fig"><div id="f23_h7"></div>\(y=x^2,\ x>0\)</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-12</span><span class="no">8.</span><span class="ty">應用（地震規模）</span></div>
+<div class="stem">\(\log r=1.5m+4.8\)。某地震能量為 2018 花蓮規模 6.2 地震的 1000 倍以上，規模至少多少？</div>
+<div class="sol">
+\[\begin{aligned}
+\text{花蓮：}&\ \log r_0=1.5\times6.2+4.8=9.3+4.8=14.1\\
+r\ge1000\,r_0\ \Rightarrow\ &\log r\ge\log1000+\log r_0=3+14.1=17.1\\
+&1.5m+4.8\ge17.1\ \Rightarrow\ 1.5m\ge12.3\ \Rightarrow\ m\ge8.2
+\end{aligned}\]
+<p><span class="tag tk">技巧</span>能量 ×1000 ⇔ \(\log\) +3 ⇔ 規模 +\(\tfrac{3}{1.5}\)=+2，所以 \(6.2+2=8.2\)。</p>
+<div class="ans">8.2</div>
+</div></div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-12</span><span class="no">9.</span><span class="ty">圖形判讀・參數比較</span></div>
+<div class="stem">\(f(x)=\log_2(ax+b),\ g(x)=\log_2(cx+d)\) 都過 \((2,0)\)；\(x>2\) 時 \(g\) 在上；\(g\) 以 \(x=1\) 為漸近線。比較 \(a,c\) 與 \(b,d\)。</div>
+<div class="row"><div class="txt sol">
+<p><b>步驟 1</b>　過 \((2,0)\)：\(\log_2(2a+b)=0\Rightarrow2a+b=1\)；同理 \(2c+d=1\)。</p>
+\[\begin{aligned}
+b&=1-2a\ \Rightarrow\ ax+b=a(x-2)+1\\
+d&=1-2c\ \Rightarrow\ cx+d=c(x-2)+1
+\end{aligned}\]
+<p><b>步驟 2</b>　\(x>2\) 時 \(g(x)>f(x)\)，\(\log_2\) 遞增 → 真數也較大：</p>
+\[c(x-2)+1>a(x-2)+1\ \Rightarrow\ (c-a)(x-2)>0\ \Rightarrow\ c>a\]
+<p>（最後一步：因 \(x-2>0\)，兩邊同除不變向）</p>
+<p><b>步驟 3</b>　\(b-d=(1-2a)-(1-2c)=2(c-a)>0\Rightarrow b>d\)</p>
+<p><b>讀圖驗證</b>：\(g\) 漸近線 \(x=1\) → \(c\cdot1+d=0\)，配合 \(2c+d=1\) 得 \(c=1,d=-1\)，\(g=\log_2(x-1)\)；\(f\) 漸近線為 \(y\) 軸 → \(b=0,\ a=\tfrac12\)，\(f=\log_2\tfrac x2\)。確實 \(a\lt c,\ b>d\)。</p>
+<div class="ans">\(a\lt c,\ b>d\)</div>
+</div>
+<div class="fig"><div id="f23_h9"></div>\(f=\log_2\tfrac x2\)（紅），\(g=\log_2(x-1)\)（藍）</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-12</span><span class="no">10.</span><span class="ty">凹向性</span></div>
+<div class="stem">\(a,b>1\)，比較 \(\log\frac{a+b}2\) 與 \(\frac{\log a+\log b}2\)。</div>
+<div class="row"><div class="txt sol">
+<p><b>圖形法</b>　<span class="tag th">定理</span>凹口向下的函數，任兩點的連線（弦）在曲線<b>下方</b>。</p>
+<p>在 \(y=\log x\) 上取 \(A(a,\log a)\)、\(B(b,\log b)\)：</p>
+<table>
+<tr><th>點</th><th>\(x\) 座標</th><th>\(y\) 座標</th><th>位置</th></tr>
+<tr><td>曲線上</td><td>\(\frac{a+b}2\)</td><td>\(\log\frac{a+b}2\)</td><td>較高</td></tr>
+<tr><td>弦 \(\overline{AB}\) 中點</td><td>\(\frac{a+b}2\)</td><td>\(\frac{\log a+\log b}2\)</td><td>較低</td></tr>
+</table>
+<p>底數 \(10>1\)，凹口向下 → \(\log\frac{a+b}2\ge\frac{\log a+\log b}2\)。</p>
+<p><b>代數法</b>　<span class="tag th">定理</span>算幾不等式：</p>
+\[\begin{aligned}
+\frac{a+b}2&\ge\sqrt{ab}\\
+\log\frac{a+b}2&\ge\log\sqrt{ab}=\tfrac12\log(ab)=\frac{\log a+\log b}2 \why{log 遞增，保持方向}
+\end{aligned}\]
+<p>等號成立於 \(a=b\)。</p>
+<div class="ans">\(\log\frac{a+b}2\ge\frac{\log a+\log b}2\)（\(a\ne b\) 時取 \(>\)）</div>
+</div>
+<div class="fig"><div id="f23_h10"></div></div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-13</span><span class="no">11.</span><span class="ty">指數關係的圖形（多選）</span></div>
+<div class="stem">滿足 \(3^x=5^y\) 的點 \(P(x,y)\)：(A) \((0,0)\) (B) \((1,\log_53)\) (C) \((\log3,\log5)\) (D) 所有 \(P\) 構成一直線 (E) \(xy\ge0\)</div>
+<div class="row"><div class="txt sol">
+<p>兩邊取 log：</p>
+\[\log3^x=\log5^y\ \Rightarrow\ x\log3=y\log5\ \Rightarrow\ y=\frac{\log3}{\log5}x\approx\frac{0.4771}{0.6990}x\approx0.683x\]
+<p>(A) \(3^0=5^0=1\)。✓</p>
+<p>(B) \(x=1\)：\(3^1=3\)；\(y=\log_53\)：\(5^{\log_53}=3\)。相等。✓</p>
+<p>(C) 代入 \(x\log3=y\log5\)：左 \(=\log3\cdot\log3\)，右 \(=\log5\cdot\log5\)；\(\log3\ne\log5\)，不相等。（\((\log5,\log3)\) 才對）✗</p>
+<p>(D) \(y=\tfrac{\log3}{\log5}x\) 是過原點的直線。✓</p>
+<p>(E) \(xy=x\cdot\tfrac{\log3}{\log5}x=\tfrac{\log3}{\log5}x^2\)，係數 \(>0\)、\(x^2\ge0\) → \(xy\ge0\)。✓</p>
+<div class="ans">(A)(B)(D)(E)</div>
+</div>
+<div class="fig"><div id="f23_h11"></div>\(y=\tfrac{\log3}{\log5}x\)</div></div>
+</div>
+
+<div class="q">
+<div class="qh"><span class="pg">p.2-3-13</span><span class="no">12.</span><span class="ty">方程式／不等式</span></div>
+<div class="stem">(1) \(2\log(x+8)-\log(x+28)=1\)　(2) \(4^x-5\cdot2^{x-1}+1\lt0\)</div>
+<div class="sol">
+<p><b>(1)</b> 條件：\(x+8>0\) 且 \(x+28>0\Rightarrow x>-8\)</p>
+\[\begin{aligned}
+\log(x+8)^2-\log(x+28)&=1\\
+\log\frac{(x+8)^2}{x+28}&=\log10\ \Rightarrow\ (x+8)^2=10(x+28)\\
+x^2+16x+64&=10x+280\\
+x^2+6x-216&=0\ \Rightarrow\ (x+18)(x-12)=0 \why{$18\times12=216$，$18-12=6$}
+\end{aligned}\]
+<p>\(x=-18\) 不合（\(x>-8\)），\(x=12\)。驗算：\(2\log20-\log40=\log\tfrac{400}{40}=\log10=1\) ✓</p>
+<p><b>(2)</b> \(4^x=(2^x)^2\)，\(2^{x-1}=\tfrac12\cdot2^x\)。令 \(t=2^x>0\)：</p>
+\[\begin{aligned}
+t^2-\tfrac52t+1&\lt0\\
+2t^2-5t+2&\lt0 \why{兩邊乘 2}\\
+(2t-1)(t-2)&\lt0\ \Rightarrow\ \tfrac12\lt t\lt2\\
+2^{-1}\lt2^x&\lt2^1\ \Rightarrow\ -1\lt x\lt1
+\end{aligned}\]
+<div class="ans">(1) 12　(2) \(-1\lt x\lt1\)</div>
+</div></div>
+
+</div>
+
+<script>
+(function(){
+const C={b:'#1f5fbf',r:'#d1495b',g:'#1f8a4c',o:'#c77d14',k:'#333',m:'#999',p:'#7b4bb7'};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+// label mini-markup: a^{b}, a_{b}
+function lab(s){
+  let out='',i=0;s=String(s);
+  while(i<s.length){
+    const ch=s[i];
+    if((ch==='^'||ch==='_')&&s[i+1]==='{'){
+      let d=1,j=i+2;while(j<s.length&&d){if(s[j]==='{')d++;else if(s[j]==='}')d--;j++}
+      const inner=s.slice(i+2,j-1);
+      const sh=ch==='^'?'-0.45em':'0.3em', back=ch==='^'?'0.45em':'-0.3em';
+      out+=`<tspan dy="${sh}" font-size="0.72em">${esc(inner)}</tspan><tspan dy="${back}">​</tspan>`;
+      i=j;
+    }else{out+=esc(ch);i++}
+  }
+  return out;
+}
+function plot(id,o){
+  const el=document.getElementById(id); if(!el) return;
+  const W=o.w||300,H=o.h||230,pl=26,pr=12,pt=12,pb=22;
+  const [x0,x1]=o.xr,[y0,y1]=o.yr;
+  const X=x=>pl+(x-x0)/(x1-x0)*(W-pl-pr), Y=y=>pt+(y1-y)/(y1-y0)*(H-pt-pb);
+  const xs=o.xs||1, ys=o.ys||1;
+  const cid='c'+id;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" font-family="Times New Roman,serif" font-size="12">`;
+  s+=`<defs><clipPath id="${cid}"><rect x="${pl}" y="${pt}" width="${W-pl-pr}" height="${H-pt-pb}"/></clipPath>`;
+  s+=`<marker id="ar${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#333"/></marker></defs>`;
+  // grid
+  if(o.grid){
+    for(let x=Math.ceil(x0/xs)*xs;x<=x1+1e-9;x+=xs) s+=`<line x1="${X(x)}" y1="${pt}" x2="${X(x)}" y2="${H-pb}" stroke="#e6e6e6"/>`;
+    for(let y=Math.ceil(y0/ys)*ys;y<=y1+1e-9;y+=ys) s+=`<line x1="${pl}" y1="${Y(y)}" x2="${W-pr}" y2="${Y(y)}" stroke="#e6e6e6"/>`;
+  }
+  // axes
+  const ax0=(y0<=0&&y1>=0)?Y(0):H-pb, ay0=(x0<=0&&x1>=0)?X(0):pl;
+  s+=`<line x1="${pl-4}" y1="${ax0}" x2="${W-pr+6}" y2="${ax0}" stroke="#333" marker-end="url(#ar${id})"/>`;
+  s+=`<line x1="${ay0}" y1="${H-pb+4}" x2="${ay0}" y2="${pt-6}" stroke="#333" marker-end="url(#ar${id})"/>`;
+  s+=`<text x="${W-pr+2}" y="${ax0-5}" font-style="italic" text-anchor="end">${lab(o.xl||'x')}</text>`;
+  s+=`<text x="${ay0+5}" y="${pt+4}" font-style="italic">${lab(o.yl||'y')}</text>`;
+  if(!o.noO) s+=`<text x="${ay0-4}" y="${ax0+12}" text-anchor="end" font-style="italic">O</text>`;
+  if(!o.noTicks){
+    for(let x=Math.ceil(x0/xs)*xs;x<=x1-0.3*xs;x+=xs){ if(Math.abs(x)<1e-9) continue;
+      s+=`<line x1="${X(x)}" y1="${ax0-2.5}" x2="${X(x)}" y2="${ax0+2.5}" stroke="#333"/><text x="${X(x)}" y="${ax0+13}" text-anchor="middle" font-size="10" fill="#555">${+x.toFixed(2)}</text>`;}
+    for(let y=Math.ceil(y0/ys)*ys;y<=y1-0.3*ys;y+=ys){ if(Math.abs(y)<1e-9) continue;
+      s+=`<line x1="${ay0-2.5}" y1="${Y(y)}" x2="${ay0+2.5}" y2="${Y(y)}" stroke="#333"/><text x="${ay0-4}" y="${Y(y)+3.5}" text-anchor="end" font-size="10" fill="#555">${+y.toFixed(2)}</text>`;}
+  }
+  s+=`<g clip-path="url(#${cid})">`;
+  (o.polys||[]).forEach(p=>{s+=`<polygon points="${p.p.map(q=>X(q[0])+','+Y(q[1])).join(' ')}" fill="${p.fill||'#f6d9a8'}" opacity="${p.op||0.6}"/>`});
+  (o.hl||[]).forEach(h=>{s+=`<line x1="${pl}" y1="${Y(h.y)}" x2="${W-pr}" y2="${Y(h.y)}" stroke="${C[h.c]||h.c||'#888'}" stroke-dasharray="${h.dash===false?'':'4 3'}"/>`});
+  (o.vl||[]).forEach(v=>{s+=`<line x1="${X(v.x)}" y1="${pt}" x2="${X(v.x)}" y2="${H-pb}" stroke="${C[v.c]||v.c||'#888'}" stroke-dasharray="${v.dash===false?'':'4 3'}"/>`});
+  (o.fns||[]).forEach(F=>{
+    const a=F.dom?Math.max(F.dom[0],x0):x0, b=F.dom?Math.min(F.dom[1],x1):x1, N=600;
+    let d='',pen=false;
+    for(let i=0;i<=N;i++){const x=a+(b-a)*i/N, y=F.f(x);
+      if(!isFinite(y)||y>y1+(y1-y0)*3||y<y0-(y1-y0)*3){pen=false;continue}
+      d+=(pen?'L':'M')+X(x).toFixed(1)+','+Y(y).toFixed(1);pen=true;}
+    s+=`<path d="${d}" fill="none" stroke="${C[F.c]||F.c||C.b}" stroke-width="${F.w||1.8}" ${F.dash?'stroke-dasharray="5 4"':''}/>`;
+  });
+  (o.segs||[]).forEach(g=>{s+=`<line x1="${X(g[0])}" y1="${Y(g[1])}" x2="${X(g[2])}" y2="${Y(g[3])}" stroke="${C[g[4]]||g[4]||'#333'}" stroke-width="${g[6]||1.5}" ${g[5]?'stroke-dasharray="4 3"':''}/>`});
+  s+=`</g>`;
+  (o.pts||[]).forEach(P=>{
+    const col=C[P.c]||P.c||'#222';
+    s+=`<circle cx="${X(P.x)}" cy="${Y(P.y)}" r="3" fill="${P.hollow?'#fff':col}" stroke="${col}" stroke-width="1.3"/>`;
+    if(P.t) s+=`<text x="${X(P.x)+(P.dx??5)}" y="${Y(P.y)+(P.dy??-5)}" font-size="11" text-anchor="${P.a||'start'}" fill="${col}">${lab(P.t)}</text>`;
+  });
+  (o.tx||[]).forEach(T=>{s+=`<text x="${X(T.x)}" y="${Y(T.y)}" font-size="${T.fs||12}" font-style="italic" text-anchor="${T.a||'start'}" fill="${C[T.c]||T.c||'#222'}">${lab(T.t)}</text>`});
+  s+='</svg>';
+  el.innerHTML=s;
+}
+const L2=Math.log2, L10=Math.log10, P=Math.pow;
+
+// ---------- 2-1 ----------
+plot('f21_e2',{xr:[-3,3],yr:[-4.5,4.5],fns:[{f:x=>P(2,x),c:'b'},{f:x=>P(2,-x),c:'g',dash:1},{f:x=>-P(2,-x),c:'r'}],
+  pts:[{x:0,y:1,t:'(0,1)',dx:4,dy:12},{x:0,y:-1,t:'(0,−1)',c:'r',dx:4,dy:12}],
+  tx:[{x:1.55,y:3.6,t:'y=2^{x}',c:'b'},{x:-2.9,y:3.6,t:'y=2^{−x}',c:'g'},{x:-2.9,y:-3.2,t:'y=−2^{−x}',c:'r'}]});
+plot('f21_e3',{xr:[-2.5,2],yr:[-0.5,5],vl:[{x:1}],fns:[{f:x=>P(.5,x),c:'g'},{f:x=>P(4,x),c:'r'},{f:x=>P(2,x),c:'b'}],
+  pts:[{x:1,y:4,t:'(1,b)',c:'r'},{x:1,y:2,t:'(1,c)',c:'b'},{x:1,y:.5,t:'(1,a)',c:'g',dy:-4}],
+  tx:[{x:-2.4,y:4.4,t:'y=a^{x}',c:'g'},{x:.15,y:4.6,t:'y=b^{x}',c:'r'},{x:1.25,y:3.0,t:'y=c^{x}',c:'b'},{x:1.05,y:-0.35,t:'x=1',fs:10}]});
+plot('f21_e4',{grid:1,xr:[-2.5,2.5],yr:[-0.5,6],fns:[{f:x=>P(1/3,x),c:'r'},{f:x=>P(2,x),c:'b'},{f:x=>P(.5,x),c:'m',dash:1}],
+  vl:[{x:-1}],pts:[{x:-1,y:3,t:'(−1,3)',c:'r',a:'end',dx:-5},{x:-1,y:2,t:'(−1,2)',c:'m',a:'end',dx:-5,dy:12},{x:0,y:1,t:'(0,1)',dx:5,dy:12}],
+  tx:[{x:-1.75,y:5.6,t:'y=a^{x}',c:'r'},{x:1.4,y:5.6,t:'y=2^{x}',c:'b'}]});
+plot('f21_p6',{xr:[-3,4],yr:[-0.5,5],hl:[{y:1,c:'r'}],fns:[{f:x=>1+P(.6,x),c:'b'}],pts:[{x:0,y:2,t:'(0,2)'}],
+  tx:[{x:3.0,y:1.25,t:'y=1',c:'r',fs:11},{x:0.3,y:4.6,t:'y=1+(3/5)^{x}',c:'b'}]});
+plot('f21_e2b',{xr:[-3,2],yr:[-1,3.2],fns:[{f:x=>P(2,x),c:'b'},{f:x=>-x,c:'r'}],pts:[{x:-0.6412,y:0.6412,t:'唯一交點',a:'end',dx:-6,dy:-6}],
+  tx:[{x:1.0,y:2.7,t:'y=2^{x}',c:'b'},{x:-2.9,y:2.7,t:'y=−x',c:'r'}]});
+plot('f21_p7',{w:300,h:250,xr:[-1.5,4.7],yr:[-1.5,18],ys:4,fns:[{f:x=>x*x,c:'r'},{f:x=>P(2,x),c:'b'}],
+  pts:[{x:-0.767,y:0.588,t:'(−0.77,0.59)',a:'end',dx:-4,dy:-6},{x:2,y:4,t:'(2,4)',dx:6,dy:4},{x:4,y:16,t:'(4,16)',a:'end',dx:-6}],
+  tx:[{x:2.9,y:7,t:'y=x^{2}',c:'r'},{x:3.5,y:17,t:'y=2^{x}',c:'b',a:'end'}]});
+const p3=L2(3),q6=L2(6);
+plot('f21_e3b',{xr:[-1.5,3.6],yr:[-0.5,7.5],hl:[{y:3},{y:6}],fns:[{f:x=>P(2,x),c:'b'}],
+  segs:[[p3,3,q6,3,'g',1],[q6,3,q6,6,'g',1],[p3,3,q6,6,'r',0,2.2]],
+  pts:[{x:p3,y:3,t:'P',a:'end',dx:-5,dy:-4},{x:q6,y:6,t:'Q',a:'end',dx:-6,dy:-3}],
+  tx:[{x:2.1,y:2.4,t:'1',c:'g'},{x:2.7,y:4.4,t:'3',c:'g'},{x:-1.4,y:3.25,t:'y=3',fs:10},{x:-1.4,y:6.25,t:'y=6',fs:10},{x:.3,y:7,t:'y=2^{x}',c:'b'}]});
+plot('f21_e7',{w:300,h:230,xr:[-0.5,9.9],yr:[-4,64],ys:10,fns:[{f:t=>t*t-3*t+5,c:'m',dash:1,w:1.2},{f:t=>t*t-3*t+5,c:'b',dom:[1/9,9]}],
+  pts:[{x:1/9,y:379/81,t:'t=1/9',dx:2,dy:-8},{x:1.5,y:2.75,t:'頂點(1.5, 11/4)',dx:6,dy:12,c:'r'},{x:9,y:59,t:'(9, 59)',a:'end',dx:-6,c:'r'}],
+  xl:'t',yl:'f'});
+plot('f21_e8',{w:300,h:220,xr:[-0.5,10.5],yr:[-25,430],xs:2,ys:100,hl:[{y:25,c:'r'}],fns:[{f:x=>400*P(2,-x/2),c:'b',dom:[0,10.5]}],
+  pts:[{x:2,y:200,t:'(2,200)'},{x:4,y:100,t:'(4,100)'},{x:8,y:25,t:'(8,25)',c:'r',dy:-7}],tx:[{x:9.2,y:40,t:'25',c:'r',fs:10}],xl:'時間',yl:'濃度'});
+plot('f21_h3',{xr:[-4.5,2],yr:[-0.5,7],hl:[{y:1,c:'r'}],fns:[{f:x=>P(2,x),c:'m',dash:1},{f:x=>P(2,x+2)+1,c:'r'}],
+  pts:[{x:0,y:1,t:'(0,1)',c:'m',dx:5,dy:12},{x:-2,y:2,t:'(−2,2)',c:'r',a:'end',dx:-5},{x:0,y:5,t:'(0,5)',c:'r',dx:5}],
+  segs:[[0,1,-2,2,'g',1]],tx:[{x:-4.4,y:1.25,t:'y=1',c:'r',fs:10}]});
+plot('f21_h7',{w:300,h:240,xr:[-4,4.2],yr:[-0.5,11.5],ys:2,hl:[{y:1,c:'r'}],
+  fns:[{f:x=>P(3,x),c:'m',dash:1},{f:x=>P(3,x-2),c:'b'},{f:x=>9*P(3,x)+1,c:'r'}],
+  pts:[{x:0,y:1,c:'m'},{x:1,y:3,c:'m'},{x:2,y:1,t:'(2,1)',c:'b',dx:5,dy:12},{x:3,y:3,t:'(3,3)',c:'b'},{x:-2,y:2,t:'(−2,2)',c:'r',a:'end',dx:-5},{x:-1,y:4,t:'(−1,4)',c:'r',a:'end',dx:-5},{x:0,y:10,t:'(0,10)',c:'r',dx:5}]});
+plot('f21_h8',{grid:1,xr:[-2.5,2],yr:[-0.5,5],hl:[{y:1}],fns:[{f:x=>2*P(2,x),c:'r'},{f:x=>P(2,x)+1,c:'b'}],
+  pts:[{x:0,y:2,t:'(0,2)',dx:5,dy:12},{x:-1,y:1,t:'(−1,1)',c:'r',a:'end',dx:-4,dy:12}],
+  tx:[{x:.85,y:4.6,t:'f',c:'r'},{x:1.55,y:4.0,t:'g',c:'b'}]});
+plot('f21_h11',{w:300,h:240,xr:[-2.5,2.2],yr:[-0.5,10.8],ys:2,vl:[{x:1}],
+  fns:[{f:x=>P(2,x),c:'b'},{f:x=>P(10,x),c:'r'},{f:x=>P(Math.SQRT1_2,x),c:'g'},{f:x=>P(1/7,x),c:'o'}],
+  pts:[{x:1,y:10,t:'10',c:'r',dx:5},{x:1,y:2,t:'2',c:'b',dx:5},{x:1,y:.707,c:'g'},{x:1,y:1/7,c:'o'}],
+  tx:[{x:2.0,y:5.0,t:'Γ_{1}: 2^{x}',c:'b',a:'end'},{x:.25,y:9.6,t:'Γ_{2}',c:'r'},{x:-1.2,y:9.6,t:'Γ_{3}',c:'o'},{x:-2.45,y:2.4,t:'Γ_{4}',c:'g'}]});
+
+// ---------- 2-2 ----------
+plot('f22_h12',{xr:[-0.5,4.5],yr:[-0.5,2.5],fns:[{f:x=>x/2,c:'b'}],pts:[{x:2,y:1,t:'(2,1)',dx:4,dy:14}],xl:'log a',yl:'log b',
+  tx:[{x:3.0,y:1.85,t:'y=x/2',c:'b'}]});
+
+// ---------- 2-3 ----------
+plot('f23_e2',{xr:[-0.5,6.2],yr:[-3,3],hl:[{y:1}],fns:[{f:x=>L2(x),c:'b',dom:[1e-4,7]},{f:x=>L2(x)/2,c:'g',dom:[1e-4,7]},{f:x=>-L2(x),c:'r',dom:[1e-4,7]}],
+  pts:[{x:2,y:1,t:'(a,1)',c:'b',a:'end',dx:-3,dy:-6},{x:4,y:1,t:'(b,1)',c:'g',dx:4,dy:12},{x:.5,y:1,t:'(c,1)',c:'r',a:'end',dx:-4,dy:-5},{x:1,y:0}],
+  tx:[{x:4.6,y:2.6,t:'log_{a}x',c:'b'},{x:5.0,y:1.55,t:'log_{b}x',c:'g'},{x:4.4,y:-2.7,t:'log_{c}x',c:'r'},{x:5.6,y:.65,t:'y=1',fs:10}]});
+plot('f23_e6',{xr:[-0.5,11],yr:[-2,3],xs:1,vl:[{x:9}],hl:[{y:1}],polys:[{p:[[3,1],[9,1],[9,2]]}],
+  fns:[{f:x=>Math.log(x)/Math.log(3),c:'b',dom:[1e-4,12]}],segs:[[3,1,9,2,'r',0,2]],
+  pts:[{x:9,y:2,t:'P(9,2)',a:'end',dx:-4,dy:-6},{x:3,y:1,t:'Q(3,1)',a:'end',dx:-3,dy:-6},{x:9,y:1,t:'R(9,1)',a:'end',dx:-3,dy:14}],
+  tx:[{x:6,y:.6,t:'6',c:'g'},{x:9.25,y:1.4,t:'1',c:'g'}]});
+plot('f23_h2',{grid:1,xr:[-0.5,6],yr:[-1.5,4],fns:[{f:x=>1+L2(x),c:'b',dom:[1e-4,7]}],pts:[{x:1,y:1,t:'(1,1)',dx:5,dy:12},{x:4,y:3,t:'(4,3)',dx:2,dy:14}]});
+plot('f23_h4',{w:300,h:240,xr:[-0.5,6.2],yr:[-3.2,3.2],vl:[{x:1,c:'b'}],
+  fns:[{f:x=>L2(x),c:'m',dash:1,dom:[1e-4,7]},{f:x=>L2(x-1),c:'b',dom:[1+1e-4,7]},{f:x=>-L2(x),c:'g',dom:[1e-4,7]},{f:x=>1-L2(x),c:'r',dom:[1e-4,7]}],
+  pts:[{x:2,y:0,t:'(2,0)',dx:2,dy:14},{x:3,y:1,c:'b'},{x:1,y:1,t:'(1,1)',c:'r',dx:5,dy:-4},{x:1,y:0,c:'g'}],
+  tx:[{x:5.0,y:2.4,t:'(1)',c:'b'},{x:5.0,y:-2.0,t:'(2)',c:'g'},{x:5.0,y:-1.0,t:'(3)',c:'r'}]});
+plot('f23_h7',{xr:[-0.5,2.4],yr:[-0.5,4.6],fns:[{f:x=>x*x,c:'b',dom:[1e-3,2.3]}],pts:[{x:0,y:0,hollow:1,c:'b'},{x:1,y:1,t:'(1,1)',dx:5,dy:10},{x:2,y:4,t:'(2,4)',a:'end',dx:-6}],noO:1});
+plot('f23_h9',{xr:[-0.5,7],yr:[-4,2.6],vl:[{x:1}],fns:[{f:x=>L2(x/2),c:'r',dom:[1e-4,8]},{f:x=>L2(x-1),c:'b',dom:[1+1e-5,8]}],
+  pts:[{x:2,y:0,t:'(2,0)',dx:3,dy:14}],tx:[{x:6.9,y:2.1,t:'g',c:'b',a:'end'},{x:6.9,y:.95,t:'f',c:'r',a:'end'},{x:1.1,y:2.2,t:'x=1',fs:10}]});
+const A=1.5,B=10,M=(A+B)/2;
+plot('f23_h10',{w:300,h:220,xr:[-0.5,12],yr:[-0.35,1.25],noTicks:1,vl:[{x:A},{x:M},{x:B}],fns:[{f:x=>L10(x),c:'b',dom:[1e-4,13]}],
+  segs:[[A,L10(A),B,L10(B),'r',0,1.6]],
+  pts:[{x:A,y:L10(A),t:'(a, log a)',a:'end',dx:-4,dy:-6},{x:B,y:L10(B),t:'(b, log b)',a:'end',dx:-4,dy:-8},
+       {x:M,y:L10(M),t:'log((a+b)/2)',c:'b',a:'end',dx:-4,dy:-6},{x:M,y:(L10(A)+L10(B))/2,t:'平均',c:'r',dx:5,dy:12}],
+  tx:[{x:A,y:-0.25,t:'a',a:'middle'},{x:M,y:-0.25,t:'(a+b)/2',a:'middle'},{x:B,y:-0.25,t:'b',a:'middle'},{x:11.9,y:1.17,t:'y=log x',c:'b',a:'end'}]});
+const k=Math.log(3)/Math.log(5);
+plot('f23_h11',{xr:[-0.7,1.7],yr:[-0.45,1.25],xs:.5,ys:.5,fns:[{f:x=>k*x,c:'b'}],pts:[{x:0,y:0},{x:1,y:k,t:'(1, log_{5}3)',dx:6,dy:10},{x:Math.log10(5),y:Math.log10(3),c:'g',t:'(log5, log3)',dx:6,dy:12},{x:Math.log10(3),y:Math.log10(5),c:'r',hollow:1,t:'(log3, log5) 不在線上',a:'end',dx:-5,dy:-6}]});
+})();
+document.addEventListener('DOMContentLoaded',function(){
+  renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false,macros:{'\\why':'\\qquad\\textcolor{gray}{\\small\\text{#1}}'}});
+});
+</script>
+</body>
+</html>
