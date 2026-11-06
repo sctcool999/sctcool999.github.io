@@ -83,6 +83,13 @@ td.l{text-align:left}
   .katex-display{margin:.2em 0}
   @page{size:A4;margin:12mm}
 }
+/* 手機寬度：圖與表格不撐開整頁，表格過寬時在框內左右捲動 */
+@media screen and (max-width:600px){
+  .fig{max-width:100%}
+  table{display:block;overflow-x:auto;position:relative}
+  td .katex,th .katex{white-space:nowrap}
+  tr>:first-child{white-space:nowrap}
+}
 </style>
 </head>
 <body>
