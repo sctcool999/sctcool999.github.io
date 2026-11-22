@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4-6 簡諧運動動畫</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 版面：上方分頁、左側大畫布（動畫）、右側公式與控制、下方播放列。顏色依物理量固定：x 紅、v 藍、a 綠。 */
+:root{
+  --bg:#f4f6f8; --panel:#ffffff; --ink:#1c2733; --mute:#5d6b7a; --line:#d5dbe2;
+  --accent:#6a1b9a; --accent-ink:#ffffff;
+  --x:#2b8a3e; --v:#1864ab; --a:#c92a2a; --trace:#2f9e44;
+  --spring:#6b7684; --block:#7b8aa3; --blockEdge:#3f4a5c; --light:#c9a400; --yes:#0e7490; --no:#64748b;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --math:"Times New Roman","STIX Two Text",Times,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161c; --panel:#1a212a; --ink:#e6ebf0; --mute:#9aa7b4; --line:#33404d;
+    --accent:#c084fc; --accent-ink:#240a3d;
+    --x:#69db7c; --v:#74c0fc; --a:#ff8787; --trace:#8ce99a;
+    --spring:#a7b2be; --block:#8e9bb3; --blockEdge:#cfd8e6; --light:#facc15; --yes:#22d3ee; --no:#94a3b8;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161c; --panel:#1a212a; --ink:#e6ebf0; --mute:#9aa7b4; --line:#33404d;
+  --accent:#c084fc; --accent-ink:#240a3d;
+  --x:#69db7c; --v:#74c0fc; --a:#ff8787; --trace:#8ce99a;
+  --spring:#a7b2be; --block:#8e9bb3; --blockEdge:#cfd8e6; --light:#facc15; --yes:#22d3ee; --no:#94a3b8;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.55;display:flex;flex-direction:column}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+h1{font-size:18px;margin:0;font-weight:700;white-space:nowrap}
+h1 span{color:var(--mute);font-weight:500;font-size:13px;margin-left:8px}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+nav a{white-space:nowrap;padding:6px 12px;border:1px solid var(--line);border-radius:6px;color:var(--ink);text-decoration:none;font-weight:500;font-size:14px}
+nav a[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:12px;padding:12px 16px}
+.stage{display:flex;flex-direction:column;min-height:0;gap:8px}
+.wrap{flex:1;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative}
+canvas{display:block;width:100%;height:100%}
+.read{display:flex;flex-wrap:wrap;gap:6px 18px;padding:6px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;font-variant-numeric:tabular-nums;font-size:14px}
+.read b{font-family:var(--math);font-style:italic;font-weight:400;font-size:16px}
+.read .rx{color:var(--x)} .read .rv{color:var(--v)} .read .ra{color:var(--a)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+button{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700;min-width:76px}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bar label{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--mute)}
+.bar output{color:var(--ink);font-variant-numeric:tabular-nums;min-width:3.2em}
+.jump{display:flex;gap:4px;align-items:center;font-size:14px;color:var(--mute)}
+.jump button{padding:6px 9px;font-family:var(--math);font-size:15px}
+input[type=range]{accent-color:var(--accent)}
+aside{overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-height:0}
+aside section[hidden]{display:none}
+h2{font-size:15px;margin:0 0 6px;font-weight:700}
+h2:not(:first-child){margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+aside p{margin:4px 0}
+aside ul{margin:4px 0;padding-left:1.2em}
+aside li{margin:2px 0}
+.note{color:var(--mute);font-size:13px}
+.cx{color:var(--x)} .cv{color:var(--v)} .ca{color:var(--a)}
+.modes{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--line);padding:4px 8px;text-align:center;vertical-align:middle}
+th{background:var(--bg);font-weight:500}
+.sl{display:grid;grid-template-columns:5.2em 1fr 5.2em;align-items:center;gap:6px;margin:3px 0;font-size:14px}
+.sl output{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:15px}
+.big{font-size:32px;line-height:1.2;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)}
+.live{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.q{border:1px solid var(--line);border-left:6px solid var(--qc,var(--mute));border-radius:6px;padding:6px 10px;background:var(--bg);display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;column-gap:8px}
+.q{min-width:0}
+.q.wide{grid-column:1/-1}
+.q:not(.wide){grid-template-columns:minmax(0,1fr) auto}
+.q:not(.wide) .qn{grid-column:1/-1}
+.q:not(.wide) .qu{min-width:0}
+.qn{font-family:var(--math);font-style:italic;font-size:24px;color:var(--qc,var(--ink));white-space:nowrap}
+.qn small{font-family:var(--font);font-style:normal;font-size:13px;color:var(--mute);margin-right:6px}
+.qv{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;color:var(--qc,var(--ink));line-height:1.2}
+.qu{font-family:var(--math);font-style:italic;font-size:19px;color:var(--mute);min-width:2.3em}
+.g{grid-column:1/-1;height:8px;border-radius:4px;background:var(--line);position:relative;margin:5px 0 3px}
+.g i{position:absolute;top:0;bottom:0;background:var(--qc);border-radius:4px}
+.g::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--ink)}
+.qx{--qc:var(--x)} .qvel{--qc:var(--v)} .qa{--qc:var(--a)}
+.vxbox{border:1px solid var(--line);border-left:6px solid var(--v);border-radius:6px;background:var(--bg);padding:8px 10px;margin:8px 0}
+.axbox{border-left-color:var(--a)} .axbox .vxh,.axbox .big2 b{color:var(--a)}
+.vxh{font-weight:700;color:var(--v);margin-bottom:2px}
+.vxr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:15px;padding:1px 0}
+.vxr b{font-size:22px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vxr.big2 b{font-size:28px;color:var(--v)}
+.vxr i{font-family:var(--math);font-weight:400;font-size:18px;color:var(--mute)}
+.sys{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:12px;background:var(--panel)}
+.sysh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 8px;font-size:17px}
+.sysh b{white-space:nowrap}
+.tline{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:2px 0 8px;font-size:17px}
+.chip{font-size:13px;font-weight:700;padding:2px 8px;border-radius:999px;color:#fff;background:var(--no);white-space:nowrap}
+.chip[data-s="chg"]{background:var(--yes)}
+.grp{border-radius:6px;padding:6px 8px 4px;margin-top:6px;border:1px solid var(--line);border-left:6px solid var(--no);background:var(--bg)}
+.grp.yes{border-left-color:var(--yes)}
+.gh{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute);margin-bottom:2px}
+.pill{font-size:15px;font-weight:700;color:#fff;background:var(--no);border-radius:4px;padding:1px 10px;white-space:nowrap}
+.yes .pill{background:var(--yes)}
+.loc{display:flex;gap:4px;flex-wrap:wrap}
+.loc button{padding:3px 7px;font-size:13px}
+#restore{width:100%;margin-bottom:10px}
+.cmp td:first-child,.cmp th:first-child{white-space:nowrap}
+.cmp .y{color:var(--yes);font-weight:700} .cmp .n{color:var(--no);font-weight:700}
+.tcard{border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:6px;background:var(--bg);padding:6px 10px;font-size:17px}
+.tcard .note{display:block}
+mjx-container{font-size:108%!important}
+mjx-container[display="true"]{margin:.45em 0!important;overflow-x:auto;overflow-y:hidden}
+@media (max-width:860px){
+  html,body{height:auto}
+  main{grid-template-columns:minmax(0,1fr)}
+  .wrap{flex:none;height:72vh;min-height:360px}
+}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'local'},startup:{typeset:false}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" defer></script>
+</head>
+<body>
+<header>
+  <h1>4-6 簡諧運動<span>選修物理 I 教學動畫</span></h1>
+  <nav id="nav">
+    <a href="#terms">1 名詞與性質</a>
+    <a href="#circle">2 參考圓投影</a>
+    <a href="#graphs">3 函數圖形</a>
+    <a href="#period">4 一般彈簧 vs 小角度單擺（θ&lt;5°）</a>
+  </nav>
+</header>
+<main>
+  <div class="stage">
+    <div class="wrap" id="wrap"><canvas id="cv" aria-label="簡諧運動動畫"></canvas></div>
+    <div class="read" id="read">
+      <span><b>t</b> = <span id="rt">0.00</span> <b>T</b></span>
+      <span><b>θ</b> = <b>ωt</b> = <span id="rth">0</span>°</span>
+      <span class="rx"><b>x</b> = <span id="rx">+1.00</span> <b>R</b></span>
+      <span class="rv"><b>v</b> = <span id="rv">0.00</span> <b>Rω</b></span>
+      <span class="ra"><b>a</b> = <span id="ra">−1.00</span> <b>Rω</b>²</span>
+    </div>
+    <div class="bar">
+      <button class="pri" id="play">暫停</button>
+      <button id="reset">重設</button>
+      <div class="jump" id="jump">跳到 <b style="font-family:var(--math);font-style:italic;font-weight:400">t</b> =
+        <button data-q="0">0</button><button data-q="1"><i>T</i>/4</button><button data-q="2"><i>T</i>/2</button><button data-q="3">3<i>T</i>/4</button><button data-q="4"><i>T</i></button>
+      </div>
+      <label for="spd">播放速度 <input type="range" id="spd" min="0.25" max="2" step="0.25" value="1"><output id="spdo">1.00×</output></label>
+    </div>
+  </div>
+  <aside>
+    <div class="live" id="live">
+      <div class="q"><span class="qn"><small>時間</small>t</span><span class="qv" id="lt">0.00</span><span class="qu">T</span></div>
+      <div class="q"><span class="qn"><small>角位置</small>θ</span><span class="qv" id="lth">0</span><span class="qu">°</span></div>
+      <div class="q wide qx"><span class="qn"><small>位移</small>x</span><span class="qv" id="lx">+1.00</span><span class="qu">R</span><div class="g"><i id="gx"></i></div></div>
+      <div class="q wide qvel"><span class="qn"><small>速度</small>v</span><span class="qv" id="lv">0.00</span><span class="qu">Rω</span><div class="g"><i id="gv"></i></div></div>
+      <div class="q wide qa"><span class="qn"><small>加速度</small>a</span><span class="qv" id="la">−1.00</span><span class="qu">Rω²</span><div class="g"><i id="ga"></i></div></div>
+    </div>
+    <section id="p-terms">
+      <h2>定義</h2>
+      <p>合力與位移量值成正比，且永遠指向平衡點：</p>
+      \[\vec F=-k\,\vec x\]
+      <h2>名詞</h2>
+      <ul>
+        <li><b>平衡點 O</b>：合力為零、速率最大；彈簧原長處</li>
+        <li><b>端點 A、B</b>：折返點，速度為零、加速度量值最大；放手點即端點</li>
+        <li><b class="cx">位移 \(x\)</b>：由平衡點量起的位置向量</li>
+        <li><b>振幅 \(R\)</b>：端點到平衡點的距離</li>
+        <li><b>週期 \(T\)</b>、<b>頻率 \(f\)</b>（Hz）、<b>角頻率 \(\omega\)</b></li>
+      </ul>
+      <h2>看動畫</h2>
+      <ul>
+        <li><span class="cv">藍色箭頭是速度 \(v\)</span>，<span class="ca">綠色箭頭是加速度 \(a\)</span>（與合力同向）</li>
+        <li>下方軌跡把每個時刻的位置往下排開，和講義的連續圖相同</li>
+        <li>對稱性：位置、速度、加速度的量值都對稱於 O 的兩側</li>
+      </ul>
+    </section>
+    <section id="p-circle" hidden>
+      <h2>顯示的物理量</h2>
+      <div class="modes" id="modes">
+        <button data-m="pos">位置</button><button data-m="vel">速度</button><button data-m="acc">加速度</button><button data-m="all" aria-pressed="true">全部</button>
+      </div>
+      <div class="vxbox" id="vxbox">
+        <div class="vxh">速度的 \(x\) 分量</div>
+        <div class="vxr"><span>\(\theta\)</span><b id="vth">0°</b></div>
+        <div class="vxr"><span>\(\sin\theta\)</span><b id="vsn">0.00</b></div>
+        <div class="vxr big2"><span>\(v_x=-v\sin\theta\)</span><b id="vvx">0.00 <i>Rω</i></b></div>
+        <p class="note" id="vref">三角形中標示的角就是 \(\theta\)</p>
+      </div>
+      <div class="vxbox axbox">
+        <div class="vxh">加速度的 \(x\) 分量</div>
+        <div class="vxr"><span>\(\theta\)</span><b id="ath">0°</b></div>
+        <div class="vxr"><span>\(\cos\theta\)</span><b id="acs">1.00</b></div>
+        <div class="vxr big2"><span>\(a_x=-a\cos\theta\)</span><b id="aax">0.00 <i>Rω²</i></b></div>
+        <p class="note" id="aref">三角形中標示的角就是 \(\theta\)</p>
+      </div>
+      <p class="note">拖曳圓上的 P 點（或圓周任一處）可手動設定位置，動畫自動暫停；按「播放」繼續。</p>
+      <p class="note">平行光把等速圓周運動投影到屏幕上，影子的運動就是簡諧運動。等速圓周運動本身不是簡諧運動。</p>
+      <h2>對應</h2>
+      <table>
+        <tr><th>參考圓</th><th>SHM</th></tr>
+        <tr><td>O 圓心</td><td>O 平衡點</td></tr>
+        <tr><td>\(R\) 半徑</td><td>\(R\) 振幅</td></tr>
+        <tr><td>\(v=R\omega\) 速率</td><td>平衡點的最大速率</td></tr>
+        <tr><td>\(a=R\omega^2\) 向心加速度</td><td>端點的最大加速度</td></tr>
+        <tr><td>\(\omega\) 角速度</td><td>\(\omega\) 角頻率</td></tr>
+      </table>
+      <h2>水平投影（\(t=0\) 在端點，\(\theta=\omega t\)）</h2>
+      \[\begin{array}{rcrl}
+      x&=&R&\cos\omega t\\[3pt]
+      v_x&=&-R\omega&\sin\omega t\\[3pt]
+      a_x&=&-R\omega^2&\cos\omega t\;=\;-\omega^2x
+      \end{array}\]
+      <p class="note">初角位置 \(\theta_0\neq 0\) 時：\(x=R\cos(\omega t+\theta_0)\)</p>
+    </section>
+    <section id="p-graphs" hidden>
+      <h2>運動函數</h2>
+      \[\begin{array}{rcrl}
+      x&=&R&\cos\omega t\\[3pt]
+      v&=&-R\omega&\sin\omega t\\[3pt]
+      a&=&-R\omega^2&\cos\omega t
+      \end{array}\]
+      <p class="note">\(x\text{-}t\) 微分得 \(v\text{-}t\)，\(v\text{-}t\) 再微分得 \(a\text{-}t\)。</p>
+      <h2>兩個特殊位置</h2>
+      <table>
+        <tr><th></th><th class="cx">\(x\)</th><th class="cv">\(v\)</th><th class="ca">\(a\)</th></tr>
+        <tr><td>平衡點</td><td>\(0\)</td><td>\(R\omega\)（最大）</td><td>\(0\)（最小）</td></tr>
+        <tr><td>端點</td><td>\(R\)</td><td>\(0\)</td><td>\(R\omega^2=\dfrac{kR}{m}\)（最大）</td></tr>
+      </table>
+      <h2>看動畫</h2>
+      <ul>
+        <li>用「跳到」按鈕停在 \(T/4\)、\(T/2\) 等時刻，對照三條曲線的值</li>
+        <li>\(a\) 與 \(x\) 永遠反相；\(v\) 與 \(x\) 相差四分之一週期</li>
+      </ul>
+    </section>
+    <section id="p-period" hidden>
+      <div class="sys">
+        <div class="sysh"><b>一般彈簧</b><span>\(T=2\pi\sqrt{\dfrac{m}{k}}\)</span></div>
+        <div class="tline">\(T\) = <b class="big" id="sT">1.40</b> s <span class="chip" id="sC">與原始相同</span></div>
+        <div class="grp yes"><div class="gh"><span class="pill">有關</span>改了 \(T\) 會變</div>
+          <div class="sl"><label for="sm">質量 \(m\)</label><input type="range" id="sm" min="0.5" max="4" step="0.1" value="1"><output id="smo"></output></div>
+          <div class="sl"><label for="sk">力常數 \(k\)</label><input type="range" id="sk" min="5" max="80" step="1" value="20"><output id="sko"></output></div>
+        </div>
+        <div class="grp"><div class="gh"><span class="pill">無關</span>改了 \(T\) 不變</div>
+          <div class="sl"><label for="sR">振幅 \(R\)</label><input type="range" id="sR" min="0.05" max="0.3" step="0.01" value="0.2"><output id="sRo"></output></div>
+          <div class="sl"><span>地點 \(g\)</span><div class="loc" id="sg"><button data-g="1.62">月球</button><button data-g="3.71">火星</button><button data-g="9.8" aria-pressed="true">地球</button><button data-g="24.79">木星</button></div><output id="sgo"></output></div>
+        </div>
+      </div>
+      <div class="sys">
+        <div class="sysh"><b>小角度單擺（θ&lt;5°）</b><span>\(T=2\pi\sqrt{\dfrac{L}{g}}\)</span></div>
+        <div class="tline">\(T\) = <b class="big" id="pT">2.01</b> s <span class="chip" id="pC">與原始相同</span></div>
+        <div class="grp yes"><div class="gh"><span class="pill">有關</span>改了 \(T\) 會變</div>
+          <div class="sl"><label for="pL">擺長 \(L\)</label><input type="range" id="pL" min="0.2" max="2" step="0.05" value="1"><output id="pLo"></output></div>
+          <div class="sl"><span>地點 \(g\)</span><div class="loc" id="pg"><button data-g="1.62">月球</button><button data-g="3.71">火星</button><button data-g="9.8" aria-pressed="true">地球</button><button data-g="24.79">木星</button></div><output id="pgo"></output></div>
+        </div>
+        <div class="grp"><div class="gh"><span class="pill">無關</span>改了 \(T\) 不變</div>
+          <div class="sl"><label for="pm">質量 \(m\)</label><input type="range" id="pm" min="0.5" max="4" step="0.1" value="1"><output id="pmo"></output></div>
+          <div class="sl"><label for="pa">擺角 \(\theta\)</label><input type="range" id="pa" min="1" max="5" step="0.5" value="5"><output id="pao"></output></div>
+        </div>
+      </div>
+      <button id="restore">恢復原始值</button>
+      <h2>比較</h2>
+      <table class="cmp">
+        <tr><th></th><th>一般彈簧</th><th>小角度單擺</th></tr>
+        <tr><td>\(k\) 值</td><td>由彈簧本身材料決定</td><td>\(\dfrac{mg}{L}\)</td></tr>
+        <tr><td>週期 \(T\)</td><td>\(2\pi\sqrt{\dfrac{m}{k}}\)</td><td>\(2\pi\sqrt{\dfrac{L}{g}}\)</td></tr>
+        <tr><td>質量 \(m\)</td><td class="y">有關</td><td class="n">無關</td></tr>
+        <tr><td>地點 \(g\)</td><td class="n">無關</td><td class="y">有關</td></tr>
+        <tr><td>振幅／擺角</td><td class="n">無關</td><td class="n">無關</td></tr>
+      </table>
+      <p class="note">灰色是原始設定（\(m=1\ \mathrm{kg}\)、\(k=20\ \mathrm{N/m}\)、\(L=1\ \mathrm{m}\)、地球），用來對照：改「無關」的量，兩者始終同步；改「有關」的量，兩者逐漸錯開。每次調整都會讓兩者從端點重新同時出發。</p>
+      <p class="note">\(k\) 泛指簡諧力常數，不單指彈簧的力常數。擺角在畫面上放大 4 倍顯示。</p>
+    </section>
+  </aside>
+</main>
+<script>
+(function(){
+'use strict';
+var T0=4, W0=2*Math.PI/T0, TAU=2*Math.PI;
+var SCENES=['terms','circle','graphs','period'];
+var S={t:0,playing:!matchMedia('(prefers-reduced-motion: reduce)').matches,speed:1,scene:'terms',mode:'all',
+  sp:{m:1,k:20,R:0.2,g:9.8,ph:0,ph0:0}, pd:{L:1,g:9.8,th:5,m:1,ph:0,ph0:0}};
+var DEF={sp:{m:1,k:20,R:0.2,g:9.8},pd:{L:1,g:9.8,th:5,m:1}};
+var cv=document.getElementById('cv'), wrap=document.getElementById('wrap'), ctx=cv.getContext('2d');
+var W=0,H=0,C={},FS=14,G={},drag={on:false,hover:false};
+function $(id){return document.getElementById(id);}
+
+function colors(){
+  var cs=getComputedStyle(document.documentElement);
+  ['bg','panel','ink','mute','line','accent','x','v','a','trace','spring','block','blockEdge','light','yes','no'].forEach(function(k){
+    C[k]=cs.getPropertyValue('--'+k).trim();
+  });
+}
+function resize(){
+  var r=wrap.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  W=Math.max(200,r.width); H=Math.max(200,r.height);
+  cv.width=Math.round(W*d); cv.height=Math.round(H*d);
+  ctx.setTransform(d,0,0,d,0,0);
+  FS=Math.max(12,Math.min(18,W/55));
+  draw();
+}
+new ResizeObserver(resize).observe(wrap);
+
+/* ---------- drawing helpers ---------- */
+function txt(s,x,y,o){
+  o=o||{};
+  ctx.font=(o.math?'italic ':'')+(o.bold?'700 ':'')+((o.size||FS)*(o.math?1.15:1))+'px '+(o.math?'"Times New Roman",Times,serif':'"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif');
+  ctx.fillStyle=o.color||C.ink; ctx.textAlign=o.align||'center'; ctx.textBaseline=o.base||'middle';
+  ctx.fillText(s,x,y);
+}
+function line(x1,y1,x2,y2,color,w,dash){
+  ctx.save(); ctx.beginPath(); ctx.setLineDash(dash||[]); ctx.strokeStyle=color; ctx.lineWidth=w||1;
+  ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrow(x1,y1,x2,y2,color,w){
+  var dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy); if(L<1.5) return;
+  w=w||3; var h=Math.min(L,4+w*2.6), ux=dx/L, uy=dy/L;
+  ctx.save(); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w; ctx.lineCap='butt';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*h*0.8,y2-uy*h*0.8); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-ux*h-uy*h*0.5,y2-uy*h+ux*h*0.5);
+  ctx.lineTo(x2-ux*h+uy*h*0.5,y2-uy*h-ux*h*0.5); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function wall(x,y,h){
+  ctx.save(); ctx.fillStyle=C.spring; ctx.fillRect(x-7,y-h/2,7,h);
+  ctx.strokeStyle=C.panel; ctx.lineWidth=1;
+  for(var i=-h/2+4;i<h/2;i+=7){ctx.beginPath();ctx.moveTo(x-7,y+i+4);ctx.lineTo(x,y+i-3);ctx.stroke();}
+  ctx.restore();
+}
+function spring(x1,x2,y,n,amp,w){
+  var lead=7, L=x2-x1-2*lead, seg=L/(n*2);
+  ctx.save(); ctx.strokeStyle=C.spring; ctx.lineWidth=w||1.6; ctx.lineJoin='round'; ctx.beginPath();
+  ctx.moveTo(x1,y); ctx.lineTo(x1+lead,y);
+  for(var i=0;i<n*2;i++){ctx.lineTo(x1+lead+seg*(i+0.5),y+(i%2?amp:-amp));}
+  ctx.lineTo(x2-lead,y); ctx.lineTo(x2,y); ctx.stroke(); ctx.restore();
+}
+function block(x,y,bw,bh,alpha){
+  ctx.save(); ctx.globalAlpha=alpha==null?1:alpha; ctx.fillStyle=C.block; ctx.strokeStyle=C.blockEdge; ctx.lineWidth=1.5;
+  ctx.fillRect(x-bw/2,y-bh/2,bw,bh); ctx.strokeRect(x-bw/2,y-bh/2,bw,bh); ctx.restore();
+}
+function dot(x,y,r,color,ring){
+  ctx.save(); ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fillStyle=color; ctx.fill();
+  if(ring){ctx.strokeStyle=ring;ctx.lineWidth=1.5;ctx.stroke();} ctx.restore();
+}
+function floor(x1,x2,y){ line(x1,y,x2,y,C.line,2); }
+
+/* ---------- scene 1：名詞與性質 ---------- */
+function sceneTerms(){
+  var th=W0*S.t, c=Math.cos(th), s=Math.sin(th);
+  var wx=Math.max(14,W*0.07), cx=W*0.57, R=Math.min(W*0.25,cx-wx-60), bw=Math.max(34,Math.min(48,W*0.06)), bh=bw*0.8;
+  var y=Math.max(96,H*0.24), bx=cx+R*c, VL=R*0.55;
+  var top=y-bh/2-58, yT=y+bh/2+46, yB=H-16;
+  // 參考線
+  [[cx-R,'端點 B'],[cx,'平衡點 O'],[cx+R,'端點 A']].forEach(function(p,i){
+    line(p[0],top+18,p[0],yB,i==1?C.mute:C.line,1,[5,5]);
+    txt(p[1],p[0],top+6,{color:i==1?C.ink:C.mute,bold:i==1});
+  });
+  // 軌跡（時間向下）
+  var win=1.5*T0, hT=yB-yT;
+  if(hT>40){
+    ctx.save(); ctx.beginPath(); ctx.strokeStyle=C.trace; ctx.lineWidth=2.5;
+    var n=160, started=false;
+    for(var i=0;i<=n;i++){
+      var tau=win*i/n, tt=S.t-tau; if(tt<0) break;
+      var px=cx+R*Math.cos(W0*tt), py=yT+hT*i/n;
+      if(!started){ctx.moveTo(px,py);started=true;} else ctx.lineTo(px,py);
+    }
+    ctx.stroke(); ctx.restore();
+    var k0=Math.floor(S.t/(T0/8));
+    for(var k=k0;k>=0;k--){
+      var tk=k*T0/8, ta=S.t-tk; if(ta>win) break;
+      var px2=cx+R*Math.cos(W0*tk), py2=yT+hT*ta/win;
+      block(px2,py2,bw*0.5,bh*0.5,0.75*(1-ta/win)+0.1);
+    }
+    txt('時間',wx+4,yT+hT*0.5-12,{color:C.mute,align:'left',size:FS*0.9});
+    arrow(wx+12,yT+hT*0.5+2,wx+12,yT+hT*0.5+40,C.mute,1.5);
+  }
+  // 彈簧系統
+  floor(wx,cx+R+bw,y+bh/2+1);
+  wall(wx,y,bh+22);
+  spring(wx,bx-bw/2,y,11,bh*0.26);
+  block(bx,y,bw,bh);
+  // 向量
+  var vy=y-bh/2-12, ay=y-bh/2-30;
+  arrow(bx,vy,bx-VL*s,vy,C.v,3.5);
+  if(Math.abs(s)>0.06) txt('v',bx-VL*s+(s>0?-12:12),vy-1,{math:true,color:C.v});
+  arrow(bx,ay,bx-VL*c,ay,C.a,3.5);
+  if(Math.abs(c)>0.06) txt('a',bx-VL*c+(c>0?-12:12),ay-1,{math:true,color:C.a});
+  // 位移
+  var xy=y+bh/2+18;
+  if(Math.abs(c)>0.03){
+    arrow(cx,xy,bx,xy,C.x,2.5);
+    txt('x',(cx+bx)/2,xy+13,{math:true,color:C.x});
+  }
+  dot(cx,xy,3,C.x);
+  // 狀態
+  var msg='';
+  if(Math.abs(c)>0.985) msg='端點：v = 0，a 量值最大';
+  else if(Math.abs(c)<0.12) msg='平衡點：v 量值最大，a = 0';
+  if(msg) txt(msg,cx,top-14>10?top-14:10,{color:C.accent,bold:true});
+}
+
+/* ---------- scene 2：參考圓 ---------- */
+function sceneCircle(){
+  var th=W0*S.t, c=Math.cos(th), s=Math.sin(th), m=S.mode;
+  var R=Math.max(50,Math.min(W*0.22,(H-228)/2.3)), tot=220+2.3*R, oy=Math.max(0,(H-tot)/2);
+  var cx=W/2, cy=oy+76+R, sy=cy+1.3*R+24, by=sy+64, VL=R*0.78, VA=R*0.5;
+  var px=cx+R*c, py=cy-R*s, bw=Math.max(32,Math.min(44,W*0.055)), bh=bw*0.8, wx=Math.max(12,cx-R-120);
+  // 平行光
+  for(var i=-4;i<=4;i++){ var lx=cx+i*R/3.6; arrow(lx,oy+24,lx,oy+56,C.light,1.6); }
+  txt('平行光',cx-R*4/3.6-12,oy+40,{color:C.light,align:'right'});
+  // 八個等分點與其投影
+  for(var k=0;k<8;k++){
+    var a=k*TAU/8, qx=cx+R*Math.cos(a), qy=cy-R*Math.sin(a);
+    line(qx,qy,qx,sy,C.line,1,[2,5]); dot(qx,qy,2.5,C.mute); dot(qx,sy,2.5,C.mute);
+  }
+  // 圓與軸
+  ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.strokeStyle=C.mute; ctx.lineWidth=1.6; ctx.stroke(); ctx.restore();
+  line(cx-R-12,cy,cx+R+12,cy,C.line,1,[4,4]); line(cx,cy-R-8,cx,cy+R+8,C.line,1,[4,4]);
+  // 半徑、角度
+  line(cx,cy,px,py,C.ink,1.6);
+  ctx.save(); ctx.beginPath(); var ang=((th%TAU)+TAU)%TAU; ctx.arc(cx,cy,R*0.2,0,-ang,true); ctx.strokeStyle=C.accent; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+  txt('θ',cx+R*0.31*Math.cos(ang/2),cy-R*0.31*Math.sin(ang/2),{math:true,color:C.accent});
+  txt('O',cx-11,cy+13,{color:C.mute,size:FS*0.9});
+  var rk=-1; if(ang>=Math.PI/2&&(-s)*(c<0?1:-1)>=0) rk=1;
+  txt('R',cx+R*0.28*c+rk*13*s,cy-R*0.28*s+rk*13*c,{math:true});
+  // 投影線、屏幕
+  line(px,py,px,by-bh/2,C.ink,1,[5,4]);
+  line(cx-R-30,sy,cx+R+30,sy,C.ink,2);
+  txt('屏幕',cx+R+36,sy,{color:C.mute,align:'left'});
+  // 位置
+  if(m=='pos'||m=='all'){
+    arrow(cx,cy,cx+R*c,cy,C.x,3);
+    if(Math.abs(c)>0.12) txt('x',cx+R*c/2,cy+14,{math:true,color:C.x});
+  }
+  // 速度
+  if(m=='vel'||m=='all'){
+    var tx=px-VL*s, ty=py-VL*c, legX=Math.abs(tx-px), legY=Math.abs(ty-py);
+    // 直角三角形：P、(tx,py)、v 箭頭尖端；直角在 (tx,py)
+    ctx.save(); ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(tx,py); ctx.lineTo(tx,ty); ctx.closePath();
+    ctx.globalAlpha=0.16; ctx.fillStyle=C.v; ctx.fill(); ctx.restore();
+    if(legY>4) line(tx,py,tx,ty,C.v,1.2,[4,3]);
+    if(legX>14&&legY>14){
+      var rs=9, sx=tx+(px>tx?rs:-rs), sy2=py+(ty>py?rs:-rs);
+      ctx.save(); ctx.beginPath(); ctx.moveTo(sx,py); ctx.lineTo(sx,sy2); ctx.lineTo(tx,sy2);
+      ctx.strokeStyle=C.v; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+    }
+    if(legX>4) arrow(px,py,tx,py,C.v,2.5);
+    arrow(px,py,tx,ty,C.v,3.5);
+    // θ 標在 v 與鉛直邊之間（v 箭頭尖端）
+    if(legX>14&&legY>14){
+      var a1=Math.atan2(py-ty,px-tx), a2=Math.atan2(py-ty,0), d=a2-a1;
+      while(d>Math.PI) d-=TAU; while(d<-Math.PI) d+=TAU;
+      var ar=Math.min(26,Math.hypot(legX,legY)*0.3);
+      ctx.save(); ctx.beginPath(); ctx.arc(tx,ty,ar,a1,a2,d<0); ctx.strokeStyle=C.accent; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+      var am=a1+d/2, deg=ang*180/Math.PI, lab=deg<90?'θ':deg<180?'180°−θ':deg<270?'θ−180°':'360°−θ';
+      if(lab.length>1){ var sd=tx>px?1:-1;
+        txt(lab,tx+sd*8,ty+(py>ty?1:-1)*ar*0.75,{math:true,color:C.accent,align:sd>0?'left':'right'}); }
+      else txt(lab,tx+(ar+11)*Math.cos(am),ty+(ar+11)*Math.sin(am),{math:true,color:C.accent,size:FS*1.1});
+    }
+    // 標籤：v 標在斜邊外側，vₓ 標在水平邊外側
+    var mx=(px+tx)/2, my=(py+ty)/2, nx=-(ty-py), ny=tx-px, nl=Math.hypot(nx,ny)||1;
+    if(nx*(tx-mx)+ny*(py-my)>0){ nx=-nx; ny=-ny; }
+    txt('v',mx+14*nx/nl,my+14*ny/nl,{math:true,color:C.v,bold:true});
+    if(legX>18) txt('vₓ',(px+tx)/2,py+(ty<py?-12:12),{math:true,color:C.v,size:FS*0.95});
+    arrow(px,sy-13,px-VL*s,sy-13,C.v,3.5);
+  }
+  // 加速度
+  if(m=='acc'||m=='all'){
+    var ax=px-VA*c, ay=py+VA*s, gX=Math.abs(ax-px), gY=Math.abs(ay-py);
+    // 直角三角形（斜線）：P、(px,ay)、a 箭頭尖端；直角在 (px,ay)，θ 在 a 尖端
+    ctx.save(); ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,ay); ctx.lineTo(ax,ay); ctx.closePath();
+    ctx.globalAlpha=0.12; ctx.fillStyle=C.a; ctx.fill(); ctx.globalAlpha=0.55; ctx.clip();
+    ctx.strokeStyle=C.a; ctx.lineWidth=1; ctx.beginPath();
+    var x0=Math.min(px,ax)-gY, x1=Math.max(px,ax)+gY, y0=Math.min(py,ay), y1=Math.max(py,ay);
+    for(var hx=x0;hx<x1;hx+=8){ ctx.moveTo(hx,y1); ctx.lineTo(hx+(y1-y0),y0); }
+    ctx.stroke(); ctx.restore();
+    if(gY>4) line(px,py,px,ay,C.a,1.2,[4,3]);
+    if(gX>14&&gY>14){
+      var rs2=9, qx2=px+(ax>px?rs2:-rs2), qy2=ay+(py>ay?rs2:-rs2);
+      ctx.save(); ctx.beginPath(); ctx.moveTo(qx2,ay); ctx.lineTo(qx2,qy2); ctx.lineTo(px,qy2);
+      ctx.strokeStyle=C.a; ctx.lineWidth=1.2; ctx.stroke(); ctx.restore();
+    }
+    if(gX>4) arrow(px,ay,ax,ay,C.a,2.5);
+    arrow(px,py,ax,ay,C.a,3.5);
+    if(gX>14&&gY>14){
+      var b1=Math.atan2(py-ay,px-ax), b2=Math.atan2(0,px-ax), e=b2-b1;
+      while(e>Math.PI) e-=TAU; while(e<-Math.PI) e+=TAU;
+      var br=Math.min(24,Math.hypot(gX,gY)*0.3);
+      ctx.save(); ctx.beginPath(); ctx.arc(ax,ay,br,b1,b2,e<0); ctx.strokeStyle=C.accent; ctx.lineWidth=2; ctx.stroke(); ctx.restore();
+      var bm=b1+e/2, dg2=ang*180/Math.PI, lab2=dg2<90?'θ':dg2<180?'180°−θ':dg2<270?'θ−180°':'360°−θ';
+      if(lab2.length>1){ var sd2=ax>px?1:-1;
+        txt(lab2,ax+sd2*12,ay+(ay>py?1:-1)*4,{math:true,color:C.accent,align:sd2>0?'left':'right'}); }
+      else txt(lab2,ax+(br+11)*Math.cos(bm),ay+(br+11)*Math.sin(bm),{math:true,color:C.accent,size:FS*1.1});
+    }
+    var mx2=px+(ax-px)*0.7, my2=py+(ay-py)*0.7, nx2=-(ay-py), ny2=ax-px, nl2=Math.hypot(nx2,ny2)||1;
+    if(nx2*(px-mx2)+ny2*(ay-my2)>0){ nx2=-nx2; ny2=-ny2; }
+    txt('a',mx2+14*nx2/nl2,my2+14*ny2/nl2,{math:true,color:C.a,bold:true});
+    if(gX>18) txt('aₓ',(px+ax)/2,ay+(ay>py?15:-15),{math:true,color:C.a,size:FS*0.95});
+    arrow(px,sy+13,px-VA*c,sy+13,C.a,3.5);
+  }
+  if(drag.hover||drag.on){ ctx.save(); ctx.beginPath(); ctx.arc(px,py,16,0,TAU); ctx.globalAlpha=0.22; ctx.fillStyle=C.light; ctx.fill(); ctx.restore(); }
+  dot(px,py,drag.on?9:8,C.light,C.ink); txt('P',px+16*c+4,py-16*s-4,{size:FS*0.95,bold:true});
+  G.cx=cx; G.cy=cy; G.R=R; G.px=px; G.py=py;
+  if(!S.playing&&!drag.on) txt('拖曳 P 點可改變位置',W-14,H-14,{align:'right',color:C.mute,size:FS*0.85});
+  dot(px,sy,6,C.ink);
+  // 同步的彈簧
+  floor(wx,cx+R+bw,by+bh/2+1); wall(wx,by,bh+18);
+  spring(wx,px-bw/2,by,9,bh*0.26); block(px,by,bw,bh);
+  txt('影子與彈簧上的物體同步運動',cx,by+bh/2+18,{color:C.mute,size:FS*0.9});
+}
+
+/* ---------- scene 3：函數圖形 ---------- */
+function sceneGraphs(){
+  var th=W0*S.t, c=Math.cos(th), s=Math.sin(th);
+  var gl=Math.max(58,W*0.09), gr=W-Math.max(26,W*0.04), gw=gr-gl;
+  var stripH=Math.max(64,H*0.15), y0=stripH*0.52, bw=34, bh=26;
+  var cx=W/2, R=Math.min(W*0.2,150), wx=cx-R-90; if(wx<12) wx=12;
+  var bx=cx+R*c;
+  line(cx,y0-bh/2-8,cx,y0+bh/2+4,C.mute,1,[4,4]);
+  floor(wx,cx+R+bw,y0+bh/2+1); wall(wx,y0,bh+14);
+  spring(wx,bx-bw/2,y0,9,7); block(bx,y0,bw,bh);
+  var span=2*T0, tc=S.t%span; if(S.t>0&&tc===0) tc=span;
+  var rows=[
+    {f:function(u){return Math.cos(u);},col:C.x,name:'x',hi:'+R',lo:'−R',val:c},
+    {f:function(u){return -Math.sin(u);},col:C.v,name:'v',hi:'+Rω',lo:'−Rω',val:-s},
+    {f:function(u){return -Math.cos(u);},col:C.a,name:'a',hi:'+Rω²',lo:'−Rω²',val:-c}];
+  var gTop=stripH+6, rh=(H-gTop-10)/3, xc=gl+gw*tc/span;
+  rows.forEach(function(r,i){
+    var ym=gTop+rh*(i+0.5), A=rh*0.33;
+    line(gl,ym-A,gr,ym-A,C.line,1,[4,4]); line(gl,ym+A,gr,ym+A,C.line,1,[4,4]);
+    arrow(gl,ym,gr+10,ym,C.mute,1.2); arrow(gl,ym+A+10,gl,ym-A-16,C.mute,1.2);
+    txt(r.hi,gl-6,ym-A,{align:'right',color:C.mute,size:FS*0.9,math:true});
+    txt(r.lo,gl-6,ym+A,{align:'right',color:C.mute,size:FS*0.9,math:true});
+    txt('0',gl-6,ym,{align:'right',color:C.mute,size:FS*0.9});
+    txt(r.name,gl+10,ym-A-12,{math:true,color:r.col,align:'left',bold:true});
+    txt('t',gr+16,ym+12,{math:true,color:C.mute});
+    for(var q=1;q<=8;q++){ var qx=gl+gw*q/8; line(qx,ym-3,qx,ym+3,C.mute,1); }
+    [['T/2',2],['T',4],['3T/2',6],['2T',8]].forEach(function(p){ txt(p[0],gl+gw*p[1]/8,ym+A+11,{math:true,color:C.mute,size:FS*0.82}); });
+    function path(t1,w,alpha){
+      ctx.save(); ctx.beginPath(); ctx.globalAlpha=alpha; ctx.strokeStyle=r.col; ctx.lineWidth=w;
+      var n=Math.max(2,Math.ceil(240*t1/span));
+      for(var j=0;j<=n;j++){ var tt=t1*j/n, X=gl+gw*tt/span, Y=ym-A*r.f(W0*tt); if(j) ctx.lineTo(X,Y); else ctx.moveTo(X,Y); }
+      ctx.stroke(); ctx.restore();
+    }
+    path(span,1.5,0.28); if(tc>0) path(tc,3,1);
+    line(xc,ym-A-6,xc,ym+A+6,C.ink,1,[3,3]);
+    dot(xc,ym-A*r.val,5.5,r.col,C.panel);
+  });
+}
+
+/* ---------- scene 4：週期 ---------- */
+function locName(g){ return {1.62:'月球',3.71:'火星',9.8:'地球',24.79:'木星'}[g]||''; }
+function scenePeriod(){
+  var sp=S.sp, pd=S.pd, hw=W/2;
+  line(hw,14,hw,H-14,C.line,1);
+  function head(x,title,T,T0){
+    txt(title,x,24,{bold:true,size:FS*1.1});
+    txt('T = '+T.toFixed(2)+' s',x,24+FS*2,{color:C.accent,bold:true,size:FS*1.6});
+    var same=Math.abs(T-T0)<0.005;
+    txt(same?'與原始相同':(T>T0?'週期變大':'週期變小')+'（原始 '+T0.toFixed(2)+' s）',x,24+FS*3.8,{color:same?C.no:C.yes,bold:true});
+  }
+  head(hw/2,'一般彈簧',TAU*Math.sqrt(sp.m/sp.k),TAU*Math.sqrt(DEF.sp.m/DEF.sp.k));
+  head(hw*1.5,'小角度單擺（θ < 5°）',TAU*Math.sqrt(pd.L/pd.g),TAU*Math.sqrt(DEF.pd.L/DEF.pd.g));
+  var top=24+FS*5;
+  // 彈簧：上排原始（灰），下排調整後
+  var wx=Math.max(12,W*0.025), cx=hw*0.6, Rmax=Math.min(hw*0.27,hw-cx-34);
+  var yA=top+(H-top-40)*0.3, yB=top+(H-top-40)*0.76;
+  line(cx,yA-36,cx,yB+34,C.mute,1,[4,4]); txt('O',cx,yB+44,{color:C.mute,size:FS*0.9});
+  function srow(y,p,ph,ghost,label){
+    var Rp=Rmax*p.R/0.3, bw=20+12*Math.cbrt(p.m), bh=bw*0.8, bx=cx+Rp*Math.cos(ph);
+    txt(label+'　已振盪 '+Math.floor(ph/TAU)+' 次',wx,y-bh/2-18,{align:'left',color:ghost?C.mute:C.ink,bold:!ghost,size:FS*0.9});
+    ctx.save(); if(ghost) ctx.globalAlpha=0.4;
+    line(cx-Rp,y+bh/2+5,cx-Rp,y+bh/2+13,C.mute,1); line(cx+Rp,y+bh/2+5,cx+Rp,y+bh/2+13,C.mute,1);
+    floor(wx,hw-14,y+bh/2+1); wall(wx,y,bh+18);
+    spring(wx,bx-bw/2,y,10,Math.min(10,bh*0.3),1.1+p.k/28); block(bx,y,bw,bh);
+    txt('m',bx,y,{math:true,color:C.panel,bold:true,size:FS*0.9});
+    ctx.restore();
+  }
+  srow(yA,DEF.sp,sp.ph0,true,'原始');
+  srow(yB,sp,sp.ph,false,'調整後');
+  txt('地點：'+locName(sp.g)+'（g = '+sp.g+' m/s²）',hw/2,H-16,{color:C.mute,size:FS*0.9});
+  // 單擺：灰色為原始，彩色為調整後，同一懸點
+  var pxv=hw*1.5, pyv=top+10, Lmax=H-pyv-70, MAG=4;
+  ctx.save(); ctx.fillStyle=C.spring; ctx.fillRect(pxv-60,pyv-7,120,7); ctx.restore();
+  line(pxv,pyv,pxv,pyv+Lmax+20,C.line,1,[4,4]);
+  function pend(p,ph,ghost){
+    var Lp=Lmax*p.L/2, a0=p.th*MAG*Math.PI/180, an=a0*Math.cos(ph), br=7+6*Math.cbrt(p.m);
+    var bx=pxv+Lp*Math.sin(an), by=pyv+Lp*Math.cos(an);
+    ctx.save(); if(ghost) ctx.globalAlpha=0.4;
+    if(!ghost){ ctx.beginPath(); ctx.arc(pxv,pyv,Lp,Math.PI/2-a0,Math.PI/2+a0); ctx.strokeStyle=C.line; ctx.lineWidth=2; ctx.stroke(); }
+    line(pxv,pyv,bx,by,ghost?C.mute:C.ink,1.6); dot(bx,by,br,ghost?C.mute:C.block,ghost?C.mute:C.blockEdge);
+    ctx.restore();
+    if(!ghost) txt('L',pxv+Lp*0.5*Math.sin(an)+(an>=0?14:-14),pyv+Lp*0.5*Math.cos(an),{math:true});
+  }
+  pend(DEF.pd,pd.ph0,true); pend(pd,pd.ph,false);
+  txt('灰色＝原始',pxv+68,pyv-3,{align:'left',color:C.mute,size:FS*0.85});
+  txt('原始 '+Math.floor(pd.ph0/TAU)+' 次　調整後 '+Math.floor(pd.ph/TAU)+' 次',pxv,H-38,{bold:true,size:FS*0.9});
+  txt('地點：'+locName(pd.g)+'（g = '+pd.g+' m/s²）・擺角放大 '+MAG+' 倍顯示',pxv,H-16,{color:C.mute,size:FS*0.9});
+}
+
+function gauge(id,v){ var e=$(id).style; e.left=(v>=0?50:50+50*v)+'%'; e.width=Math.abs(v)*50+'%'; }
+function draw(){
+  if(!W) return;
+  colors();
+  ctx.clearRect(0,0,W,H);
+  ({terms:sceneTerms,circle:sceneCircle,graphs:sceneGraphs,period:scenePeriod})[S.scene]();
+  if(S.scene!='period'){
+    var th=W0*S.t, c=Math.cos(th), s=Math.sin(th);
+    function sg(v){ if(Math.abs(v)<0.005) v=0; return (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(2); }
+    $('rt').textContent=(S.t/T0).toFixed(2);
+    $('rth').textContent=Math.round(th*180/Math.PI);
+    $('rx').textContent=sg(c); $('rv').textContent=sg(-s); $('ra').textContent=sg(-c);
+    $('lt').textContent=(S.t/T0).toFixed(2); $('lth').textContent=Math.round(th*180/Math.PI);
+    $('lx').textContent=sg(c); $('lv').textContent=sg(-s); $('la').textContent=sg(-c);
+    gauge('gx',c); gauge('gv',-s); gauge('ga',-c);
+    var dg=Math.round(((th%TAU)+TAU)%TAU*180/Math.PI)%360;
+    $('vth').textContent=dg+'°'; $('vsn').textContent=sg(Math.sin(dg*Math.PI/180));
+    $('vvx').firstChild.nodeValue=sg(-Math.sin(dg*Math.PI/180))+' ';
+    var rf=dg<90?'θ':dg<180?'180°−θ = '+(180-dg)+'°':dg<270?'θ−180° = '+(dg-180)+'°':'360°−θ = '+(360-dg)+'°';
+    $('vref').textContent=dg<90?'三角形中標示的角就是 θ':'三角形中標示的角是 '+rf+'（參考角）';
+    $('ath').textContent=dg+'°'; $('acs').textContent=sg(Math.cos(dg*Math.PI/180));
+    $('aax').firstChild.nodeValue=sg(-Math.cos(dg*Math.PI/180))+' ';
+    $('aref').textContent=$('vref').textContent;
+  }
+}
+
+/* ---------- loop ---------- */
+var last=null;
+function frame(now){
+  if(last!=null&&S.playing){
+    var dt=Math.min(0.05,(now-last)/1000)*S.speed*0.5; /* 基準速度 = 初版的 0.5× */
+    S.t+=dt;
+    S.sp.ph+=Math.sqrt(S.sp.k/S.sp.m)*dt; S.sp.ph0+=Math.sqrt(DEF.sp.k/DEF.sp.m)*dt;
+    S.pd.ph+=Math.sqrt(S.pd.g/S.pd.L)*dt; S.pd.ph0+=Math.sqrt(DEF.pd.g/DEF.pd.L)*dt;
+  }
+  last=now; draw(); requestAnimationFrame(frame);
+}
+
+/* ---------- controls ---------- */
+function setPlay(p){ S.playing=p; $('play').textContent=p?'暫停':'播放'; }
+$('play').addEventListener('click',function(){ setPlay(!S.playing); });
+$('reset').addEventListener('click',function(){ S.t=0; S.sp.ph=S.sp.ph0=0; S.pd.ph=S.pd.ph0=0; draw(); });
+$('jump').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  S.t=(+b.dataset.q)*T0/4; setPlay(false); draw();
+});
+$('spd').addEventListener('input',function(){ S.speed=+this.value; $('spdo').textContent=S.speed.toFixed(2)+'×'; });
+$('modes').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  S.mode=b.dataset.m;
+  [].forEach.call(this.children,function(x){ x.setAttribute('aria-pressed',x===b?'true':'false'); });
+  draw();
+});
+document.addEventListener('keydown',function(e){
+  if(e.code=='Space'&&!/^(BUTTON|INPUT|A)$/.test(e.target.tagName)){ e.preventDefault(); setPlay(!S.playing); }
+});
+function period(){
+  var Ts=TAU*Math.sqrt(S.sp.m/S.sp.k), Ts0=TAU*Math.sqrt(DEF.sp.m/DEF.sp.k);
+  var Tp=TAU*Math.sqrt(S.pd.L/S.pd.g), Tp0=TAU*Math.sqrt(DEF.pd.L/DEF.pd.g);
+  function chip(id,T,T0){ var same=Math.abs(T-T0)<0.005, e=$(id);
+    e.dataset.s=same?'same':'chg'; e.textContent=same?'與原始相同':(T>T0?'變大':'變小')+'（原始 '+T0.toFixed(2)+' s）'; }
+  $('sT').textContent=Ts.toFixed(2); $('pT').textContent=Tp.toFixed(2);
+  chip('sC',Ts,Ts0); chip('pC',Tp,Tp0);
+}
+var SL=[['sm','sp','m','kg',1],['sk','sp','k','N/m',0],['sR','sp','R','m',2],['pL','pd','L','m',2],['pm','pd','m','kg',1],['pa','pd','th','°',1]];
+function restart(sys){ S[sys].ph=0; S[sys].ph0=0; }
+function showOut(r){ $(r[0]+'o').textContent=(+$(r[0]).value).toFixed(r[4])+' '+r[3]; }
+SL.forEach(function(r){
+  var el=$(r[0]);
+  el.addEventListener('input',function(){ S[r[1]][r[2]]=+el.value; showOut(r); restart(r[1]); period(); draw(); });
+  S[r[1]][r[2]]=+el.value; showOut(r);
+});
+function setLoc(id,sys,g){
+  S[sys].g=g; $(id+'o').textContent=g+' m/s²';
+  [].forEach.call($(id).children,function(b){ b.setAttribute('aria-pressed',+b.dataset.g===g?'true':'false'); });
+}
+[['sg','sp'],['pg','pd']].forEach(function(r){
+  $(r[0]).addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
+    setLoc(r[0],r[1],+b.dataset.g); restart(r[1]); period(); draw(); });
+  setLoc(r[0],r[1],9.8);
+});
+$('restore').addEventListener('click',function(){
+  SL.forEach(function(r){ $(r[0]).value=DEF[r[1]][r[2]]; S[r[1]][r[2]]=DEF[r[1]][r[2]]; showOut(r); });
+  setLoc('sg','sp',9.8); setLoc('pg','pd',9.8); restart('sp'); restart('pd'); period(); draw();
+});
+period();
+
+/* ---------- 拖曳 P 點（參考圓） ---------- */
+function ptr(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
+function hit(q){
+  if(S.scene!='circle'||!G.R) return false;
+  if(Math.hypot(q.x-G.px,q.y-G.py)<24) return true;
+  return Math.abs(Math.hypot(q.x-G.cx,q.y-G.cy)-G.R)<16;
+}
+function dragTo(q){
+  var deg=Math.round(Math.atan2(G.cy-q.y,q.x-G.cx)*180/Math.PI);
+  deg=((deg%360)+360)%360;
+  S.t=deg/360*T0; draw();
+}
+cv.addEventListener('pointerdown',function(e){
+  var q=ptr(e); if(!hit(q)) return;
+  drag.on=true; setPlay(false); cv.setPointerCapture(e.pointerId); cv.style.cursor='grabbing'; dragTo(q); e.preventDefault();
+});
+cv.addEventListener('pointermove',function(e){
+  var q=ptr(e);
+  if(drag.on){ dragTo(q); return; }
+  var h=hit(q); if(h!==drag.hover){ drag.hover=h; cv.style.cursor=h?'grab':''; draw(); }
+});
+function endDrag(e){ if(!drag.on) return; drag.on=false; cv.style.cursor=drag.hover?'grab':''; draw(); }
+cv.addEventListener('pointerup',endDrag); cv.addEventListener('pointercancel',endDrag);
+cv.addEventListener('pointerleave',function(){ if(!drag.on&&drag.hover){ drag.hover=false; cv.style.cursor=''; draw(); } });
+
+/* ---------- routing ---------- */
+var typeset={};
+function show(){
+  var h=location.hash.replace('#',''); if(SCENES.indexOf(h)<0) h='terms';
+  S.scene=h; cv.style.touchAction=h=='circle'?'none':''; drag.hover=false; cv.style.cursor='';
+  SCENES.forEach(function(n){ $('p-'+n).hidden=(n!=h); });
+  [].forEach.call($('nav').children,function(a){ a.setAttribute('aria-current',a.getAttribute('href')=='#'+h?'true':'false'); });
+  $('read').style.display=h=='period'?'none':'';
+  $('live').style.display=h=='period'?'none':'';
+  $('jump').style.display=h=='period'?'none':'';
+  math(h); draw();
+}
+function math(h){
+  if(typeset[h]) return;
+  if(window.MathJax&&MathJax.typesetPromise){ typeset[h]=true; MathJax.typesetPromise([$('p-'+h)]).catch(function(){ typeset[h]=false; }); }
+  else setTimeout(function(){ math(h); },120);
+}
+window.addEventListener('hashchange',show);
+setPlay(S.playing); colors(); show(); resize();
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(draw);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
