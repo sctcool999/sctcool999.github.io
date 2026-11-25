@@ -22,6 +22,8 @@
     --byline: #7b3fbf;
     --eng: #c0562b;
     --eng-tint: #fbebe3;
+    --chem: #9b3b8f;
+    --chem-tint: #f6e6f3;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -37,6 +39,8 @@
       --byline: #b993ef;
       --eng: #f0946a;
       --eng-tint: #3a2219;
+      --chem: #e08ad3;
+      --chem-tint: #34192f;
     }
   }
 
@@ -67,6 +71,7 @@
   .math { --accent: var(--math); --tint: var(--math-tint); }
   .phy  { --accent: var(--phy);  --tint: var(--phy-tint); }
   .eng  { --accent: var(--eng);  --tint: var(--eng-tint); }
+  .chem { --accent: var(--chem); --tint: var(--chem-tint); }
 
   .grid {
     display: grid;
@@ -262,6 +267,21 @@
         <span class="tag">高中單字</span>
         <span class="card-title">單字卡 Unit 4</span>
         <span class="card-desc">30 個單字與片語，發音、例句、間隔重複複習與學習統計（建議用 iPhone 加入主畫面）</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ===================== 化學 ===================== -->
+  <section class="chem">
+    <h2>化學</h2>
+    <div class="grid">
+
+      <!-- 新增教材：複製下面一整個 <a class="card"> … </a>，改 href、標籤、標題、說明 -->
+      <a class="card" href="chemistry/ch2-gases.html">
+        <span class="tag">選修化學</span>
+        <span class="card-title">Ch2 氣體 考前重點整理</span>
+        <span class="card-desc">高二上 選修化學(I) 2-1～2-4：壓力單位、氣體定律總表、圖形判讀、分壓與排水集氣法、常見考題與易錯（B5 列印版）</span>
       </a>
 
     </div>
